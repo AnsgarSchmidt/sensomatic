@@ -24,7 +24,7 @@ notifications:
     on_success: always
     on_failure: always
 
-install: "pip install -r knot/python/Pip-packages.txt"
+install: "pip install -r $TEST_DIR/Pip-packages.txt"
 
 # command to run tests
 script: cd $TEST_DIR && nosetests -v Test.py 
