@@ -20,7 +20,7 @@ notifications:
     on_success: always
     on_failure: always
 
-install: "pip install -r Pip-packages.txt"
+install: "pip install -r knot/python/Pip-packages.txt"
 
 # command to run tests
-script: nosetests -v Test.py 
+script: nosetests -v knot/pyhon/Test.py 
