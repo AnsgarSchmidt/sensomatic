@@ -24,3 +24,5 @@ install: "pip install -r knot/python/Pip-packages.txt"
 
 # command to run tests
 script: nosetests -v knot/python/Test.py 
+script: nosetests -v server/python/Test.py
+
