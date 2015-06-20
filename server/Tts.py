@@ -14,7 +14,6 @@ def readConfig():
         os.makedirs(homeDir)
 
     if os.path.isfile(configFileName):
-        print "Config File present"
         config.read(configFileName)
     else:
         print "Config file not found"
