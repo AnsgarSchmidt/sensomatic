@@ -53,16 +53,14 @@ def createWavFile(text, filename):
 
     with open(filename, 'w') as f:
         res = requests.get(config.get('TTS','ServerURL'),
-                   auth=(config.get('TTS', 'AuthName'), config.get('TTS', 'AuthSecret')),
-                   params={'text': text, 'voice': config.get('TTS', 'Voice'), 'accept': 'audio/wav; codecs=opus'},
-                   stream=True,
-                   verify=False
-                  )
+                           auth=(config.get('TTS', 'AuthName'), config.get('TTS', 'AuthSecret')),
+                           params={'text': text, 'voice': config.get('TTS', 'Voice'), 'accept': 'audio/wav; codecs=opus'},
+                           stream=True,
+                           verify=False
+                          )
         f.write(res.content)
-    return filename
 
 if __name__ == '__main__':
 
     readConfig()
-
     createWavFile("This is a test", "/tmp/test.wav")
