@@ -28,7 +28,7 @@ def readConfig():
     if not config.has_option("TTS", "ServerURL"):
         print "No Server URL"
         update = True
-        config.set("TTS", "ServerURL", "<ServerURL>")
+        config.set("TTS", "ServerURL", "https://stream.watsonplatform.net/text-to-speech-beta/api/v1/synthesize")
 
     if not config.has_option("TTS", "AuthName"):
         print "No Server AuthName"
@@ -43,7 +43,7 @@ def readConfig():
     if not config.has_option("TTS", "Voice"):
         print "No Server Voice"
         update = True
-        config.set("TTS", "Voice", "<Voice>")
+        config.set("TTS", "Voice", "VoiceEnUsMichael")
 
     if update:
         with open(configFileName, 'w') as f:
