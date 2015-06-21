@@ -71,7 +71,7 @@ class Persistor(threading.Thread):
         self._mqclient.subscribe("#")
 
     def _on_message(self, client, userdata, msg):
-        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         self._redis.setex(msg.topic, 60 * 10, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
