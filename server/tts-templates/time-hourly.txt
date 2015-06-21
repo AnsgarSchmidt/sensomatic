@@ -1,1 +1,1 @@
-Its time to go
+Its time to go because it's {{ hour }} o'clock
