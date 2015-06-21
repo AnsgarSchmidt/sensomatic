@@ -23,6 +23,11 @@ class TemplateMatcher():
         template = self._env.get_template('washingmachine-ready.txt')
         return template.render()
 
+    def getTimeToGoToBed(self):
+        template = self._env.get_template('time-to-go-to-bed.txt')
+        hour = datetime.datetime.now().time().hour + 1
+        return template.render(hour=hour)
+
     def getWakeupText(self, name):
         template = self._env.get_template('wakeup.txt')
         name = name
@@ -37,6 +42,7 @@ if __name__ == '__main__':
     print t.getHourlyTime()
     print t.getAcknowledgeStartWashingMachine()
     print t.getWashingMachineReady()
+    print t.getTimeToGoToBed()
     print t.getWakeupText('Ansi')
 
 
