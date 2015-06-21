@@ -39,7 +39,6 @@ class TemplateMatcher():
         prediction = self._informationFetcher.getPrediction()
         return template.render(name=name, degrees=degrees, minutes=minutes, seconds=seconds, messages=messages, bathtemp=bathtemp, bathhum=bathhum, planettemp=planettemp, planethum=planethum, planetfeels=planetfeels, conditions=conditions, winddir=winddir, windspeed=windspeed, gust=gust, prediction=prediction )
 
-
 if __name__ == '__main__':
     print "Test"
     t = TemplateMatcher()
