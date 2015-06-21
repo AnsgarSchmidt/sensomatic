@@ -3,4 +3,14 @@ Good morning {{ name }}! This is HEL and I am happy to welcome you to a new day 
 The current ship time is {{ degrees }} degrees, {{ minutes }} minutes and {{ seconds }} seconds of arc.
 There are {{ messages }} messages waiting for you in the central database.
 
+The current temperature in the bathroom is {{ bathtemp }} at {{ bathhum }} percent humidity.
+
+The current temperature on the planet is {{ planettemp }} degrees celcius at {{ planethum }} humidity
+and it feels like {{ planetfeels }} degrees celcius.
+
+Current conditions are {{ conditions }} with wind from {{ winddir }} at {{ windspeed }} kilometers per
+hour and wind gust of {{ gust }} kilometers per hour.
+
+Today will be {{ prediction }}
+
 Have a nice day!
