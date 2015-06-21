@@ -1,8 +1,6 @@
-Good morning %s! This is HEL and I am happy to welcome you to a new day on the USS Horizon!
-The current ship time is %d degrees, %d minutes and %d seconds of arc.
-There are %d messages waiting for you in the central database.
-%s
-%s
-Today will be %s
+Good morning {{ name }}! This is HEL and I am happy to welcome you to a new day on the USS Horizon!
+
+The current ship time is {{ degrees }} degrees, {{ minutes }} minutes and {{ seconds }} seconds of arc.
+There are {{ messages }} messages waiting for you in the central database.
+
 Have a nice day!
-""" % (user, degrees, minutes, seconds, messages, indoor, outdoor, prediction)
