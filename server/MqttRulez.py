@@ -74,7 +74,7 @@ class MqttRulez(threading.Thread):
                         self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), Room.BATH_ROOM)
                     else:
                         print "Ack start wasching machine"
-                        self._redis.setex("Waschingmachine", 60 * 60 * 24 * 2, time.time())
+                        self._redis.setex("Waschingmachine", 60 * 60 * 24 * 1, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
 
     def __init__(self):
