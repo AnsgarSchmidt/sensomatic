@@ -13,6 +13,8 @@ class Tts():
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
 
+        requests.packages.urllib3.disable_warnings()
+
         if not os.path.isdir(self._config.get("TTS","TTSDir")):
             print "Creating TTS Dir"
             os.makedirs(self._config.get("TTS","TTSDir"))
