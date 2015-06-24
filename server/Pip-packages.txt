@@ -7,3 +7,4 @@ redis>=2.10.3
 jinja2>=2.7.3
 IMAPClient>=0.12
 schedule>=0.3.1
+pyOpenSSL>=0.15.1
