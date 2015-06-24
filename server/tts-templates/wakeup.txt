@@ -3,6 +3,8 @@ Good morning {{ name }}! This is HEL and I am happy to welcome you to a new day 
 The current ship time is {{ degrees }} degrees, {{ minutes }} minutes and {{ seconds }} seconds of arc.
 There are {{ messages }} messages waiting for you in the central database.
 
+The International Space Station is currently populated with {{ astronauts }}.
+
 The current temperature in the bathroom is {{ bathtemp }} at {{ bathhum }} percent humidity.
 
 The current temperature on the planet is {{ planettemp }} degrees celcius at {{ planethum }} humidity
