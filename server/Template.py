@@ -1,3 +1,4 @@
+import time
 import datetime
 from jinja2 import Template
 from jinja2 import Environment
@@ -23,9 +24,12 @@ class TemplateMatcher():
         template = self._env.get_template('acknowledge-end-washing-machine.txt')
         return template.render()
 
-    def getWashingMachineReady(self):
+    def getWashingMachineReady(self, endtime):
         template = self._env.get_template('washingmachine-ready.txt')
-        return template.render()
+        diff = time.time() - endtime
+        hours = int(diff / (60.0 * 60.0) )
+        minutes = int( (diff - (hours * 60.0 * 60.0)) / 60.0 )
+        return template.render(hours=hours, minutes=minutes)
 
     def getTimeToGoToBed(self):
         template = self._env.get_template('time-to-go-to-bed.txt')

@@ -68,13 +68,12 @@ class MqttRulez(threading.Thread):
             if keys[1] == "button":
                 print "button"
                 if v == "1":
-                    print "Washing machine"
                     if self._redis.exists("Waschingmachine"):
-                        print "Token exists so end process"
+                        print "Ack empty wasching machine"
                         self._redis.delete("Waschingmachine")
                         self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), Room.BATH_ROOM)
                     else:
-                        print "Token does not exists"
+                        print "Ack start wasching machine"
                         self._redis.setex("Waschingmachine", 60 * 60 * 24 * 2, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
 
