@@ -4,12 +4,9 @@ import time
 import paho.mqtt.client as mqtt
 import threading
 
-__author__ = 'ansi'
-
 sendQueue    = Queue.Queue()
 
 class ReceiveThread(threading.Thread):
-    """Threaded serial receive"""
 
     def __init__(self, ser, mqclient):
         threading.Thread.__init__(self)
@@ -43,19 +40,19 @@ class ReceiveThread(threading.Thread):
             if (command == 9):
                 temp = float(element[1].split(";")[0])
                 #print "Temp:%f" % temp
-                self._mqclient.publish("badezimmer/temperature", temp)
+                self._mqclient.publish("bathroom/temperature", temp)
             if (command == 10):
                 hum = float(element[1].split(";")[0])
                 #print "Humidity:%f"  % hum
-                self._mqclient.publish("badezimmer/humidity", hum)
+                self._mqclient.publish("bathroom/humidity", hum)
             if (command == 11):
                 light = float(element[1].split(";")[0])
                 #print "Light:%d"  % light
-                self._mqclient.publish("badezimmer/light", light)
+                self._mqclient.publish("bathroom/light", light)
             if (command == 12):
                 button = int(element[1].split(";")[0])
                 #print "Button Pressed:%d" % button
-                self._mqclient.publish("badezimmer/button", button)
+                self._mqclient.publish("bathroom/button", button)
 
 class SendThread(threading.Thread):
     """Threaded serial send"""
@@ -88,7 +85,7 @@ class TasksThread(threading.Thread):
 
 def on_connect(client, userdata, rc):
     print("Connected with result code "+str(rc))
-    client.subscribe("badezimmer/light/+")
+    client.subscribe("bathroom/light/+")
 
 def on_message(client, userdata, msg):
     print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
@@ -107,7 +104,7 @@ if __name__ == "__main__":
 
     ser = serial.Serial("/dev/ttyUSB0", 115200)
 
-    mqclient = mqtt.Client("badezimmer", clean_session=True)
+    mqclient = mqtt.Client("bathroom", clean_session=True)
     mqclient.connect("ansinas", 1883, 60)
     mqclient.on_connect = on_connect
     mqclient.on_message = on_message
