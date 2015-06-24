@@ -68,11 +68,13 @@ def checkWaschingMachine():
         timestamp = float(_redis.get("Waschingmachine"))
         if (timestamp + washingtime < time.time()):
             print "Waschmaschine ready"
-            print temp.getWashingMachineReady(timestamp + washingtime)
+            tts.createWavFile(temp.getWashingMachineReady(timestamp + washingtime), Room.LIVING_ROOM)
     else:
         print "Wasching machine inactive"
 
-
+def goSleep():
+    print "Go to sleep"
+    tts.createWavFile(temp.getTimeToGoToBed(), Room.LIVING_ROOM)
 
 if __name__ == '__main__':
 
@@ -90,12 +92,20 @@ if __name__ == '__main__':
     #https://github.com/dbader/schedule
 
     schedule.every().minutes.do(checkWaschingMachine)
+
     schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
+
     schedule.every().monday.at("05:30").do(wakeup)
     schedule.every().tuesday.at("05:30").do(wakeup)
     schedule.every().wednesday.at("05:30").do(wakeup)
     schedule.every().thursday.at("05:30").do(wakeup)
     schedule.every().friday.at("05:30").do(wakeup)
+
+    schedule.every().sunday.at("23:42").do(goSleep)
+    schedule.every().monday.at("23:42").do(goSleep)
+    schedule.every().tuesday.at("23:42").do(goSleep)
+    schedule.every().wednesday.at("23:42").do(goSleep)
+    schedule.every().thursday.at("23:42").do(goSleep)
 
     while True:
         schedule.run_pending()
