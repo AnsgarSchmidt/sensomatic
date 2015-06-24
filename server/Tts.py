@@ -3,7 +3,7 @@ import time
 import random
 import requests
 import ConfigParser
-
+from Room import Room
 
 class Tts():
 
@@ -90,4 +90,4 @@ class Tts():
 if __name__ == '__main__':
 
     t = Tts()
-    t.createWavFile("This is a test", "/tmp/test.wav")
+    t.createWavFile("This is a test", Room.ANSI_ROOM)
