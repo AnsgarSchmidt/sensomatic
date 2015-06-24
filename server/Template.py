@@ -37,15 +37,16 @@ class TemplateMatcher():
         return template.render(hour=hour)
 
     def getWakeupText(self, name):
-        template = self._env.get_template('wakeup.txt')
-        name = name
+        template   = self._env.get_template('wakeup.txt')
+        name       = name
         fraction, degrees, minutes, seconds = self._informationFetcher.getEarthRotationTime()
-        messages = self._informationFetcher.getNumEmailMessages()
-        bathtemp = self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
-        bathhum  = self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
+        messages   = self._informationFetcher.getNumEmailMessages()
+        bathtemp   = self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
+        bathhum    = self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
         planettemp, planethum, planetfeels, conditions, winddir, windspeed, gust = self._informationFetcher.getOutdoor()
         prediction = self._informationFetcher.getPrediction()
-        return template.render(name=name, degrees=degrees, minutes=minutes, seconds=seconds, messages=messages, bathtemp=bathtemp, bathhum=bathhum, planettemp=planettemp, planethum=planethum, planetfeels=planetfeels, conditions=conditions, winddir=winddir, windspeed=windspeed, gust=gust, prediction=prediction )
+        astronauts = self._informationFetcher.getAstronauts()
+        return template.render(name=name, degrees=degrees, minutes=minutes, seconds=seconds, messages=messages, bathtemp=bathtemp, bathhum=bathhum, planettemp=planettemp, planethum=planethum, planetfeels=planetfeels, conditions=conditions, winddir=winddir, windspeed=windspeed, gust=gust, prediction=prediction, astronauts=astronauts )
 
     def getBathToMoisty(self):
         template = self._env.get_template('bath-still-to-moisty.txt')
