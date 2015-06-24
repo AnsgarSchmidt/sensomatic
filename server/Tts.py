@@ -49,8 +49,13 @@ class Tts():
             update = True
             self._config.set("TTS", "Voice", "VoiceEnUsMichael")
 
+        if not self._config.has_option("TTS", "TTSDir"):
+            print "No TTS Dir"
+            update = True
+            self._config.set("TTS", "TTSDir", "<TTSDir>")
+
         if update:
-            with open(configFileName, 'w') as f:
+            with open(self._configFileName, 'w') as f:
                 self._config.write(f)
 
     def createWavFile(self, text, filename):
