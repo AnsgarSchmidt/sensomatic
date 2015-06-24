@@ -47,6 +47,10 @@ class TemplateMatcher():
         prediction = self._informationFetcher.getPrediction()
         return template.render(name=name, degrees=degrees, minutes=minutes, seconds=seconds, messages=messages, bathtemp=bathtemp, bathhum=bathhum, planettemp=planettemp, planethum=planethum, planetfeels=planetfeels, conditions=conditions, winddir=winddir, windspeed=windspeed, gust=gust, prediction=prediction )
 
+    def getBathToMoisty(self):
+        template = self._env.get_template('bath-still-to-moisty.txt')
+        return template.render()
+
 if __name__ == '__main__':
     print "Test"
     t = TemplateMatcher()
