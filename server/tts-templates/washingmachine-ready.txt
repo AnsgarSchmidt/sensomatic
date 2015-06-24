@@ -1,1 +1,1 @@
-Washing machine is ready please take care of it now!
+Washing machine is ready since {{ hours }} hours and {{ minutes }} minutes please take care of it now!
