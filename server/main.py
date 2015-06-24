@@ -57,8 +57,8 @@ def hourAnnounce(room):
     print "Announce hour"
     tts.createWavFile(temp.getHourlyTime(), room)
 
-def wakeup():
-    print "Wakeup"
+def wakeup(name, room):
+    tts.createWavFile(temp.getWakeupText(name), room)
 
 def checkWaschingMachine():
     washingtime = (60.0 * 60.0 * 0.5) #normal washing time
@@ -91,21 +91,27 @@ if __name__ == '__main__':
 
     #https://github.com/dbader/schedule
 
-    schedule.every().minutes.do(checkWaschingMachine)
+    schedule.every(15).minutes.do(checkWaschingMachine)
 
     schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
 
-    schedule.every().monday.at("05:30").do(wakeup)
-    schedule.every().tuesday.at("05:30").do(wakeup)
-    schedule.every().wednesday.at("05:30").do(wakeup)
-    schedule.every().thursday.at("05:30").do(wakeup)
-    schedule.every().friday.at("05:30").do(wakeup)
+    schedule.every().monday.at("05:30").do(wakeup,    "Ansi", Room.ANSI_ROOM)
+    schedule.every().tuesday.at("05:30").do(wakeup,   "Ansi", Room.ANSI_ROOM)
+    schedule.every().wednesday.at("05:30").do(wakeup, "Ansi", Room.ANSI_ROOM)
+    schedule.every().thursday.at("05:30").do(wakeup,  "Ansi", Room.ANSI_ROOM)
+    schedule.every().friday.at("05:30").do(wakeup,    "Ansi", Room.ANSI_ROOM)
 
-    schedule.every().sunday.at("23:42").do(goSleep)
-    schedule.every().monday.at("23:42").do(goSleep)
-    schedule.every().tuesday.at("23:42").do(goSleep)
-    schedule.every().wednesday.at("23:42").do(goSleep)
-    schedule.every().thursday.at("23:42").do(goSleep)
+    schedule.every().monday.at("10:30").do(wakeup,    "Phawx", Room.TIFFY_ROOM)
+    schedule.every().tuesday.at("10:30").do(wakeup,   "Phawx", Room.TIFFY_ROOM)
+    schedule.every().wednesday.at("10:30").do(wakeup, "Phawx", Room.TIFFY_ROOM)
+    schedule.every().thursday.at("10:30").do(wakeup,  "Phawx", Room.TIFFY_ROOM)
+    schedule.every().friday.at("10:30").do(wakeup,    "Phawx", Room.TIFFY_ROOM)
+
+    schedule.every().sunday.at("22:42").do(goSleep)
+    schedule.every().monday.at("22:42").do(goSleep)
+    schedule.every().tuesday.at("22:42").do(goSleep)
+    schedule.every().wednesday.at("22:42").do(goSleep)
+    schedule.every().thursday.at("22:42").do(goSleep)
 
     while True:
         schedule.run_pending()
