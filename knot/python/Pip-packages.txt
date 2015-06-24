@@ -1,5 +1,2 @@
-feedparser>=5.2.0
-paho-mqtt>=1.1
-python-mpd>=0.3.0
-twitter>=1.17.0
-requests>=2.7.0
+paho-mqtt==1.1
+pyserial==2.7
