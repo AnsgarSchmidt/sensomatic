@@ -4,6 +4,9 @@ import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 import time
+from Tts import Tts
+from Room import Room
+from Template import TemplateMatcher
 
 class MqttRulez(threading.Thread):
 
@@ -67,15 +70,13 @@ class MqttRulez(threading.Thread):
                 if v == "1":
                     print "Washing machine"
                     if self._redis.exists("Waschingmachine"):
-                        print "Token exists so remove"
+                        print "Token exists so end process"
                         self._redis.delete("Waschingmachine")
-
+                        self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), Room.BATH_ROOM)
                     else:
                         print "Token does not exists"
                         self._redis.setex("Waschingmachine", 60 * 60 * 24 * 2, time.time())
-
-
-
+                        self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -88,6 +89,8 @@ class MqttRulez(threading.Thread):
 
         self._mqclient = mqtt.Client("MqttRulez", clean_session=True)
         self._redis    = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
+        self._tts      = Tts()
+        self._template = TemplateMatcher()
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected with result code %s" % rc
