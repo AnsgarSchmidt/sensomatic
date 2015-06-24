@@ -5,6 +5,7 @@ import ConfigParser
 from Tts import Tts
 from Template import TemplateMatcher
 from Persistor import Persistor
+from Room import Room
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -35,9 +36,9 @@ def _readConfig():
         with open(configFileName, 'w') as f:
             config.write(f)
 
-def hourAnnounce():
+def hourAnnounce(room):
     print "Announce hour"
-    tts.createWavFile(temp.getHourlyTime(), "/tmp/test.wav")
+    tts.createWavFile(temp.getHourlyTime(), room)
 
 def wakeup():
     print "Wakeup"
@@ -53,14 +54,14 @@ if __name__ == '__main__':
 
     #https://github.com/dbader/schedule
 
-    schedule.every().hour.do(hourAnnounce)
+    schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
     schedule.every().monday.at("05:30").do(wakeup)
     schedule.every().tuesday.at("05:30").do(wakeup)
     schedule.every().wednesday.at("05:30").do(wakeup)
     schedule.every().thursday.at("05:30").do(wakeup)
     schedule.every().friday.at("05:30").do(wakeup)
 
-    hourAnnounce()
+    hourAnnounce(Room.LIVING_ROOM)
 
     while True:
         schedule.run_pending()
