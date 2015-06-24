@@ -76,6 +76,10 @@ def goSleep():
     print "Go to sleep"
     tts.createWavFile(temp.getTimeToGoToBed(), Room.LIVING_ROOM)
 
+def checkBath():
+    print "Checking bath"
+
+
 if __name__ == '__main__':
 
     _readConfig()
@@ -92,6 +96,7 @@ if __name__ == '__main__':
     #https://github.com/dbader/schedule
 
     schedule.every(15).minutes.do(checkWaschingMachine)
+    schedule.every(10).minutes.do(checkBath)
 
     schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
 
@@ -112,6 +117,8 @@ if __name__ == '__main__':
     schedule.every().tuesday.at("22:42").do(goSleep)
     schedule.every().wednesday.at("22:42").do(goSleep)
     schedule.every().thursday.at("22:42").do(goSleep)
+
+    wakeup("Ansi", Room.ANSI_ROOM)
 
     while True:
         schedule.run_pending()
