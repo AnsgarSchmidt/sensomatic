@@ -1,4 +1,6 @@
 import os
+import time
+import random
 import requests
 import ConfigParser
 
@@ -10,6 +12,10 @@ class Tts():
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
+
+        if not os.path.isdir(self._config.get("TTS","TTSDir")):
+            print "Creating TTS Dir"
+            os.makedirs(self._config.get("TTS","TTSDir"))
 
     def _readConfig(self):
         update = False
@@ -58,9 +64,19 @@ class Tts():
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
 
-    def createWavFile(self, text, filename):
+    def createWavFile(self, text, room):
 
-        with open(filename, 'w') as f:
+        tempDir  = self._config.get("TTS", "TTSDir")
+
+        finalDir = tempDir + "/" + room
+
+        if not os.path.isdir(finalDir):
+            print "Creating destination Dir"
+            os.makedirs(finalDir)
+
+        filename = "%s-%i-%d.wav" % (room, int(time.time()), random.randint(0,9999999999))
+
+        with open(tempDir + "/" + filename, 'w') as f:
             res = requests.get(self._config.get('TTS','ServerURL'),
                                auth=(self._config.get('TTS', 'AuthName'), self._config.get('TTS', 'AuthSecret')),
                                params={'text': text, 'voice': self._config.get('TTS', 'Voice'), 'accept': 'audio/wav; codecs=opus'},
@@ -68,6 +84,8 @@ class Tts():
                                verify=False
                               )
             f.write(res.content)
+
+        os.rename(tempDir + "/" + filename, finalDir + "/" + filename)
 
 if __name__ == '__main__':
 
