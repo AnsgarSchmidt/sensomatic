@@ -83,11 +83,14 @@ class InformationFetcher():
         return fraction, degrees, minutes, seconds
 
     def getNumEmailMessages(self):
-        server = IMAPClient(self._config.get("INFORMATION","IMAPServer"), use_uid=True, ssl=True)
-        server.login(self._config.get("INFORMATION", "IMAPUser"), self._config.get("INFORMATION", "IMAPPasswd"))
-        select_info = server .select_folder(self._config.get("INFORMATION", "IMAPFolder"))
-        #print json.dumps(select_info, sort_keys=True, indent=4, separators=(',', ': '))
-        return select_info['EXISTS']
+        try:
+            server = IMAPClient(self._config.get("INFORMATION","IMAPServer"), use_uid=True, ssl=True)
+            server.login(self._config.get("INFORMATION", "IMAPUser"), self._config.get("INFORMATION", "IMAPPasswd"))
+            select_info = server .select_folder(self._config.get("INFORMATION", "IMAPFolder"))
+            #print json.dumps(select_info, sort_keys=True, indent=4, separators=(',', ': '))
+            return select_info['EXISTS']
+        except:
+            return 0
 
     def getRoomTemp(self, room):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
