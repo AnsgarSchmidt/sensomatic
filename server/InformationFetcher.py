@@ -120,13 +120,34 @@ class InformationFetcher():
         #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
         return j['forecast']['txt_forecast']['forecastday'][0]['fcttext_metric']
 
+    def getNextISSPass(self):
+        f = urllib2.urlopen("http://api.open-notify.org/iss-pass.json?lat=52.5147&lon=13.4394&alt=80&n=10")
+        j = json.loads(f.read())
+        #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+        passes = []
+        for i in j['response']:
+            if int(i['duration']) > 600:
+                passes.append(int(i['risetime']))
+        return passes
+
+    def getAstronauts(self):
+        f = urllib2.urlopen("http://api.open-notify.org/astros.json")
+        j = json.loads(f.read())
+        #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+        ast = ""
+        for i in j['people']:
+                ast = ast +  i['name'] + ', '
+        return ast[:-2]
+
 if __name__ == '__main__':
 
     print "Testing"
     i = InformationFetcher()
-    print i.getEarthRotationTime()
-    print i.getNumEmailMessages()
-    print i.getRoomTemp(InformationFetcher.BATH)
-    print i.getRoomHumidity(InformationFetcher.BATH)
-    print i.getOutdoor()
-    print i.getPrediction()
+    #print i.getEarthRotationTime()
+    #print i.getNumEmailMessages()
+    #print i.getRoomTemp(InformationFetcher.BATH)
+    #print i.getRoomHumidity(InformationFetcher.BATH)
+    #print i.getOutdoor()
+    #print i.getPrediction()
+    print i.getNextISSPass()
+    print i.getAstronauts()
