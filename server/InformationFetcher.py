@@ -134,10 +134,15 @@ class InformationFetcher():
         f = urllib2.urlopen("http://api.open-notify.org/astros.json")
         j = json.loads(f.read())
         #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+        num = int(j['number'])
         ast = ""
-        for i in j['people']:
-                ast = ast +  i['name'] + ', '
-        return ast[:-2]
+        for i in range(num - 1):
+                ast = ast +  j['people'][i]['name'] + ', '
+        ast = ast[:-2]
+        ast = ast + " and "
+        ast = ast + j['people'][num - 1]['name']
+
+        return ast
 
 if __name__ == '__main__':
 
