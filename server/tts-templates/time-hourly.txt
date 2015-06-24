@@ -1,1 +1,1 @@
-Its time to go
+It's {{ hour }} o'clock
