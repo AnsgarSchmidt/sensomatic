@@ -1,5 +1,7 @@
+import os
 import time
 import schedule
+import ConfigParser
 from Tts import Tts
 from Template import TemplateMatcher
 from Persistor import Persistor
@@ -7,8 +9,31 @@ from Persistor import Persistor
 temp = TemplateMatcher()
 tts  = Tts()
 
+homeDir        = os.path.expanduser("~/.sensomatic")
+configFileName = homeDir + '/config.ini'
+config         = ConfigParser.ConfigParser()
 
-def
+def _readConfig():
+    update = False
+
+    if not os.path.isdir(homeDir):
+        print "Creating homeDir"
+        os.makedirs(homeDir)
+
+    if os.path.isfile(configFileName):
+        config.read(configFileName)
+    else:
+        print "Config file not found"
+        update = True
+
+    if not config.has_section('MAIN'):
+        print "Adding MAIN part"
+        update = True
+        config.add_section("MAIN")
+
+    if update:
+        with open(configFileName, 'w') as f:
+            config.write(f)
 
 def hourAnnounce():
     print "Announce hour"
@@ -18,6 +43,8 @@ def wakeup():
     print "Wakeup"
 
 if __name__ == '__main__':
+
+    _readConfig()
 
     print "Start Persistor"
     persistor = Persistor()
