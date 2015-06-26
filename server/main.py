@@ -17,6 +17,7 @@ configFileName = homeDir + '/config.ini'
 config         = ConfigParser.ConfigParser()
 
 def _readConfig():
+
     update = False
 
     if not os.path.isdir(homeDir):

@@ -24,6 +24,22 @@ class TemplateMatcher():
         template = self._env.get_template('acknowledge-end-washing-machine.txt')
         return template.render()
 
+    def getAcknowledgeStartShower(self, name):
+        template = self._env.get_template('acknowledge-start-shower.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeEndShower(self, name):
+        template = self._env.get_template('acknowledge-end-shower.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeStartBath(self, name):
+        template = self._env.get_template('acknowledge-start-bath.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeEndShower(self, name):
+        template = self._env.get_template('acknowledge-end-shower.txt')
+        return template.render(name=name)
+
     def getWashingMachineReady(self, endtime):
         template = self._env.get_template('washingmachine-ready.txt')
         diff = time.time() - endtime
@@ -57,9 +73,11 @@ if __name__ == '__main__':
     t = TemplateMatcher()
     print t.getHourlyTime()
     print t.getAcknowledgeStartWashingMachine()
-    print t.getWashingMachineReady()
+    print t.getWashingMachineReady(234234)
     print t.getTimeToGoToBed()
     print t.getWakeupText('Ansi')
+    print t.getAcknowledgeStartShower('Ansi')
+    print t.getAcknowledgeEndShower('Ansi')
 
 
 
