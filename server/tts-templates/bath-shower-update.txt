@@ -1,0 +1,5 @@
+{{ name }} you are in {{ showerbath }} since {{ minutes }}. Just to keep
+you informed, the current temperature outside is {{ outtemp }} degrees
+{% if rain > 0 %} with rain{%endif%}.
+In here is {{ temp }} degrees by {{ humidity }} percentage humidity. Time is
+{{ time }}. Enjoy.
