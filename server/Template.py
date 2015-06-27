@@ -47,6 +47,16 @@ class TemplateMatcher():
         minutes = int( (diff - (hours * 60.0 * 60.0)) / 60.0 )
         return template.render(hours=hours, minutes=minutes)
 
+    def getBathShowerUpdate(self, name,showerbath):
+        minutes=1
+        outtemp,_,_,condition,_,_,_ = self._informationFetcher.getOutdoor()
+        temp=self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
+        humidity=self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
+        timehour=datetime.datetime.now().time().hour
+        timemin=datetime.datetime.now().time().minute
+        template = self._env.get_template('bath-shower-update.txt')
+        return template.render(name=name, showerbath=showerbath,minutes=minutes,outtemp=outtemp,condition=condition,temp=temp,humidity=humidity,timehour=timehour,timemin=timemin )
+
     def getTimeToGoToBed(self):
         template = self._env.get_template('time-to-go-to-bed.txt')
         hour = datetime.datetime.now().time().hour + 1
@@ -78,6 +88,7 @@ if __name__ == '__main__':
     print t.getWakeupText('Ansi')
     print t.getAcknowledgeStartShower('Ansi')
     print t.getAcknowledgeEndShower('Ansi')
+    print t.getBathShowerUpdate('Ansi',"shower")
 
 
 
