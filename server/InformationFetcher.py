@@ -54,12 +54,12 @@ class InformationFetcher():
         if not self._config.has_option("INFORMATION", "WUCurrentURL"):
             print "No URL"
             update = True
-            self._config.set("INFORMATION", "WUCurrentURL", "http://api.wunderground.com/api/287a022198bbd5a4/geolookup/conditions/q/Germany/Berlin.json")
+            self._config.set("INFORMATION", "WUCurrentURL", "<WU Current>")
 
         if not self._config.has_option("INFORMATION", "WUPredictionURL"):
             print "No URL"
             update = True
-            self._config.set("INFORMATION", "WUPredictionURL", "http://api.wunderground.com/api/287a022198bbd5a4/forecast/q/Germany/Berlin.json")
+            self._config.set("INFORMATION", "WUPredictionURL", "<WU Predict>")
 
         if update:
             with open(self._configFileName, 'w') as f:
@@ -143,6 +143,9 @@ class InformationFetcher():
         ast = ast + j['people'][num - 1]['name']
 
         return ast
+
+    def getTimeInBathShower(self):
+        return 2323
 
 if __name__ == '__main__':
 

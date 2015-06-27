@@ -24,12 +24,38 @@ class TemplateMatcher():
         template = self._env.get_template('acknowledge-end-washing-machine.txt')
         return template.render()
 
+    def getAcknowledgeStartShower(self, name):
+        template = self._env.get_template('acknowledge-start-shower.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeEndShower(self, name):
+        template = self._env.get_template('acknowledge-end-shower.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeStartBath(self, name):
+        template = self._env.get_template('acknowledge-start-bath.txt')
+        return template.render(name=name)
+
+    def getAcknowledgeEndShower(self, name):
+        template = self._env.get_template('acknowledge-end-shower.txt')
+        return template.render(name=name)
+
     def getWashingMachineReady(self, endtime):
         template = self._env.get_template('washingmachine-ready.txt')
         diff = time.time() - endtime
         hours = int(diff / (60.0 * 60.0) )
         minutes = int( (diff - (hours * 60.0 * 60.0)) / 60.0 )
         return template.render(hours=hours, minutes=minutes)
+
+    def getBathShowerUpdate(self, name,showerbath):
+        minutes=self._informationFetcher.getTimeInBathShower()
+        outtemp,_,_,condition,_,_,_ = self._informationFetcher.getOutdoor()
+        temp=self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
+        humidity=self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
+        timehour=datetime.datetime.now().time().hour
+        timemin=datetime.datetime.now().time().minute
+        template = self._env.get_template('bath-shower-update.txt')
+        return template.render(name=name, showerbath=showerbath,minutes=minutes,outtemp=outtemp,condition=condition,temp=temp,humidity=humidity,timehour=timehour,timemin=timemin )
 
     def getTimeToGoToBed(self):
         template = self._env.get_template('time-to-go-to-bed.txt')
@@ -57,9 +83,12 @@ if __name__ == '__main__':
     t = TemplateMatcher()
     print t.getHourlyTime()
     print t.getAcknowledgeStartWashingMachine()
-    print t.getWashingMachineReady()
+    print t.getWashingMachineReady(234234)
     print t.getTimeToGoToBed()
     print t.getWakeupText('Ansi')
+    print t.getAcknowledgeStartShower('Ansi')
+    print t.getAcknowledgeEndShower('Ansi')
+    print t.getBathShowerUpdate('Ansi',"shower")
 
 
 

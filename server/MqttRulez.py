@@ -67,6 +67,8 @@ class MqttRulez(threading.Thread):
 
             if keys[1] == "button":
                 print "button"
+
+                #Wasching machine
                 if v == "1":
                     if self._redis.exists("Waschingmachine"):
                         print "Ack empty wasching machine"
@@ -76,6 +78,59 @@ class MqttRulez(threading.Thread):
                         print "Ack start wasching machine"
                         self._redis.setex("Waschingmachine", 60 * 60 * 24 * 1, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
+
+                #Ansi shower
+                if v == "2":
+                    if self._redis.exists("shower"):
+                        print "Stop shower"
+                        self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
+                        self._redis.delete("shower")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndShower('Ansi'), Room.BATH_ROOM)
+                    else:
+                        print "Start shower"
+                        self._mqclient.publish("bathroom/light","{'R':255, 'G':255, 'B':23}")
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
+
+                #Tiffy shower
+                if v == "3":
+                    if self._redis.exists("shower"):
+                        print "Stop shower"
+                        self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
+                        self._redis.delete("shower")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndShower('Phawx'), Room.BATH_ROOM)
+                    else:
+                        print "Start shower"
+                        self._mqclient.publish("bathroom/light","{'R':23, 'G':255, 'B':155}")
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
+
+                #Ansi bath
+                if v == "2":
+                    if self._redis.exists("bath"):
+                        print "Stop bath"
+                        self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
+                        self._redis.delete("bath")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndBath('Ansi'), Room.BATH_ROOM)
+                    else:
+                        print "Start bath"
+                        self._mqclient.publish("bathroom/light","{'R':25, 'G':25, 'B':23}")
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartBath('Ansi'), Room.BATH_ROOM)
+
+                #Tiffy bath
+                if v == "3":
+                    if self._redis.exists("bath"):
+                        print "Stop bath"
+                        self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
+                        self._redis.delete("bath")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndBath('Phawx'), Room.BATH_ROOM)
+                    else:
+                        print "Start bath"
+                        self._mqclient.publish("bathroom/light","{'R':23, 'G':25, 'B':15}")
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
+
 
     def __init__(self):
         threading.Thread.__init__(self)
