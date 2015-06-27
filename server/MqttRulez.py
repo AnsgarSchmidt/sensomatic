@@ -143,6 +143,18 @@ class MqttRulez(threading.Thread):
                 print "motion in livingroom detected"
                 self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
 
+        if keys[0] == Room.ANSI_ROOM:
+
+            if keys[1] == "motion":
+                print "motion in ansi room detected"
+                self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
+
+        if keys[0] == Room.TIFFY_ROOM:
+
+            if keys[1] == "motion":
+                print "motion in tiffy room detected"
+                self._redis.setex(Room.TIFFY_ROOM+"/populated", 60 * 60, time.time())
+
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
