@@ -1,0 +1,3 @@
+Hi {{ name }}. I stop the music and switch off the light.
+If you do not mind I monitor the humidity for some time and
+switch off the fan when the conditions are fine again. See you later.
