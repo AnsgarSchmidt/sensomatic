@@ -1,4 +1,4 @@
 {{ name }} you are in {{ showerbath }} since {{ minutes }} minutes. Just to keep
 you informed, the current condition outside is {{ condition }} at {{ outtemp }} degrees celcious.
 In here is {{ temp }} degrees by {{ humidity }} percentage humidity. Time is
-{{ timehour }} and {{ timemin }} minutes. Enjoy.
+{{ timehour }} o'clock and {{ timemin }} minutes. Enjoy.
