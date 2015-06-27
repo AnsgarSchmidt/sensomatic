@@ -87,7 +87,7 @@ def checkBath():
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
-        tts.createWavFile(temp.getBathShowerUpdate())
+        tts.createWavFile(temp.getBathShowerUpdate(), Room.BATH_ROOM)
     else:
         print "No one showers"
 
