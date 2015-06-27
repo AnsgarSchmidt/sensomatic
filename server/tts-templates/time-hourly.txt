@@ -1,1 +1,1 @@
-It's {{ hour }} o'clock
+It's {{ hour }} o'clock. Outside temperature is {{ temp }} degrees ceclius.

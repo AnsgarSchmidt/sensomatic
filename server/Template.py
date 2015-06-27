@@ -14,7 +14,8 @@ class TemplateMatcher():
     def getHourlyTime(self):
         template = self._env.get_template('time-hourly.txt')
         hour = datetime.datetime.now().time().hour
-        return template.render(hour=hour)
+        _,_,temp,_,_,_,_ = self._informationFetcher.getOutdoor()
+        return template.render(hour=hour, temp=temp)
 
     def getAcknowledgeStartWashingMachine(self):
         template = self._env.get_template('acknowledge-start-washing-machine.txt')
