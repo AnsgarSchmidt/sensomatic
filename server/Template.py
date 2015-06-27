@@ -14,7 +14,8 @@ class TemplateMatcher():
     def getHourlyTime(self):
         template = self._env.get_template('time-hourly.txt')
         hour = datetime.datetime.now().time().hour
-        return template.render(hour=hour)
+        _,_,temp,_,_,_,_ = self._informationFetcher.getOutdoor()
+        return template.render(hour=hour, temp=temp)
 
     def getAcknowledgeStartWashingMachine(self):
         template = self._env.get_template('acknowledge-start-washing-machine.txt')
@@ -47,7 +48,9 @@ class TemplateMatcher():
         minutes = int( (diff - (hours * 60.0 * 60.0)) / 60.0 )
         return template.render(hours=hours, minutes=minutes)
 
-    def getBathShowerUpdate(self, name,showerbath):
+    def getBathShowerUpdate(self):
+        name=self._informationFetcher.getWhoIsInBathShower()
+        showerbath=self._informationFetcher.getBathOrShower()
         minutes=self._informationFetcher.getTimeInBathShower()
         outtemp,_,_,condition,_,_,_ = self._informationFetcher.getOutdoor()
         temp=self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
@@ -88,7 +91,7 @@ if __name__ == '__main__':
     print t.getWakeupText('Ansi')
     print t.getAcknowledgeStartShower('Ansi')
     print t.getAcknowledgeEndShower('Ansi')
-    print t.getBathShowerUpdate('Ansi',"shower")
+    print t.getBathShowerUpdate()
 
 
 

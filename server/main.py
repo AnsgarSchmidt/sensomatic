@@ -3,6 +3,7 @@ import time
 import redis
 import schedule
 import ConfigParser
+from InformationFetcher import InformationFetcher
 from Tts import Tts
 from Template import TemplateMatcher
 from Persistor import Persistor
@@ -11,6 +12,7 @@ from MqttRulez import MqttRulez
 
 temp = TemplateMatcher()
 tts  = Tts()
+info = InformationFetcher()
 
 homeDir        = os.path.expanduser("~/.sensomatic")
 configFileName = homeDir + '/config.ini'
@@ -54,9 +56,11 @@ def _readConfig():
         with open(configFileName, 'w') as f:
             config.write(f)
 
-def hourAnnounce(room):
+def hourAnnounce():
     print "Announce hour"
-    tts.createWavFile(temp.getHourlyTime(), room)
+    for room in InformationFetcher.ROOMS:
+        if info.isSomeoneIsInTheRoom(room):
+            tts.createWavFile(temp.getHourlyTime(), room)
 
 def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
@@ -80,6 +84,12 @@ def goSleep():
 def checkBath():
     print "Checking bath"
 
+def bathShowerUpdate():
+    print "Checking Bath and Shower conditions"
+    if info.getBathOrShower() is not None:
+        tts.createWavFile(temp.getBathShowerUpdate())
+    else:
+        print "No one showers"
 
 if __name__ == '__main__':
 
@@ -98,8 +108,9 @@ if __name__ == '__main__':
 
     schedule.every(15).minutes.do(checkWaschingMachine)
     schedule.every(10).minutes.do(checkBath)
+    schedule.every(30).minutes.do(bathShowerUpdate)
 
-    schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
+    schedule.every().hour.do(hourAnnounce)
 
     schedule.every().monday.at("05:30").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("05:30").do(wakeup,   "Ansi", Room.ANSI_ROOM)
@@ -119,7 +130,7 @@ if __name__ == '__main__':
     schedule.every().wednesday.at("22:42").do(goSleep)
     schedule.every().thursday.at("22:42").do(goSleep)
 
-    wakeup("Ansi", Room.ANSI_ROOM)
+    hourAnnounce()
 
     while True:
         schedule.run_pending()

@@ -12,6 +12,7 @@ class InformationFetcher():
     LIVING="livingroom"
     ANSI="ansi"
     TIFFY="tiffy"
+    ROOMS = [BATH,LIVING,ANSI,TIFFY]
 
     def _readConfig(self):
         update = False
@@ -107,6 +108,9 @@ class InformationFetcher():
             return None
 
     def getOutdoor(self):
+        '''
+            temp, hum, feelslike,  ..... 7
+        '''
         f = urllib2.urlopen(self._config.get("INFORMATION", "WUCurrentURL"))
         json_string = f.read()
         j = json.loads(json_string)
@@ -145,7 +149,25 @@ class InformationFetcher():
         return ast
 
     def getTimeInBathShower(self):
-        return 2323
+        r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
+        if r.exists("bath"):
+            start = float(r.get("bath"))
+        if r.exists("shower"):
+            start = float(r.get("shower"))
+        return int((time.time()-start)/60.0)
+
+    def getWhoIsInBathShower(self):
+        return "Ansi"
+
+    def getBathOrShower(self):
+        r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
+        if r.exists("bath"):
+            return "bath"
+        if r.exists("shower"):
+            return "shower"
+
+    def isSomeoneIsInTheRoom(room):
+        return True
 
 if __name__ == '__main__':
 
