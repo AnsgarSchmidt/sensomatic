@@ -62,7 +62,7 @@ class MqttRulez(threading.Thread):
 
         keys = k.split("/")
 
-        if keys[0] == Room.BATH:
+        if keys[0] == Room.BATH_ROOM:
 
             if keys[1] == "temp":
                 print "temp"
@@ -137,7 +137,7 @@ class MqttRulez(threading.Thread):
                 print "motion in bath detected"
                 self._redis.setex(Room.BATH+"/populated", 60 * 60, time.time())
 
-        if keys[0] == Room.LIVING:
+        if keys[0] == Room.LIVING_ROOM:
 
             if keys[1] == "motion":
                 print "motion in livingroom detected"
