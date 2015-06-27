@@ -144,6 +144,9 @@ class InformationFetcher():
 
         return ast
 
+    def getTimeInBathShower(self):
+        return 2323
+
 if __name__ == '__main__':
 
     print "Testing"

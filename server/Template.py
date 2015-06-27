@@ -48,7 +48,7 @@ class TemplateMatcher():
         return template.render(hours=hours, minutes=minutes)
 
     def getBathShowerUpdate(self, name,showerbath):
-        minutes=1
+        minutes=self._informationFetcher.getTimeInBathShower()
         outtemp,_,_,condition,_,_,_ = self._informationFetcher.getOutdoor()
         temp=self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
         humidity=self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
