@@ -110,7 +110,7 @@ if __name__ == '__main__':
     schedule.every(10).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
-    schedule.every().hour.do(hourAnnounce)
+    schedule.every().hour.at("00:00").do(hourAnnounce)
 
     schedule.every().monday.at("05:30").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("05:30").do(wakeup,   "Ansi", Room.ANSI_ROOM)
