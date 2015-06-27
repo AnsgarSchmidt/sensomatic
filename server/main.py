@@ -130,8 +130,6 @@ if __name__ == '__main__':
     schedule.every().wednesday.at("22:42").do(goSleep)
     schedule.every().thursday.at("22:42").do(goSleep)
 
-    hourAnnounce()
-
     while True:
         schedule.run_pending()
         time.sleep(1)

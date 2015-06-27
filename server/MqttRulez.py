@@ -4,6 +4,7 @@ import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 import time
+from InformationFetcher import InformationFetcher
 from Tts import Tts
 from Room import Room
 from Template import TemplateMatcher
@@ -61,7 +62,8 @@ class MqttRulez(threading.Thread):
 
         keys = k.split("/")
 
-        if keys[0] == "bathroom":
+        if keys[0] == InformationFetcher.BATH:
+
             if keys[1] == "temp":
                 print "temp"
 
@@ -131,6 +133,15 @@ class MqttRulez(threading.Thread):
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
 
+            if keys[1] == "motion":
+                print "motion in bath detected"
+                self._redis.setex(InformationFetcher.BATH+"/populated", 60 * 60, time.time())
+
+        if keys[0] == InformationFetcher.LIVING:
+
+            if keys[1] == "motion":
+                print "motion in livingroom detected"
+                self._redis.setex(InformationFetcher.LIVING+"/populated", 60 * 60, time.time())
 
     def __init__(self):
         threading.Thread.__init__(self)
