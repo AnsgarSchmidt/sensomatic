@@ -10,9 +10,11 @@ class InformationFetcher():
 
     BATH="badezimmer"
     LIVING="livingroom"
-    ANSI="ansi"
-    TIFFY="tiffy"
-    ROOMS = [BATH,LIVING,ANSI,TIFFY]
+    ANSI="ansiroom"
+    TIFFY="tiffyroom"
+    ENTRANCE="entrance"
+    CORRIDOR="corridor"
+    ROOMS = [BATH,LIVING,ANSI,TIFFY,ENTRANCE,CORRIDOR]
 
     def _readConfig(self):
         update = False
