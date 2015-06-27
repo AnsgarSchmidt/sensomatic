@@ -56,7 +56,7 @@ def _readConfig():
         with open(configFileName, 'w') as f:
             config.write(f)
 
-def hourAnnounce(room):
+def hourAnnounce():
     print "Announce hour"
     for room in InformationFetcher.ROOMS:
         if info.isSomeoneIsInTheRoom(room):
@@ -129,6 +129,8 @@ if __name__ == '__main__':
     schedule.every().tuesday.at("22:42").do(goSleep)
     schedule.every().wednesday.at("22:42").do(goSleep)
     schedule.every().thursday.at("22:42").do(goSleep)
+
+    hourAnnounce()
 
     while True:
         schedule.run_pending()
