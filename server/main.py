@@ -58,7 +58,9 @@ def _readConfig():
 
 def hourAnnounce(room):
     print "Announce hour"
-    tts.createWavFile(temp.getHourlyTime(), room)
+    for room in InformationFetcher.ROOMS:
+        if info.isSomeoneIsInTheRoom(room):
+            tts.createWavFile(temp.getHourlyTime(), room)
 
 def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
@@ -108,7 +110,7 @@ if __name__ == '__main__':
     schedule.every(10).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
-    schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
+    schedule.every().hour.do(hourAnnounce)
 
     schedule.every().monday.at("05:30").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("05:30").do(wakeup,   "Ansi", Room.ANSI_ROOM)
