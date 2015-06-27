@@ -106,7 +106,7 @@ class MqttRulez(threading.Thread):
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
 
                 #Ansi bath
-                if v == "2":
+                if v == "4":
                     if self._redis.exists("bath"):
                         print "Stop bath"
                         self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
@@ -119,7 +119,7 @@ class MqttRulez(threading.Thread):
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Ansi'), Room.BATH_ROOM)
 
                 #Tiffy bath
-                if v == "3":
+                if v == "5":
                     if self._redis.exists("bath"):
                         print "Stop bath"
                         self._mqclient.publish("bathroom/light","{'R':0, 'G':0, 'B':0}")
