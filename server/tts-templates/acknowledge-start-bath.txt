@@ -1,1 +1,1 @@
-Hi {{ name }}. I start the shower sequence with your favourite light and music.
+Hi {{ name }}. I start the bath sequence with your favourite light and music.
