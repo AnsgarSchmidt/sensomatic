@@ -145,7 +145,12 @@ class InformationFetcher():
         return ast
 
     def getTimeInBathShower(self):
-        return 2323
+        r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
+        if r.exists("bath"):
+            start = float(r.get("bath"))
+        if r.exists("shower"):
+            start = float(r.get("shower"))
+        return int((time.time()-start)/60.0)
 
 if __name__ == '__main__':
 
