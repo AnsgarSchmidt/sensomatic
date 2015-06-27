@@ -3,6 +3,7 @@ import time
 import redis
 import schedule
 import ConfigParser
+from InformationFetcher import InformationFetcher
 from Tts import Tts
 from Template import TemplateMatcher
 from Persistor import Persistor
@@ -11,6 +12,7 @@ from MqttRulez import MqttRulez
 
 temp = TemplateMatcher()
 tts  = Tts()
+info = InformationFetcher()
 
 homeDir        = os.path.expanduser("~/.sensomatic")
 configFileName = homeDir + '/config.ini'
@@ -80,6 +82,12 @@ def goSleep():
 def checkBath():
     print "Checking bath"
 
+def bathShowerUpdate():
+    print "Checking Bath and Shower conditions"
+    if info.getBathOrShower() is not None:
+        tts.createWavFile(temp.getBathShowerUpdate())
+    else:
+        print "No one showers"
 
 if __name__ == '__main__':
 
@@ -98,6 +106,7 @@ if __name__ == '__main__':
 
     schedule.every(15).minutes.do(checkWaschingMachine)
     schedule.every(10).minutes.do(checkBath)
+    schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.do(hourAnnounce, Room.LIVING_ROOM)
 
@@ -118,8 +127,6 @@ if __name__ == '__main__':
     schedule.every().tuesday.at("22:42").do(goSleep)
     schedule.every().wednesday.at("22:42").do(goSleep)
     schedule.every().thursday.at("22:42").do(goSleep)
-
-    wakeup("Ansi", Room.ANSI_ROOM)
 
     while True:
         schedule.run_pending()
