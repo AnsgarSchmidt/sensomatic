@@ -135,13 +135,13 @@ class MqttRulez(threading.Thread):
 
             if keys[1] == "motion":
                 print "motion in bath detected"
-                self._redis.setex(Room.BATH+"/populated", 60 * 60, time.time())
+                self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
 
         if keys[0] == Room.LIVING_ROOM:
 
             if keys[1] == "motion":
                 print "motion in livingroom detected"
-                self._redis.setex(Room.LIVING+"/populated", 60 * 60, time.time())
+                self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
 
     def __init__(self):
         threading.Thread.__init__(self)
