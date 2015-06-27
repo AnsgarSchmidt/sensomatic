@@ -8,7 +8,7 @@ from imapclient import IMAPClient
 
 class InformationFetcher():
 
-    BATH="badezimmer"
+    BATH="bathroom"
     LIVING="livingroom"
     ANSI="ansiroom"
     TIFFY="tiffyroom"
