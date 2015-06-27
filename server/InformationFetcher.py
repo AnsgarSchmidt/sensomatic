@@ -166,7 +166,7 @@ class InformationFetcher():
         if r.exists("shower"):
             return "shower"
 
-    def isSomeoneIsInTheRoom(room):
+    def isSomeoneIsInTheRoom(self, room):
         return True
 
 if __name__ == '__main__':
