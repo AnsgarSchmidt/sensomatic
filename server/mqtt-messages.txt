@@ -1,0 +1,8 @@
+<ROOM><SENSOR|ACTOR|RADIO>
+
+
+
+ROOM=bathroom|livingroom|ansiroom|tiffyroom|bathroom|entrance|corridor
+SENSOR=temperature|humidity|motion|light|button|window|
+ACTOR=light
+RADIO=
