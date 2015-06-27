@@ -4,6 +4,8 @@ from jinja2 import Template
 from jinja2 import Environment
 from jinja2 import PackageLoader
 from InformationFetcher import  InformationFetcher
+from Room import Room
+
 
 class TemplateMatcher():
 
@@ -53,8 +55,8 @@ class TemplateMatcher():
         showerbath=self._informationFetcher.getBathOrShower()
         minutes=self._informationFetcher.getTimeInBathShower()
         outtemp,_,_,condition,_,_,_ = self._informationFetcher.getOutdoor()
-        temp=self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
-        humidity=self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
+        temp=self._informationFetcher.getRoomTemp(Room.BATH_ROOM)
+        humidity=self._informationFetcher.getRoomHumidity(Room.BATH_ROOM)
         timehour=datetime.datetime.now().time().hour
         timemin=datetime.datetime.now().time().minute
         template = self._env.get_template('bath-shower-update.txt')
@@ -70,8 +72,8 @@ class TemplateMatcher():
         name       = name
         fraction, degrees, minutes, seconds = self._informationFetcher.getEarthRotationTime()
         messages   = self._informationFetcher.getNumEmailMessages()
-        bathtemp   = self._informationFetcher.getRoomTemp(InformationFetcher.BATH)
-        bathhum    = self._informationFetcher.getRoomHumidity(InformationFetcher.BATH)
+        bathtemp   = self._informationFetcher.getRoomTemp(Room.BATH_ROOM)
+        bathhum    = self._informationFetcher.getRoomHumidity(Room.BATH_ROOM)
         planettemp, planethum, planetfeels, conditions, winddir, windspeed, gust = self._informationFetcher.getOutdoor()
         prediction = self._informationFetcher.getPrediction()
         astronauts = self._informationFetcher.getAstronauts()

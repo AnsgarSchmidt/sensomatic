@@ -58,7 +58,7 @@ def _readConfig():
 
 def hourAnnounce():
     print "Announce hour"
-    for room in InformationFetcher.ROOMS:
+    for room in Room.ROOMS:
         if info.isSomeoneIsInTheRoom(room):
             tts.createWavFile(temp.getHourlyTime(), room)
 

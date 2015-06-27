@@ -4,17 +4,10 @@ import json
 import redis
 import urllib2
 import ConfigParser
+from Room import Room
 from imapclient import IMAPClient
 
 class InformationFetcher():
-
-    BATH="bathroom"
-    LIVING="livingroom"
-    ANSI="ansiroom"
-    TIFFY="tiffyroom"
-    ENTRANCE="entrance"
-    CORRIDOR="corridor"
-    ROOMS = [BATH,LIVING,ANSI,TIFFY,ENTRANCE,CORRIDOR]
 
     def _readConfig(self):
         update = False
@@ -180,11 +173,11 @@ if __name__ == '__main__':
 
     print "Testing"
     i = InformationFetcher()
-    #print i.getEarthRotationTime()
-    #print i.getNumEmailMessages()
-    #print i.getRoomTemp(InformationFetcher.BATH)
-    #print i.getRoomHumidity(InformationFetcher.BATH)
-    #print i.getOutdoor()
-    #print i.getPrediction()
+    print i.getEarthRotationTime()
+    print i.getNumEmailMessages()
+    print i.getRoomTemp(Room.BATH_ROOM)
+    print i.getRoomHumidity(Room.BATH_ROOM)
+    print i.getOutdoor()
+    print i.getPrediction()
     print i.getNextISSPass()
     print i.getAstronauts()
