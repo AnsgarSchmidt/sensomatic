@@ -103,7 +103,7 @@ class Xively(threading.Thread):
         self._datastream_cpu_temp.current_value   = cputemp / 1000.0
         self._datastream_cpu_temp.at              = datetime.datetime.utcnow()
         gpuTempString                             = subprocess.check_output(["/opt/vc/bin/vcgencmd measure_temp"], shell=True)
-        self._datastream_gpu_temp.current_value   = float(gpuTempString[5:][:-2])
+        self._datastream_gpu_temp.current_value   = float(gpuTempString[5:][:-3])
         self._datastream_gpu_temp.at              = datetime.datetime.utcnow()
 
 if __name__ == '__main__':
