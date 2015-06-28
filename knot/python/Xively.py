@@ -68,8 +68,9 @@ class Xively(threading.Thread):
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
 
-        self._mqclient = mqtt.Client("Xively", clean_session=True)
-        self._xively   = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
+        self._mqclient  = mqtt.Client("Xively", clean_session=True)
+        self._xively    = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
+        self._feed_temp = api.feeds.get(FEED_ID)
 
     def get_datastream(feed, name):
       try:
@@ -78,7 +79,6 @@ class Xively(threading.Thread):
       except:
         datastream = feed.datastreams.create(name)
         return datastream
-
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected with result code %s" % rc
