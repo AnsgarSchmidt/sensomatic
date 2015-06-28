@@ -1,9 +1,10 @@
 import os
-import xively
-import threading
-import ConfigParser
-import paho.mqtt.client as mqtt
 import time
+import xively
+import ConfigParser
+import datetime
+import subprocess
+import threading
 
 class Xively(threading.Thread):
 
@@ -20,30 +21,10 @@ class Xively(threading.Thread):
             print "Config file not found"
             update = True
 
-        if not self._config.has_section('MQTT'):
-            print "Adding MQTT part"
-            update = True
-            self._config.add_section("MQTT")
-
-        if not self._config.has_option("MQTT", "ServerAddress"):
-            print "No Server Address"
-            update = True
-            self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
-
-        if not self._config.has_option("MQTT", "ServerPort"):
-            print "No Server Port"
-            update = True
-            self._config.set("MQTT", "ServerPort", "1883")
-
         if not self._config.has_section('XIVELY'):
             print "Adding xively part"
             update = True
             self._config.add_section("XIVELY")
-
-        if not self._config.has_option("XIVELY", "ServerAddress"):
-            print "No Server Address"
-            update = True
-            self._config.set("XIVELY", "ServerAddress", "<ServerAddress>")
 
         if not self._config.has_option("XIVELY", "FeedID"):
             print "No FeedID"
@@ -60,48 +41,77 @@ class Xively(threading.Thread):
                 self._config.write(f)
 
     def __init__(self):
-        threading.Thread.__init__(self)
-        self.setDaemon(True)
-
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-
-        self._mqclient  = mqtt.Client("Xively", clean_session=True)
-        self._xively    = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
-        self._feed_temp = api.feeds.get(FEED_ID)
-
-    def get_datastream(feed, name):
-      try:
-        datastream = feed.datastreams.get(name)
-        return datastream
-      except:
-        datastream = feed.datastreams.create(name)
-        return datastream
-
-    def _on_connect(self, client, userdata, rc, msg):
-        print "Connected with result code %s" % rc
-        self._mqclient.subscribe("#")
-
-    def _on_message(self, client, userdata, msg):
-        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
-
-    def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect"
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+        self._connect()
+        self.start()
 
     def run(self):
-        self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
-        self._mqclient.on_connect = self._on_connect
-        self._mqclient.on_message = self._on_message
-        self._mqclient.on_disconnect = self._on_disconnect
-        self._mqclient.loop_forever()
+        while True:
+            self._updateInternal()
+            self._updateValue()
+            time.sleep(30)
+
+    def _connect(self):
+        self._xively                = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
+        self._feed                  = self._xively.feeds.get(self._config.get("XIVELY","feedid"))
+        self._datastream_room_temp  = self._get_datastream("room_temp")
+        self._datastream_humidity   = self._get_datastream("humidity")
+        self._datastream_cpu_temp   = self._get_datastream("cpu_temp")
+        self._datastream_gpu_temp   = self._get_datastream("gpu_temp")
+        self._datastream_load_level = self._get_datastream("load_level")
+        self._datastreams           = [self._datastream_room_temp,
+                                       self._datastream_humidity,
+                                       self._datastream_cpu_temp,
+                                       self._datastream_gpu_temp,
+                                       self._datastream_load_level
+                                      ]
+    def _diconnect(self):
+        self._mqclient.disconnect()
+
+    def _get_datastream(self, title):
+      try:
+        datastream = self._feed.datastreams.get(title)
+        return datastream
+      except:
+        datastream = self._feed.datastreams.create(title)
+        return datastream
+
+    def _updateValue(self):
+        try:
+            for d in self._datastreams:
+                d.update()
+        except:
+            self._connect()
+
+    def setRoomTemp(self, temp):
+        self._datastream_room_temp.current_value  = temp
+        self._datastream_room_temp.at             = datetime.datetime.utcnow()
+
+    def setHumidity(self, hum):
+        self._datastream_humidity.current_value   = hum
+        self._datastream_humidity.at              = datetime.datetime.utcnow()
+
+    def _updateInternal(self):
+        self._datastream_load_level.current_value = subprocess.check_output(["awk '{print $1}' /proc/loadavg"], shell=True)
+        self._datastream_load_level.at            = datetime.datetime.utcnow()
+        cputemp                                   = int(subprocess.check_output(["awk '{print $1}' /sys/class/thermal/thermal_zone0/temp"], shell=True))
+        self._datastream_cpu_temp.current_value   = cputemp / 1000.0
+        self._datastream_cpu_temp.at              = datetime.datetime.utcnow()
+        gpuTempString                             = "temp=34.7'C"  #subprocess.check_output("/opt/vc/bin/vcgencmd measure_temp")
+        self._datastream_gpu_temp.current_value   = float(gpuTempString[5:][:-2])
+        self._datastream_gpu_temp.at              = datetime.datetime.utcnow()
 
 if __name__ == '__main__':
     print "Start"
 
     x = Xively()
-    x.start()
+    x.setRoomTemp(12.2)
+    x.setHumidity(22.5)
 
     time.sleep(10)
 
