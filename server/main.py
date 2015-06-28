@@ -66,7 +66,7 @@ def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
 
 def checkWaschingMachine():
-    washingtime = (60.0 * 60.0 * 0.5) #normal washing time
+    washingtime = (60.0 * 60.0 * 2.5) #normal washing time
     print "Check wasching machine"
     if _redis.exists("Waschingmachine"):
         print "Wasching machine active"
