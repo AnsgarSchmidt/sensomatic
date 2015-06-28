@@ -102,7 +102,7 @@ class Xively(threading.Thread):
         cputemp                                   = int(subprocess.check_output(["awk '{print $1}' /sys/class/thermal/thermal_zone0/temp"], shell=True))
         self._datastream_cpu_temp.current_value   = cputemp / 1000.0
         self._datastream_cpu_temp.at              = datetime.datetime.utcnow()
-        gpuTempString                             = "temp=34.7'C"  #subprocess.check_output("/opt/vc/bin/vcgencmd measure_temp")
+        gpuTempString                             = subprocess.check_output("/opt/vc/bin/vcgencmd measure_temp")
         self._datastream_gpu_temp.current_value   = float(gpuTempString[5:][:-2])
         self._datastream_gpu_temp.at              = datetime.datetime.utcnow()
 
