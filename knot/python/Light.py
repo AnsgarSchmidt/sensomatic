@@ -1,4 +1,4 @@
-
+import os
 import ConfigParser
 import RPi.GPIO as GPIO
 import time
@@ -53,18 +53,20 @@ class Light(threading.Thread):
         if not self._config.has_option("LIGHT", "Active"):
             print "Active"
             update = True
-            self._config.set("LIGHT", "Active", "OFF")
+            self._config.set("LIGHT", "Active", "False")
 
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
 
     def _initGPIO(self):
-        GPIO.setmode(GPIO.BCM)
-
-        self._gpios = {LIVING_ROOM, HACKING_ROOM, ANSI_ROOM, TIFFY_ROOM , KITCHEN, CORRIDOR, STORAGE, ENTRANCE, BATHROOM}
+        self._status = dict()
+	GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        self._gpios = {Light.LIVING_ROOM, Light.HACKING_ROOM, Light.ANSI_ROOM, Light.TIFFY_ROOM , Light.KITCHEN, Light.CORRIDOR, Light.STORAGE, Light.ENTRANCE, Light.BATHROOM}
         for i in self._gpios:
             GPIO.setup(i, GPIO.OUT)
+	    self._status[i] = False
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -76,7 +78,7 @@ class Light(threading.Thread):
         self._readConfig()
 
         if self._config.getboolean("LIGHT","Active"):
-
+	    print "Light active"
             self._initGPIO()
             self._mqclient = mqtt.Client("light", clean_session=True)
             self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
@@ -87,18 +89,50 @@ class Light(threading.Thread):
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected with result code %s" % rc
-        self._mqclient.subscribe("#")
+        self._mqclient.subscribe("+/light/main")
 
     def _on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
-        #self._process(msg.topic, msg.payload)
+	s = msg.topic.split("/")
+	if s[1] == 'light' and s[2] == 'main':
+		if s[0] == 'livingroom':
+			self._switch(Light.LIVING_ROOM, msg.payload)
+                if s[0] == 'hackingroom':
+                        self._switch(Light.HACKING_ROOM, msg.payload)
+                if s[0] == 'ansiroom':
+                        self._switch(Light.ANSI_ROOM, msg.payload)
+                if s[0] == 'tiffyroom':
+                        self._switch(Light.TIFFY_ROOM, msg.payload)
+                if s[0] == 'kitchen':
+                        self._switch(Light.KITCHEN_ROOM, msg.payload)
+                if s[0] == 'corridor':
+                        self._switch(Light.CORRIDOR_ROOM, msg.payload)
+                if s[0] == 'storage':
+                        self._switch(Light.STORAGE_ROOM, msg.payload)
+                if s[0] == 'entrance':
+                        self._switch(Light.ENTRANCE_ROOM, msg.payload)
+                if s[0] == 'bathroom':
+                        self._switch(Light.BATHROOM_ROOM, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect"
+
+    def _toggle(self, room):
+	GPIO.output(room, True)
+	time.sleep(0.1)
+	GPIO.output(room, False)
+
+    def _switch(self, room, status):
+	if status == "ON" and not self._status[room]:
+		self._toggle(room)
+		self._status[room] = True
+	if status == "OFF" and self._status[room]:
+		self._toggle(room)
+		self._status[room] = False 
 
 if __name__ == "__main__":
 
     print "Test"
     l = Light()
-    time.sleep(100000)
+    time.sleep(100)
 
