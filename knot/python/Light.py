@@ -104,15 +104,15 @@ class Light(threading.Thread):
                 if s[0] == 'tiffyroom':
                         self._switch(Light.TIFFY_ROOM, msg.payload)
                 if s[0] == 'kitchen':
-                        self._switch(Light.KITCHEN_ROOM, msg.payload)
+                        self._switch(Light.KITCHEN, msg.payload)
                 if s[0] == 'corridor':
-                        self._switch(Light.CORRIDOR_ROOM, msg.payload)
+                        self._switch(Light.CORRIDOR, msg.payload)
                 if s[0] == 'storage':
-                        self._switch(Light.STORAGE_ROOM, msg.payload)
+                        self._switch(Light.STORAGE, msg.payload)
                 if s[0] == 'entrance':
-                        self._switch(Light.ENTRANCE_ROOM, msg.payload)
+                        self._switch(Light.ENTRANCE, msg.payload)
                 if s[0] == 'bathroom':
-                        self._switch(Light.BATHROOM_ROOM, msg.payload)
+                        self._switch(Light.BATHROOM, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect"
@@ -125,9 +125,15 @@ class Light(threading.Thread):
     def _switch(self, room, status):
 	if status == "ON" and not self._status[room]:
 		self._toggle(room)
+		if room == Light.LIVING_ROOM:
+                        time.sleep(0.1)
+                        self._toggle(room)
 		self._status[room] = True
 	if status == "OFF" and self._status[room]:
 		self._toggle(room)
+                if room == Light.LIVING_ROOM:
+                        time.sleep(0.1)
+                        self._toggle(room)
 		self._status[room] = False 
 
 if __name__ == "__main__":
