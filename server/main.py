@@ -9,6 +9,7 @@ from Template import TemplateMatcher
 from Persistor import Persistor
 from Room import Room
 from MqttRulez import MqttRulez
+from Pinger import Pinger
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -103,6 +104,10 @@ if __name__ == '__main__':
     print "Start MqttRulez"
     rulez = MqttRulez()
     rulez.start()
+
+    print "Start Pinger"
+    pinger = Pinger()
+    pinger.start()
 
     #https://github.com/dbader/schedule
 
