@@ -135,6 +135,11 @@ class Light(threading.Thread):
                         time.sleep(0.1)
                         self._toggle(room)
 		self._status[room] = False 
+	if status == "TOGGLE":
+		self._toggle(room)
+                if room == Light.LIVING_ROOM:
+                        time.sleep(0.1)
+                        self._toggle(room)
 
 if __name__ == "__main__":
 
