@@ -62,27 +62,27 @@ class Plant(threading.Thread):
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
 
-        self._pump = mraa.Pwm(PIN_PUMP)
+        self._pump = mraa.Pwm(Plant.PIN_PUMP)
         self._pump.period_us(1000)
         self._pump.write(0.0)
         self._pump.enable(True)
 
-        self._led = mraa.Pwm(PIN_LED)
+        self._led = mraa.Pwm(Plant.PIN_LED)
         self._led.period_us(500)
         self._led.write(0.0)
         self._led.enable(True)
 
-        self._enableSoil   = mraa.Gpio(PIN_ENABLE_SOIL)
-        self._enableWater  = mraa.Gpio(PIN_ENABLE_WATER)
-        self._measureSoil  = mraa.Aio(PIN_MEASURE_SOIL)
-        self._measureWater = mraa.Aio(PIN_MEASURE_WATER)
+        self._enableSoil   = mraa.Gpio(Plant.PIN_ENABLE_SOIL)
+        self._enableWater  = mraa.Gpio(Plant.PIN_ENABLE_WATER)
+        self._measureSoil  = mraa.Aio(Plant.PIN_MEASURE_SOIL)
+        self._measureWater = mraa.Aio(Plant.PIN_MEASURE_WATER)
 
         self.connect()
 
         self._mqclient = mqtt.Client("plant", clean_session=True)
         self._mqclient.connect("cortex", 1883, 60)
-        self._mqclient.on_connect = on_connect
-        self._mqclient.on_message = on_message
+        self._mqclient.on_connect = self.on_connect
+        self._mqclient.on_message = self.on_message
 
         self.start()
 
@@ -159,11 +159,11 @@ class Plant(threading.Thread):
         self._mqclient.publish("plant/spoil", spoil)
         self._mqclient.publish("plant/water", water)
 
-    def on_connect(client, userdata, rc):
+    def on_connect(self, client, userdata, rc):
         print("Connected with result code "+str(rc))
         client.subscribe("plant/+")
 
-    def on_message(client, userdata, msg):
+    def on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         parts   = msg.topic.split("/")
         channel = parts[2]
