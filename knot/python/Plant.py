@@ -2,9 +2,10 @@ import mraa
 import time
 import xively
 import datetime
+import threading
 import paho.mqtt.client as mqtt
 
-class Plant():
+class Plant(threading.Thread):
 
     PIN_PUMP = 3
     PIN_LED  = 5
@@ -48,6 +49,9 @@ class Plant():
                 self._config.write(f)
 
     def __init__(self):
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
@@ -67,7 +71,20 @@ class Plant():
         self._enableWater  = mraa.Gpio(PIN_ENABLE_WATER)
         self._measureSoil  = mraa.Analog(PIN_MEASURE_SOIL)
         self._measureWater = mraa.Analog(PIN_MEASURE_WATER)
+
         self.connect()
+
+        self._mqclient = mqtt.Client("plant", clean_session=True)
+        self._mqclient.connect("cortex", 1883, 60)
+        self._mqclient.on_connect = on_connect
+        self._mqclient.on_message = on_message
+
+        self.start()
+
+    def run(self):
+        counter = 2
+        while True:
+            self._mqclient.loop()
 
     def connect(self):
         self._xively                = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
@@ -121,15 +138,36 @@ class Plant():
             return False
 
     def measure(self):
+        soil  = self.measureSoil()
+        water = self.measureWater()
+
         try:
-            self._datastream_soil.current_value         = self.measureSoil()
+            self._datastream_soil.current_value         = soil
             self._datastream_soil.at                    = datetime.datetime.utcnow()
             self._datastream_soil.update()
-            self._datastream_waterlevel.current_value   = self.measureWater()
+            self._datastream_waterlevel.current_value   = water
             self._datastream_waterlevel.at              = datetime.datetime.utcnow()
             self._datastream_waterlevel.update()
         except:
             self.connect()
 
+        self._mqclient.publish("plant/spoil", spoil)
+        self._mqclient.publish("plant/water", water)
+
+    def on_connect(client, userdata, rc):
+        print("Connected with result code "+str(rc))
+        client.subscribe("plant/+")
+
+    def on_message(client, userdata, msg):
+        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        parts   = msg.topic.split("/")
+        channel = parts[2]
+        val     = int(msg.payload)
+
 if __name__ == '__main__':
     print "Plant"
+
+    p = Plant()
+
+    while True:
+        time.sleep(1000)
