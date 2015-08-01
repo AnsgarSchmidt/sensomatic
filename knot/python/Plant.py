@@ -1,8 +1,11 @@
+import os
+import sys
 import mraa
 import time
 import xively
 import datetime
 import threading
+import ConfigParser
 import paho.mqtt.client as mqtt
 
 class Plant(threading.Thread):
@@ -10,11 +13,11 @@ class Plant(threading.Thread):
     PIN_PUMP = 3
     PIN_LED  = 5
 
-    PIN_ENABLE_SOIL  = 4
-    PIN_ENABLE_WATER = 6
+    PIN_ENABLE_SOIL  = 2
+    PIN_ENABLE_WATER = 4
 
-    PIN_MEASURE_SOIL  = A5
-    PIN_MEASURE_WATER = A4
+    PIN_MEASURE_SOIL  = 5
+    PIN_MEASURE_WATER = 4
 
     def _readConfig(self):
         update = False
@@ -47,6 +50,8 @@ class Plant(threading.Thread):
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
+		print "Config changed, please review"
+		sys.exit(1)
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -69,8 +74,8 @@ class Plant(threading.Thread):
 
         self._enableSoil   = mraa.Gpio(PIN_ENABLE_SOIL)
         self._enableWater  = mraa.Gpio(PIN_ENABLE_WATER)
-        self._measureSoil  = mraa.Analog(PIN_MEASURE_SOIL)
-        self._measureWater = mraa.Analog(PIN_MEASURE_WATER)
+        self._measureSoil  = mraa.Aio(PIN_MEASURE_SOIL)
+        self._measureWater = mraa.Aio(PIN_MEASURE_WATER)
 
         self.connect()
 
@@ -169,5 +174,4 @@ if __name__ == '__main__':
 
     p = Plant()
 
-    while True:
-        time.sleep(1000)
+    time.sleep(10)
