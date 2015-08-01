@@ -115,6 +115,7 @@ class Plant():
         value = 0.0
         for i in range(100):
             value += self._measureSoil.read()
+	    print value
         self._enableSoil.write(False)
         value = value / 100.0
         return value
