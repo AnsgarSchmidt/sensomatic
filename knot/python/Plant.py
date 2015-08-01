@@ -4,11 +4,10 @@ import mraa
 import time
 import xively
 import datetime
-import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 
-class Plant(threading.Thread):
+class Plant():
 
     PIN_PUMP = 3
     PIN_LED  = 5
@@ -54,9 +53,6 @@ class Plant(threading.Thread):
 		sys.exit(1)
 
     def __init__(self):
-        threading.Thread.__init__(self)
-        self.setDaemon(True)
-
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
@@ -84,12 +80,9 @@ class Plant(threading.Thread):
         self._mqclient.on_connect = self.on_connect
         self._mqclient.on_message = self.on_message
 
-        self.start()
+        self._mqclient.loop_start()
 
-    def run(self):
-        counter = 2
-        while True:
-            self._mqclient.loop()
+        self._mqclient.publish("plant/online", str(datetime.datetime.utcnow())) 
 
     def connect(self):
         self._xively                = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
@@ -156,22 +149,22 @@ class Plant(threading.Thread):
         except:
             self.connect()
 
-        self._mqclient.publish("plant/spoil", spoil)
+        self._mqclient.publish("plant/soil", soil)
         self._mqclient.publish("plant/water", water)
 
-    def on_connect(self, client, userdata, rc):
+    def on_connect(self, client, userdata, rc, msg):
         print("Connected with result code "+str(rc))
         client.subscribe("plant/+")
 
     def on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         parts   = msg.topic.split("/")
-        channel = parts[2]
-        val     = int(msg.payload)
 
 if __name__ == '__main__':
     print "Plant"
 
     p = Plant()
+
+    p.measure()
 
     time.sleep(10)
