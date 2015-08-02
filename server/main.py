@@ -94,6 +94,12 @@ def bathShowerUpdate():
 
 def plantCheck():
     print "Plant check"
+    level = info.getPlantSoilLevel()
+    if level > 500:
+        print "Plant needs water"
+        tts.createWavFile(temp.getWateringTheFlower(level), Room.LIVING_ROOM)
+    else:
+        print "Plant is fine"
 
 if __name__ == '__main__':
 
