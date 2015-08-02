@@ -103,7 +103,7 @@ class Plant():
 
         self._mqclient.loop_start()
 
-        self._mqclient.publish("plant/online", str(datetime.datetime.utcnow())) 
+        self._mqclient.publish("livingroom/plant/online", str(datetime.datetime.utcnow()))
 
     def connect(self):
         self._xively                = xively.XivelyAPIClient(self._config.get("XIVELY","APIKey"))
@@ -170,13 +170,13 @@ class Plant():
         except:
             self.connect()
 
-        self._mqclient.publish("plant/soillevel", soil)
-        self._mqclient.publish("plant/waterlevel", water)
+        self._mqclient.publish("livingroom/plant/soillevel", soil)
+        self._mqclient.publish("livingroom/plant/waterlevel", water)
 
     def on_connect(self, client, userdata, rc, msg):
         print("Connected with result code "+str(rc))
-        client.subscribe("plant/water")
-        client.subscribe("plant/light")
+        client.subscribe("livingroom/plant/water")
+        client.subscribe("livingroom/plant/light")
 
     def on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
