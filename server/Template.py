@@ -43,6 +43,10 @@ class TemplateMatcher():
         template = self._env.get_template('acknowledge-end-bath.txt')
         return template.render(name=name)
 
+    def getWateringTheFlower(self, level):
+        template = self._env.get_template('watering-the-flower.txt')
+        return template.render(level=level)
+
     def getWashingMachineReady(self, endtime):
         template = self._env.get_template('washingmachine-ready.txt')
         diff = time.time() - endtime
