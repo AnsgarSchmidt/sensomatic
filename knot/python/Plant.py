@@ -46,11 +46,26 @@ class Plant():
             update = True
             self._config.set("XIVELY", "APIKey", "<APIKey>")
 
+        if not self._config.has_section('MQTT'):
+            print "Adding MQTT part"
+            update = True
+            self._config.add_section("MQTT")
+
+        if not self._config.has_option("MQTT", "ServerAddress"):
+            print "No Server Address"
+            update = True
+            self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
+
+        if not self._config.has_option("MQTT", "ServerPort"):
+            print "No Server Port"
+            update = True
+            self._config.set("MQTT", "ServerPort", "1883")
+
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
-		print "Config changed, please review"
-		sys.exit(1)
+                print "Config changed, please review"
+                sys.exit(1)
 
     def __init__(self):
         self._homeDir        = os.path.expanduser("~/.sensomatic")
@@ -69,11 +84,11 @@ class Plant():
         self._led.enable(True)
 
         self._enableSoil   = mraa.Gpio(Plant.PIN_ENABLE_SOIL)
-	self._enableSoil.dir(mraa.DIR_OUT)
-	self._enableSoil.write(False)
+        self._enableSoil.dir(mraa.DIR_OUT)
+        self._enableSoil.write(False)
 
         self._enableWater  = mraa.Gpio(Plant.PIN_ENABLE_WATER)
-	self._enableWater.dir(mraa.DIR_OUT)
+        self._enableWater.dir(mraa.DIR_OUT)
         self._enableWater.write(False)
 
         self._measureSoil  = mraa.Aio(Plant.PIN_MEASURE_SOIL)
@@ -82,7 +97,7 @@ class Plant():
         self.connect()
 
         self._mqclient = mqtt.Client("plant", clean_session=True)
-        self._mqclient.connect("cortex", 1883, 60)
+        self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
         self._mqclient.on_connect = self.on_connect
         self._mqclient.on_message = self.on_message
 
@@ -167,9 +182,9 @@ class Plant():
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         parts   = msg.topic.split("/")
         if len(parts) == 2 and parts[0] == "plant" and parts[1] == "light":
-		self.led(float(msg.payload))
-   	if len(parts) == 2 and parts[0] == "plant" and parts[1] == "water":
-		self.water(float(msg.payload))
+            self.led(float(msg.payload))
+        if len(parts) == 2 and parts[0] == "plant" and parts[1] == "water":
+            self.water(float(msg.payload))
 
 if __name__ == '__main__':
     print "Plant"
