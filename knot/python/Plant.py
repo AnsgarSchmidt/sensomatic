@@ -15,7 +15,7 @@ class Plant():
     PIN_ENABLE_SOIL  = 2
     PIN_ENABLE_WATER = 4
 
-    PIN_MEASURE_SOIL  = 5
+    PIN_MEASURE_SOIL  = 0
     PIN_MEASURE_WATER = 4
 
     def _readConfig(self):
@@ -64,12 +64,18 @@ class Plant():
         self._pump.enable(True)
 
         self._led = mraa.Pwm(Plant.PIN_LED)
-        self._led.period_us(500)
+        self._led.period_us(1000)
         self._led.write(0.0)
         self._led.enable(True)
 
         self._enableSoil   = mraa.Gpio(Plant.PIN_ENABLE_SOIL)
+	self._enableSoil.dir(mraa.DIR_OUT)
+	self._enableSoil.write(False)
+
         self._enableWater  = mraa.Gpio(Plant.PIN_ENABLE_WATER)
+	self._enableWater.dir(mraa.DIR_OUT)
+        self._enableWater.write(False)
+
         self._measureSoil  = mraa.Aio(Plant.PIN_MEASURE_SOIL)
         self._measureWater = mraa.Aio(Plant.PIN_MEASURE_WATER)
 
@@ -115,7 +121,6 @@ class Plant():
         value = 0.0
         for i in range(100):
             value += self._measureSoil.read()
-	    print value
         self._enableSoil.write(False)
         value = value / 100.0
         return value
@@ -150,22 +155,27 @@ class Plant():
         except:
             self.connect()
 
-        self._mqclient.publish("plant/soil", soil)
-        self._mqclient.publish("plant/water", water)
+        self._mqclient.publish("plant/soillevel", soil)
+        self._mqclient.publish("plant/waterlevel", water)
 
     def on_connect(self, client, userdata, rc, msg):
         print("Connected with result code "+str(rc))
-        client.subscribe("plant/+")
+        client.subscribe("plant/water")
+        client.subscribe("plant/light")
 
     def on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         parts   = msg.topic.split("/")
+        if len(parts) == 2 and parts[0] == "plant" and parts[1] == "light":
+		self.led(float(msg.payload))
+   	if len(parts) == 2 and parts[0] == "plant" and parts[1] == "water":
+		self.water(float(msg.payload))
 
 if __name__ == '__main__':
     print "Plant"
 
     p = Plant()
 
-    p.measure()
-
-    time.sleep(10)
+    while True:
+       p.measure()
+       time.sleep(60)
