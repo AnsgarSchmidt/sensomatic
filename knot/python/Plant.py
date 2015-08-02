@@ -181,9 +181,9 @@ class Plant():
     def on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         parts   = msg.topic.split("/")
-        if len(parts) == 2 and parts[0] == "plant" and parts[1] == "light":
+        if len(parts) == 3 and parts[1] == "plant" and parts[2] == "light":
             self.led(float(msg.payload))
-        if len(parts) == 2 and parts[0] == "plant" and parts[1] == "water":
+        if len(parts) == 3 and parts[1] == "plant" and parts[2] == "water":
             self.water(float(msg.payload))
 
 if __name__ == '__main__':
