@@ -102,6 +102,13 @@ class InformationFetcher():
         else:
             return None
 
+    def getPlantSoilLevel(self):
+        r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
+        if r.exists("livingroom/plant/soillevel"):
+            return r.get("livingroom/plant/soillevel")
+        else:
+            return None
+
     def getOutdoor(self):
         '''
             temp, hum, feelslike,  ..... 7

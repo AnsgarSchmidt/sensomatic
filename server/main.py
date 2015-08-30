@@ -92,6 +92,15 @@ def bathShowerUpdate():
     else:
         print "No one showers"
 
+def plantCheck():
+    print "Plant check"
+    level = info.getPlantSoilLevel()
+    if level > 500:
+        print "Plant needs water"
+        tts.createWavFile(temp.getWateringTheFlower(level), Room.LIVING_ROOM)
+    else:
+        print "Plant is fine"
+
 if __name__ == '__main__':
 
     _readConfig()
@@ -116,6 +125,8 @@ if __name__ == '__main__':
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
+
+    schedule.every().day.at("10:15").do(plantCheck)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
