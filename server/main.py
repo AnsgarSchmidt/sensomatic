@@ -3,6 +3,7 @@ import time
 import redis
 import schedule
 import ConfigParser
+from Cloudant import Cloudant
 from InformationFetcher import InformationFetcher
 from Tts import Tts
 from Template import TemplateMatcher
@@ -117,6 +118,10 @@ if __name__ == '__main__':
     print "Start Pinger"
     pinger = Pinger()
     pinger.start()
+
+    print "Start Cloudant"
+    cloudantdb = Cloudant()
+    cloudantdb.start()
 
     #https://github.com/dbader/schedule
 
