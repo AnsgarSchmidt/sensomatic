@@ -94,7 +94,6 @@ class Cloudant(threading.Thread):
             k = key.split('/')
             l = len(k)
             w = data
-            print k
             for i in range(l):
                 if k[i] not in w:
                     w[k[i]] = {}
@@ -106,9 +105,11 @@ class Cloudant(threading.Thread):
     def run(self):
         while True:
             d = self.getData()
-            print d
-            if self.checkDB():
-                my_document = self._database.create_document(d)
+            try:
+                if self.checkDB():
+                    my_document = self._database.create_document(d)
+            except:
+                time.sleep(60)
             time.sleep(10)
 
 if __name__ == '__main__':
