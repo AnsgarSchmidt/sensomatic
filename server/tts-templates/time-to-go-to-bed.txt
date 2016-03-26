@@ -1,1 +1,1 @@
-It's time to go to bed. Its getting towards {{ hour }} o'clock. There seems to be an auxiliary energy near the diagnostic which affects critical damage at the special core.
+It's time to go to bed. Its getting towards {{ hour }} o'clock.
