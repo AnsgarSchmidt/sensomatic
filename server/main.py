@@ -74,11 +74,9 @@ def checkWorfTemperature(room):
         global worfOldTemp
         r = redis.StrictRedis(host='hal', port=6379, db=0)
         newtemp = float(r.get("livingroom/worf/watertemp"))
-        text = "Current temperature in Worfs tank is %0.2f. Temperature delta since last announce is %0.2f."%(worfOldTemp, newtemp - worfOldTemp)
-        worfOldTemp = newtemp
-        print text
         if info.isSomeoneIsInTheRoom(room):
-            tts.createWavFile(text, room)
+            tts.createWavFile(temp.getWorfsTemperature(worfOldTemp, newtemp - worfOldTemp), room)
+        worfOldTemp = newtemp
     except KeyboardInterrupt:
         print "OK I quit"
         sys.exit(0)
