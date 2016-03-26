@@ -1,0 +1,2 @@
+Current temperature in Worfs tank is {{ current }} degrees celcius.
+Temperature delta since the last announce is {{ delta }}.
