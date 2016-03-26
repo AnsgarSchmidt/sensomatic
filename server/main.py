@@ -16,6 +16,8 @@ temp = TemplateMatcher()
 tts  = Tts()
 info = InformationFetcher()
 
+worfOldTemp = 27.00
+
 homeDir        = os.path.expanduser("~/.sensomatic")
 configFileName = homeDir + '/config.ini'
 config         = ConfigParser.ConfigParser()
@@ -66,6 +68,22 @@ def hourAnnounce():
 
 def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
+
+def checkWorfTemperature(room):
+    try:
+        global worfOldTemp
+        r = redis.StrictRedis(host='hal', port=6379, db=0)
+        newtemp = float(r.get("livingroom/worf/watertemp"))
+        text = "Current temperature in Worfs tank is %0.2f. Temperature delta since last announce is %0.2f."%(worfOldTemp, newtemp - worfOldTemp)
+        worfOldTemp = newtemp
+        print text
+        if info.isSomeoneIsInTheRoom(room):
+            tts.createWavFile(text, room)
+    except KeyboardInterrupt:
+        print "OK I quit"
+        sys.exit(0)
+    except:
+        print "Error"
 
 def checkWaschingMachine():
     washingtime = (60.0 * 60.0 * 2.5) #normal washing time
@@ -130,6 +148,8 @@ if __name__ == '__main__':
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
+
+    schedule.every().hour.at("00:30").do(checkWorfTemperature, Room.LIVING_ROOM)
 
     schedule.every().day.at("10:15").do(plantCheck)
 
