@@ -40,7 +40,7 @@ class Tts():
         if not self._config.has_option("TTS", "ServerURL"):
             print "No Server URL"
             update = True
-            self._config.set("TTS", "ServerURL", "https://stream.watsonplatform.net/text-to-speech-beta/api/v1/synthesize")
+            self._config.set("TTS", "ServerURL", "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize")
 
         if not self._config.has_option("TTS", "AuthName"):
             print "No Server AuthName"
