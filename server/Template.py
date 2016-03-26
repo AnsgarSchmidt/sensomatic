@@ -87,6 +87,10 @@ class TemplateMatcher():
         template = self._env.get_template('bath-still-to-moisty.txt')
         return template.render()
 
+    def getWorfsTemperature(self, current, delta):
+        template = self._env.get_template('worf-temperature.txt')
+        return template.render(current=current, delta=delta)
+
 if __name__ == '__main__':
     print "Test"
     t = TemplateMatcher()
@@ -98,6 +102,6 @@ if __name__ == '__main__':
     print t.getAcknowledgeStartShower('Ansi')
     print t.getAcknowledgeEndShower('Ansi')
     print t.getBathShowerUpdate()
-
+    print t.getWorfsTemperature(12.12, 01.21)
 
 
