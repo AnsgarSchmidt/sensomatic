@@ -1,9 +1,9 @@
 Current temperature in Worfs tank is {{ current }} degrees celsius.
 {% if delta > 0 %}
-  Temperature increased by {{ delta }} degrees celsius since the last announcement by {{ delta }}.
+  Temperature increased by {{ delta|abs }} degrees celsius since the last announcement.
 {% else %}
   {% if delta < 0 %}
-   Temperature decreased by {{ delta|abs }} degrees celsius since the last announcement by {{ delta }}.
+   Temperature decreased by {{ delta|abs }} degrees celsius since the last announcement.
   {% else %}
    Temperature is constant since the last announcement.
   {% endif %}
