@@ -1,6 +1,5 @@
 import time
 import datetime
-from jinja2 import Template
 from jinja2 import Environment
 from jinja2 import PackageLoader
 from InformationFetcher import  InformationFetcher
@@ -92,16 +91,18 @@ class TemplateMatcher():
         return template.render(current=current, delta=delta)
 
 if __name__ == '__main__':
-    print "Test"
+    print "Test templates"
     t = TemplateMatcher()
-    print t.getHourlyTime()
-    print t.getAcknowledgeStartWashingMachine()
-    print t.getWashingMachineReady(234234)
-    print t.getTimeToGoToBed()
-    print t.getWakeupText('Ansi')
-    print t.getAcknowledgeStartShower('Ansi')
-    print t.getAcknowledgeEndShower('Ansi')
-    print t.getBathShowerUpdate()
+    #print t.getHourlyTime()
+    #print t.getAcknowledgeStartWashingMachine()
+    #print t.getWashingMachineReady(234234)
+    #print t.getTimeToGoToBed()
+    #print t.getWakeupText('Ansi')
+    #print t.getAcknowledgeStartShower('Ansi')
+    #print t.getAcknowledgeEndShower('Ansi')
+    #print t.getBathShowerUpdate()
     print t.getWorfsTemperature(12.12, 01.21)
+    print t.getWorfsTemperature(12.12, -1.21)
+    print t.getWorfsTemperature(12.12, 0.0)
 
 

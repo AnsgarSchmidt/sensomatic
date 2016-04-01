@@ -1,2 +1,15 @@
-Current temperature in Worfs tank is {{ current }} degrees celcius.
-Temperature delta since the last announce is {{ delta }}.
+Current temperature in Worfs tank is {{ current }} degrees celsius.
+{% if delta > 0 %}
+  Temperature increased by {{ delta }} degrees celsius since the last announcement by {{ delta }}.
+{% else %}
+  {% if delta < 0 %}
+   Temperature decreased by {{ delta|abs }} degrees celsius since the last announcement by {{ delta }}.
+  {% else %}
+   Temperature is constant since the last announcement.
+  {% endif %}
+{% endif %}
+
+
+
+
+
