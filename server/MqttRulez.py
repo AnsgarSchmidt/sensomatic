@@ -109,7 +109,7 @@ class MqttRulez(threading.Thread):
                             for i in s.getPlaylists('Starred'):
                                 s.loadPlaylist(i)
                             s.randomize(1)
-                        s.volume(80)
+                        s.volume(90)
                         s.play()
                         self._mqclient.publish("bathroom/light/rgb/r","255")
                         time.sleep(1)
@@ -159,11 +159,11 @@ class MqttRulez(threading.Thread):
                         for i in s.getPlaylists('Starred'):
                             s.loadPlaylist(i)
                         s.randomize(1)
-                        s.volume(10)
+                        s.volume(15)
                         s.play()
-                        self._mqclient.publish("bathroom/light/rgb/r","25")
+                        self._mqclient.publish("bathroom/light/rgb/r","255")
                         time.sleep(1)
-                        self._mqclient.publish("bathroom/light/rgb/g","25")
+                        self._mqclient.publish("bathroom/light/rgb/g","42")
                         time.sleep(1)
                         self._mqclient.publish("bathroom/light/rgb/b","23")
 
@@ -182,11 +182,11 @@ class MqttRulez(threading.Thread):
                         print "Start bath"
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
-                        self._mqclient.publish("bathroom/light/rgb/r","23")
+                        self._mqclient.publish("bathroom/light/rgb/r","0")
                         time.sleep(1)
                         self._mqclient.publish("bathroom/light/rgb/g","25")
                         time.sleep(1)
-                        self._mqclient.publish("bathroom/light/rgb/b","15")
+                        self._mqclient.publish("bathroom/light/rgb/b","255")
 
             if keys[1] == "motion":
                 print "motion in bath detected"
