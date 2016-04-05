@@ -87,104 +87,106 @@ class MqttRulez(threading.Thread):
                 if v == "2":
                     if self._redis.exists("shower"):
                         print "Stop shower"
-                        self._mqclient.publish("bathroom/light/rgb/r","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","0")
-                        self._redis.delete("shower")
                         self._tts.createWavFile(self._template.getAcknowledgeEndShower('Ansi'), Room.BATH_ROOM)
+                        self._redis.delete("shower")
                         Mpd().getServerbyName("Bath").stop()
+                        self._mqclient.publish("bathroom/light/rgb/r","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","0")
 
                     else:
                         print "Start shower"
-                        self._mqclient.publish("bathroom/light/rgb/r","255")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","255")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","255")
-                        self._redis.setex("shower", 60 * 60 * 2, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
                         if datetime.datetime.now().hour > 11:
                             s.loadPlaylist(random.choice(s.getPlaylists('Die drei ???')))
                             s.randomize(0)
                         else:
-                            s.loadPlaylist(random.choice(s.getPlaylists('Starred')))
+                            for i in s.getPlaylists('Starred'):
+                                s.loadPlaylist(i)
                             s.randomize(1)
-                        s.volume(60)
+                        s.volume(80)
                         s.play()
+                        self._mqclient.publish("bathroom/light/rgb/r","255")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","255")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","255")
 
                 #Tiffy shower
                 if v == "3":
                     if self._redis.exists("shower"):
                         print "Stop shower"
-                        self._mqclient.publish("bathroom/light/rgb/r","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","0")
-                        self._redis.delete("shower")
                         self._tts.createWavFile(self._template.getAcknowledgeEndShower('Phawx'), Room.BATH_ROOM)
+                        self._redis.delete("shower")
+                        self._mqclient.publish("bathroom/light/rgb/r","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","0")
                     else:
                         print "Start shower"
-                        self._mqclient.publish("bathroom/light/rgb/r","255")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","255")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","255")
-                        self._redis.setex("shower", 60 * 60 * 2, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._mqclient.publish("bathroom/light/rgb/r","255")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","255")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","255")
 
                 #Ansi bath
                 if v == "4":
                     if self._redis.exists("bath"):
                         print "Stop bath"
-                        self._mqclient.publish("bathroom/light/rgb/r","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","0")
-                        self._redis.delete("bath")
                         self._tts.createWavFile(self._template.getAcknowledgeEndBath('Ansi'), Room.BATH_ROOM)
+                        self._redis.delete("bath")
                         Mpd().getServerbyName("Bath").stop()
+                        self._mqclient.publish("bathroom/light/rgb/r","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","0")
                     else:
                         print "Start bath"
-                        self._mqclient.publish("bathroom/light/rgb/r","25")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","25")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","23")
-                        self._redis.setex("bath", 60 * 60 * 5, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Ansi'), Room.BATH_ROOM)
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        s.loadPlaylist(random.choice(s.getPlaylists('Starred')))
+                        for i in s.getPlaylists('Starred'):
+                            s.loadPlaylist(i)
                         s.randomize(1)
-                        s.volume(30)
+                        s.volume(10)
                         s.play()
+                        self._mqclient.publish("bathroom/light/rgb/r","25")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","25")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","23")
 
                 #Tiffy bath
                 if v == "5":
                     if self._redis.exists("bath"):
                         print "Stop bath"
-                        self._mqclient.publish("bathroom/light/rgb/r","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","0")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","0")
-                        self._redis.delete("bath")
                         self._tts.createWavFile(self._template.getAcknowledgeEndBath('Phawx'), Room.BATH_ROOM)
+                        self._redis.delete("bath")
+                        self._mqclient.publish("bathroom/light/rgb/r","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","0")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","0")
                     else:
                         print "Start bath"
-                        self._mqclient.publish("bathroom/light/rgb/r","23")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/g","25")
-                        time.sleep(0.5)
-                        self._mqclient.publish("bathroom/light/rgb/b","15")
-                        self._redis.setex("bath", 60 * 60 * 5, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        self._mqclient.publish("bathroom/light/rgb/r","23")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/g","25")
+                        time.sleep(1)
+                        self._mqclient.publish("bathroom/light/rgb/b","15")
 
             if keys[1] == "motion":
                 print "motion in bath detected"
