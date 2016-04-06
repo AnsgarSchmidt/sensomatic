@@ -9,6 +9,7 @@ class Room():
     CORRIDOR    = "corridor"
 
     ROOMS = [LIVING_ROOM, BATH_ROOM, ANSI_ROOM, TIFFY_ROOM, ENTRANCE, CORRIDOR]
+    ANNOUNCE_ROOMS = [LIVING_ROOM, BATH_ROOM, ANSI_ROOM, TIFFY_ROOM]
 
     def __init__(self):
         pass
