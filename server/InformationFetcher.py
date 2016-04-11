@@ -137,18 +137,20 @@ class InformationFetcher():
         return passes
 
     def getAstronauts(self):
-        f = urllib2.urlopen("http://api.open-notify.org/astros.json")
-        j = json.loads(f.read())
-        #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
-        num = int(j['number'])
-        ast = ""
-        for i in range(num - 1):
-                ast = ast +  j['people'][i]['name'] + ', '
-        ast = ast[:-2]
-        ast = ast + " and "
-        ast = ast + j['people'][num - 1]['name']
-
-        return ast
+        try:
+            f = urllib2.urlopen("http://api.open-notify.org/astros.json")
+            j = json.loads(f.read())
+            #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+            num = int(j['number'])
+            ast = ""
+            for i in range(num - 1):
+                    ast = ast +  j['people'][i]['name'] + ', '
+            ast = ast[:-2]
+            ast = ast + " and "
+            ast = ast + j['people'][num - 1]['name']
+            return ast
+        except:
+            return "No valid data"
 
     def getTimeInBathShower(self):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
