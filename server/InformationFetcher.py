@@ -113,11 +113,14 @@ class InformationFetcher():
         '''
             temp, hum, feelslike,  ..... 7
         '''
-        f = urllib2.urlopen(self._config.get("INFORMATION", "WUCurrentURL"))
-        json_string = f.read()
-        j = json.loads(json_string)
-        #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
-        return j["current_observation"]["temp_c"], j["current_observation"]["relative_humidity"], j["current_observation"]["feelslike_c"], j["current_observation"]["weather"], j["current_observation"]["wind_dir"], j["current_observation"]["wind_kph"], j["current_observation"]["wind_gust_kph"]
+        try:
+            f = urllib2.urlopen(self._config.get("INFORMATION", "WUCurrentURL"))
+            json_string = f.read()
+            j = json.loads(json_string)
+            #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+            return j["current_observation"]["temp_c"], j["current_observation"]["relative_humidity"], j["current_observation"]["feelslike_c"], j["current_observation"]["weather"], j["current_observation"]["wind_dir"], j["current_observation"]["wind_kph"], j["current_observation"]["wind_gust_kph"]
+        except:
+            return 0,0,0,0,0,0,0
 
     def getPrediction(self):
         f = urllib2.urlopen(self._config.get("INFORMATION","WUPredictionURL"))
