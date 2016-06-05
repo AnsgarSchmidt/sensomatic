@@ -4,6 +4,7 @@ import json
 import redis
 import urllib2
 import ConfigParser
+from backports import ssl
 from Room import Room
 from imapclient import IMAPClient
 
@@ -85,7 +86,8 @@ class InformationFetcher():
             select_info = server .select_folder(self._config.get("INFORMATION", "IMAPFolder"))
             #print json.dumps(select_info, sort_keys=True, indent=4, separators=(',', ': '))
             return select_info['EXISTS']
-        except:
+        except Exception as inst:
+            print str(inst)
             return 0
 
     def getRoomTemp(self, room):
@@ -185,11 +187,11 @@ if __name__ == '__main__':
 
     print "Testing"
     i = InformationFetcher()
-    print i.getEarthRotationTime()
+    #print i.getEarthRotationTime()
     print i.getNumEmailMessages()
-    print i.getRoomTemp(Room.BATH_ROOM)
-    print i.getRoomHumidity(Room.BATH_ROOM)
-    print i.getOutdoor()
-    print i.getPrediction()
-    print i.getNextISSPass()
-    print i.getAstronauts()
+    #print i.getRoomTemp(Room.BATH_ROOM)
+    #print i.getRoomHumidity(Room.BATH_ROOM)
+    #print i.getOutdoor()
+    #print i.getPrediction()
+    #print i.getNextISSPass()
+    #print i.getAstronauts()
