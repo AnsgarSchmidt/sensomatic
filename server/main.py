@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
 
-    schedule.every().hour.at("00:30").do(checkWorfTemperature, Room.LIVING_ROOM)
+    #schedule.every().hour.at("00:30").do(checkWorfTemperature, Room.LIVING_ROOM)
 
     schedule.every().day.at("10:15").do(plantCheck)
 
