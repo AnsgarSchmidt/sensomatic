@@ -71,10 +71,10 @@ class Tts():
             print "Creating destination Dir"
             os.makedirs(finalDir)
 
-        filename = "%s-%i-%d.wav" % (room, int(time.time()), random.randint(0,9999999999))
-
-        with open(finalDir + "/" + filename, 'w') as f:
+        filename = "%s-%i-%d" % (room, int(time.time()), random.randint(0,9999999999))
+        with open(finalDir + "/" + filename + ".tmp", 'w') as f:
             f.write(self._tts.synthesize(text, accept='audio/wav', voice=self._config.get('TTS', 'Voice')))
+        os.rename(finalDir + "/" + filename + ".tmp", finalDir + "/" + filename + ".wav")
 
 if __name__ == '__main__':
     t = Tts()
