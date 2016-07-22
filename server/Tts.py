@@ -1,8 +1,8 @@
 import os
 import time
 import random
-import requests
 import ConfigParser
+from watson_developer_cloud import TextToSpeechV1
 from Room import Room
 
 class Tts():
@@ -12,8 +12,10 @@ class Tts():
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-
-        requests.packages.urllib3.disable_warnings()
+        self._ttsDir         = self._config.get("TTS", "TTSDir")
+        self._tts            = TextToSpeechV1(username=self._config.get('TTS', 'AuthName'),
+                                              password=self._config.get('TTS', 'AuthSecret'),
+                                              x_watson_learning_opt_out=False) # Lets learn from our nonsense
 
         if not os.path.isdir(self._config.get("TTS","TTSDir")):
             print "Creating TTS Dir"
@@ -36,11 +38,6 @@ class Tts():
             print "Adding TTS part"
             update = True
             self._config.add_section("TTS")
-
-        if not self._config.has_option("TTS", "ServerURL"):
-            print "No Server URL"
-            update = True
-            self._config.set("TTS", "ServerURL", "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize")
 
         if not self._config.has_option("TTS", "AuthName"):
             print "No Server AuthName"
@@ -68,9 +65,7 @@ class Tts():
 
     def createWavFile(self, text, room):
 
-        tempDir  = self._config.get("TTS", "TTSDir")
-
-        finalDir = tempDir + "/" + room
+        finalDir = self._ttsDir + "/" + room
 
         if not os.path.isdir(finalDir):
             print "Creating destination Dir"
@@ -78,18 +73,9 @@ class Tts():
 
         filename = "%s-%i-%d.wav" % (room, int(time.time()), random.randint(0,9999999999))
 
-        with open(tempDir + "/" + filename, 'w') as f:
-            res = requests.get(self._config.get('TTS','ServerURL'),
-                               auth=(self._config.get('TTS', 'AuthName'), self._config.get('TTS', 'AuthSecret')),
-                               params={'text': text, 'voice': self._config.get('TTS', 'Voice'), 'accept': 'audio/wav; codecs=opus'},
-                               stream=True,
-                               verify=False
-                              )
-            f.write(res.content)
-
-        os.rename(tempDir + "/" + filename, finalDir + "/" + filename)
+        with open(finalDir + "/" + filename, 'w') as f:
+            f.write(self._tts.synthesize(text, accept='audio/wav', voice=self._config.get('TTS', 'Voice')))
 
 if __name__ == '__main__':
-
     t = Tts()
     t.createWavFile("This is a test", Room.ANSI_ROOM)
