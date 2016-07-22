@@ -102,6 +102,8 @@ class InitialState(threading.Thread):
             self.iss.log("Bathroom Temperature", float(d['bathroom']  ['temperature']       ['value']))
             self.iss.log("Bathroom Humidity",    float(d['bathroom']  ['humidity']          ['value']))
             self.iss.log("Hal CPU Temp",         float(d['livingroom']['hal']['cputemp']    ['value']))
+            self.iss.log("Ansiroom Temperature", float(d['ansiroom']  ['temperature']       ['value']))
+            self.iss.log("Ansiroom Co2",         float(d['ansiroom']  ['co2']               ['value']))
             self.iss.flush()
         except:
             print "Error reconnect"
