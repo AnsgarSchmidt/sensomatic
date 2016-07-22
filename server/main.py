@@ -11,6 +11,7 @@ from Persistor import Persistor
 from Room import Room
 from MqttRulez import MqttRulez
 from Pinger import Pinger
+from InitialState import InitialState
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -69,20 +70,6 @@ def hourAnnounce():
 def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
 
-def checkWorfTemperature(room):
-    try:
-        global worfOldTemp
-        r = redis.StrictRedis(host='hal', port=6379, db=0)
-        newtemp = float(r.get("livingroom/worf/watertemp"))
-        if info.isSomeoneIsInTheRoom(room):
-            tts.createWavFile(temp.getWorfsTemperature(worfOldTemp, newtemp - worfOldTemp), room)
-        worfOldTemp = newtemp
-    except KeyboardInterrupt:
-        print "OK I quit"
-        sys.exit(0)
-    except:
-        print "Error"
-
 def checkWaschingMachine():
     washingtime = (60.0 * 60.0 * 2.5) #normal washing time
     print "Check wasching machine"
@@ -109,15 +96,6 @@ def bathShowerUpdate():
     else:
         print "No one showers"
 
-def plantCheck():
-    print "Plant check"
-    level = info.getPlantSoilLevel()
-    if level > 500:
-        print "Plant needs water"
-        tts.createWavFile(temp.getWateringTheFlower(level), Room.LIVING_ROOM)
-    else:
-        print "Plant is fine"
-
 if __name__ == '__main__':
 
     _readConfig()
@@ -139,6 +117,10 @@ if __name__ == '__main__':
     cloudantdb = Cloudant()
     cloudantdb.start()
 
+    print "Start Inital State"
+    initialState = InitialState()
+    initialState.start()
+
     #https://github.com/dbader/schedule
 
     schedule.every(15).minutes.do(checkWaschingMachine)
@@ -146,10 +128,6 @@ if __name__ == '__main__':
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
-
-    #schedule.every().hour.at("00:30").do(checkWorfTemperature, Room.LIVING_ROOM)
-
-    schedule.every().day.at("10:15").do(plantCheck)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
