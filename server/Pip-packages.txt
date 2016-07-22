@@ -16,3 +16,4 @@ ping
 xively-python
 jabberbot
 xmpppy
+ISStreamer
