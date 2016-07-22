@@ -103,7 +103,12 @@ class MqttRulez(threading.Thread):
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
                         if datetime.datetime.now().hour > 11:
-                            s.loadPlaylist(random.choice(s.getPlaylists('Die drei ???')))
+                            dflist = s.getPlaylists('Die drei ???')
+                            if len(dflist) > 0:
+                                s.loadPlaylist(random.choice(dflist))
+                            else:
+                                for i in s.getPlaylists('Starred'):
+                                    s.loadPlaylist(i)
                             s.randomize(0)
                         else:
                             for i in s.getPlaylists('Starred'):
