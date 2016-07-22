@@ -89,9 +89,9 @@ class Mpd():
             update = True
             self._config.set("MPD", "ServerPorts", "6600,6600")
 
-        namesString = self._config.get("MPD", "ServerNames")
+        namesString     = self._config.get("MPD", "ServerNames")
         addressesString = self._config.get("MPD", "ServerAddresses")
-        portsString = self._config.get("MPD", "ServerPorts")
+        portsString     = self._config.get("MPD", "ServerPorts")
 
         if namesString == None or addressesString == None or portsString == None:
             print "Error in MPD config Settings"
@@ -129,18 +129,19 @@ class Mpd():
 if __name__ == "__main__":
     print "MPD"
 
-    single = MpdServer("Bath", "hal")
-    single2 = MpdServer("Bath", "hal", 6600)
+    single = MpdServer("Bath", "bathserver")
+    single2 = MpdServer("Bath", "bathserver", 6600)
 
     m = Mpd()
     print m.getServerNames()
 
-    s = m.getServerbyName('LivingRoom')
+    s = m.getServerbyName('AnsiRoom')
     print s.getPlaylists()
-    print s.getPlaylists('Die drei ???')
+    print s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
     print s.getServerVersion()
     print s.getVolume()
+    s.volume(20)
     s.emptyPlaylist()
     random.seed
-    s.loadPlaylist(random.choice(s.getPlaylists('Die drei ???')))
+    s.loadPlaylist(random.choice(s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')))
     s.play()
