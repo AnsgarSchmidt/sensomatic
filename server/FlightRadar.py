@@ -169,9 +169,9 @@ class FlightRadar():
             if "Longitude" in a and "Latitude" in a:
                 pos = (a["Latitude"], a["Longitude"])
                 distance = vincenty(self._loc, pos).m
-                if distance < 10000:
+                if distance < 5000:
                     if "Callsign" in a:
-                        print str(datetime.datetime.now()) + " Airplane in Range:" + a["Callsign"] + "-> "+ str(distance)
+                        print str(datetime.datetime.now()) + " Airplane in range:" + a["Callsign"] + "-> "+ str(distance)
 
     def cleanList(self):
         clear = []
