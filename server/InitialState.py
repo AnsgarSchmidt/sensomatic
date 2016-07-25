@@ -88,12 +88,16 @@ class InitialState(threading.Thread):
         return data
 
     def connectInitialState(self):
-        self.iss = Streamer(bucket_name = self._config.get("INITIALSTATE", "bucketName"),
-                            bucket_key  = self._config.get("INITIALSTATE", "bucketKey"),
-                            access_key  = self._config.get("INITIALSTATE", "accessKey"),
-                            buffer_size = 20)
-        self.iss.log("Uplink", "Initial Connect")
-        self.iss.flush()
+        try:
+            self.iss = Streamer(bucket_name = self._config.get("INITIALSTATE", "bucketName"),
+                                bucket_key  = self._config.get("INITIALSTATE", "bucketKey"),
+                                access_key  = self._config.get("INITIALSTATE", "accessKey"),
+                                buffer_size = 20)
+            self.iss.log("Uplink", "Initial Connect")
+            self.iss.flush()
+        except:
+            print "Error sending initial state sleep"
+            time.sleep(60 * 60) # one hour
 
     def pushData(self):
         d = self.getData()
@@ -111,7 +115,7 @@ class InitialState(threading.Thread):
     def run(self):
         while True:
             self.pushData()
-            time.sleep(60)
+            time.sleep(120)
 
 if __name__ == "__main__":
     print "InitialState"
