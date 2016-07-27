@@ -114,7 +114,7 @@ class MqttRulez(threading.Thread):
                             for i in s.getPlaylists('Starred'):
                                 s.loadPlaylist(i)
                             s.randomize(1)
-                        s.volume(90)
+                        s.volume(80)
                         s.play()
                         self._mqclient.publish("bathroom/light/rgb/r","255")
                         time.sleep(1)
