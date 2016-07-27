@@ -135,8 +135,8 @@ if __name__ == '__main__':
     cloudantdb.start()
 
     print "Start Inital State"
-    initialState = InitialState()
-    initialState.start()
+    #initialState = InitialState()
+    #initialState.start()
 
     #https://github.com/dbader/schedule
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     schedule.every(10).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
-    schedule.every().hour.at("00:00").do(hourAnnounce)
+    schedule.every().hour.do(hourAnnounce)
     schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
