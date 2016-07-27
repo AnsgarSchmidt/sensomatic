@@ -3,15 +3,15 @@ import time
 import redis
 import schedule
 import ConfigParser
-from Cloudant           import Cloudant
-from InformationFetcher import InformationFetcher
-from Tts                import Tts
-from Template           import TemplateMatcher
-from Persistor          import Persistor
-from Room               import Room
-from MqttRulez          import MqttRulez
-from Pinger             import Pinger
-from InitialState       import InitialState
+from   Cloudant           import Cloudant
+from   InformationFetcher import InformationFetcher
+from   Tts                import Tts
+from   Template           import TemplateMatcher
+from   Persistor          import Persistor
+from   Room               import Room
+from   MqttRulez          import MqttRulez
+from   Pinger             import Pinger
+from   InitialState       import InitialState
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -106,6 +106,15 @@ def radiationCheck():
             if info.isSomeoneIsInTheRoom(room):
                 tts.createWavFile(temp.getRadiationHigherThenAverage(here,avr), room)
 
+def checkHumidity():
+    print "Humidity check"
+    for room in Room.ROOMS:
+        hum = info.getRoomHumidity(room)
+        print hum
+        if hum is not None and hum < 50:
+            print room + " humidity is below 50 so we need to humidify it!"
+            rulez.publish(room+"/humidifier", 10)
+
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
@@ -116,7 +125,7 @@ def bathShowerUpdate():
 if __name__ == '__main__':
 
     _readConfig()
-    _redis         = redis.StrictRedis(host=config.get("REDIS", "ServerAddress"), port=config.get("REDIS", "ServerPort"), db=0)
+    _redis = redis.StrictRedis(host=config.get("REDIS", "ServerAddress"), port=config.get("REDIS", "ServerPort"), db=0)
 
     print "Start Persistor"
     persistor = Persistor()
@@ -148,6 +157,7 @@ if __name__ == '__main__':
     schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
+    schedule.every(20).minutes.do(checkHumidity)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)

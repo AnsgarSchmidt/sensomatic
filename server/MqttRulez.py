@@ -243,10 +243,13 @@ class MqttRulez(threading.Thread):
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
-        self._mqclient.on_connect = self._on_connect
-        self._mqclient.on_message = self._on_message
+        self._mqclient.on_connect    = self._on_connect
+        self._mqclient.on_message    = self._on_message
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.loop_forever()
+
+    def publish(self, subject, value):
+        self._mqclient.publish(subject, value)
 
 if __name__ == '__main__':
     print "Start"
