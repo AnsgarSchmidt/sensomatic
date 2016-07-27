@@ -219,12 +219,10 @@ class MqttRulez(threading.Thread):
         random.seed
         threading.Thread.__init__(self)
         self.setDaemon(True)
-
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-
         self._mqclient = mqtt.Client("MqttRulez", clean_session=True)
         self._redis    = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
         self._tts      = Tts()
