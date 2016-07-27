@@ -3,21 +3,19 @@ import time
 import redis
 import schedule
 import ConfigParser
-from Cloudant import Cloudant
+from Cloudant           import Cloudant
 from InformationFetcher import InformationFetcher
-from Tts import Tts
-from Template import TemplateMatcher
-from Persistor import Persistor
-from Room import Room
-from MqttRulez import MqttRulez
-from Pinger import Pinger
-from InitialState import InitialState
+from Tts                import Tts
+from Template           import TemplateMatcher
+from Persistor          import Persistor
+from Room               import Room
+from MqttRulez          import MqttRulez
+from Pinger             import Pinger
+from InitialState       import InitialState
 
 temp = TemplateMatcher()
 tts  = Tts()
 info = InformationFetcher()
-
-worfOldTemp = 27.00
 
 homeDir        = os.path.expanduser("~/.sensomatic")
 configFileName = homeDir + '/config.ini'
@@ -136,7 +134,7 @@ if __name__ == '__main__':
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
 
-    schedule.every(15).minute.do(checkCo2, Room.ANSI_ROOM)
+    schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
