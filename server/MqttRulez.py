@@ -248,9 +248,6 @@ class MqttRulez(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.loop_forever()
 
-    def publish(self, subject, value):
-        self._mqclient.publish(subject, value)
-
 if __name__ == '__main__':
     print "Start"
 

@@ -106,15 +106,6 @@ def radiationCheck():
             if info.isSomeoneIsInTheRoom(room):
                 tts.createWavFile(temp.getRadiationHigherThenAverage(here,avr), room)
 
-def checkHumidity():
-    print "Humidity check"
-    for room in Room.ROOMS:
-        hum = info.getRoomHumidity(room)
-        print hum
-        if hum is not None and hum < 50:
-            print room + " humidity is below 50 so we need to humidify it!"
-            rulez.publish(room+"/humidifier", 10)
-
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
@@ -157,7 +148,6 @@ if __name__ == '__main__':
     schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
-    schedule.every(20).minutes.do(checkHumidity)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
