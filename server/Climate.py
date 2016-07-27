@@ -118,7 +118,7 @@ class Climate(threading.Thread):
             hum = self._info.getRoomHumidity(room)
             if hum is not None:
                 should = self.getShouldHumidity(room)
-                print "Humiditycheck room %s. Should is %d and reality is %2.2f" % (room, should, hum)
+                print "Humiditycheck %s. Should be %d and is %2.2f" % (room, should, hum)
                 if should > hum:
                     print "Humidify now"
                     self._mqclient.publish(room+"/humidifier", 10)
@@ -139,7 +139,7 @@ class Climate(threading.Thread):
             temp = self._info.getRoomTemp(room)
             if temp is not None:
                 should = self.getShouldTemperature(room)
-                print "Temperaturecheck room %s. Should is %d and reality is %2.2f" % (room, should, temp)
+                print "Temperaturecheck %s. Should be %d and is %2.2f" % (room, should, temp)
 
     def run(self):
         humwait     = 60
