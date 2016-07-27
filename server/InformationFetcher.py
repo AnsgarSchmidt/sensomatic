@@ -7,6 +7,12 @@ import ConfigParser
 from backports import ssl
 from Room import Room
 from imapclient import IMAPClient
+import httplib2
+from apiclient import discovery
+import oauth2client
+from oauth2client import client
+from oauth2client import tools
+import datetime
 
 class InformationFetcher():
 
@@ -104,6 +110,13 @@ class InformationFetcher():
         else:
             return None
 
+    def getRoomCo2Level(self, room):
+        r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
+        if r.exists(room + "/co2"):
+            return r.get(room + "/co2")
+        else:
+            return None
+
     def getPlantSoilLevel(self):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists("livingroom/plant/soillevel"):
@@ -183,6 +196,12 @@ class InformationFetcher():
                 return True
         return False
 
+    def getCalendar(self):
+        SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+        CLIENT_SECRET_FILE = 'client_secret.json'
+        APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+
+
 if __name__ == '__main__':
 
     print "Testing"
@@ -193,5 +212,6 @@ if __name__ == '__main__':
     #print i.getRoomHumidity(Room.BATH_ROOM)
     #print i.getOutdoor()
     #print i.getPrediction()
-    #print i.getNextISSPass()
-    #print i.getAstronauts()
+    print i.getNextISSPass()
+    print i.getAstronauts()
+    print i.getRoomCo2Level(Room.ANSI_ROOM)
