@@ -89,6 +89,13 @@ def goSleep():
 def checkBath():
     print "Checking bath"
 
+def checkCo2(room):
+    print "Check co2"
+    for room in Room.ANNOUNCE_ROOMS:
+        if info.isSomeoneIsInTheRoom(room):
+            if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 800:
+                tts.createWavFile(temp.getCo2ToHigh(room), room)
+
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
@@ -128,6 +135,8 @@ if __name__ == '__main__':
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
+
+    schedule.every(15).minute.do(checkCo2, Room.ANSI_ROOM)
 
     schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
     schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
