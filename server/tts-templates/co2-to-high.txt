@@ -1,0 +1,1 @@
+Current c o 2 level is {{ co2 }}. It's to high, please open a window.

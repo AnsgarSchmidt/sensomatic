@@ -90,6 +90,10 @@ class TemplateMatcher():
         template = self._env.get_template('worf-temperature.txt')
         return template.render(current=current, delta=delta)
 
+    def getCo2ToHigh(self, room):
+        template = self._env.get_template('co2-to-high.txt')
+        return template.render(co2=self._informationFetcher.getRoomCo2Level(room))
+
 if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
@@ -101,8 +105,8 @@ if __name__ == '__main__':
     #print t.getAcknowledgeStartShower('Ansi')
     #print t.getAcknowledgeEndShower('Ansi')
     #print t.getBathShowerUpdate()
-    print t.getWorfsTemperature(12.12, 01.21)
-    print t.getWorfsTemperature(12.12, -1.21)
-    print t.getWorfsTemperature(12.12, 0.0)
-
+    #print t.getWorfsTemperature(12.12, 01.21)
+    #print t.getWorfsTemperature(12.12, -1.21)
+    #print t.getWorfsTemperature(12.12, 0.0)
+    print t.getCo2ToHigh(Room.ANSI_ROOM)
 
