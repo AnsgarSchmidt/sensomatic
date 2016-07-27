@@ -3,7 +3,9 @@ import time
 import json
 import redis
 import urllib2
+import requests
 import ConfigParser
+from requests.auth import HTTPBasicAuth
 from Room import Room
 from imapclient import IMAPClient
 
@@ -56,6 +58,26 @@ class InformationFetcher():
             print "No URL"
             update = True
             self._config.set("INFORMATION", "WUPredictionURL", "<WU Predict>")
+
+        if not self._config.has_option("INFORMATION", "RadiationURL"):
+            print "No RadiationURL"
+            update = True
+            self._config.set("INFORMATION", "RadiationURL", "https://odlinfo.bfs.de/daten/json/")
+
+        if not self._config.has_option("INFORMATION", "RadiationUser"):
+            print "No RadiationURL"
+            update = True
+            self._config.set("INFORMATION", "RadiationUser", "USERNAME")
+
+        if not self._config.has_option("INFORMATION", "RadiationPasswd"):
+            print "No RadiationURL"
+            update = True
+            self._config.set("INFORMATION", "RadiationPasswd", "USERPASSWD")
+
+        if not self._config.has_option("INFORMATION", "RadiationStation"):
+            print "No RadiationURL"
+            update = True
+            self._config.set("INFORMATION", "RadiationStation", "110000006")
 
         if update:
             with open(self._configFileName, 'w') as f:
@@ -194,17 +216,36 @@ class InformationFetcher():
         CLIENT_SECRET_FILE = 'client_secret.json'
         APPLICATION_NAME = 'Google Calendar API Python Quickstart'
 
+    def getRadiationAverage(self):
+        # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
+        auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
+        url = self._config.get("INFORMATION","RadiationURL") + "stat.json"
+        j = json.loads(requests.get(url, auth=auth).content)
+        return j['mwavg']['mw']
+
+    def getRadiationForOneStation(self):
+        # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
+        auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
+        url = self._config.get("INFORMATION","RadiationURL") + self._config.get("INFORMATION","RadiationStation") + "ct.json"
+        j = json.loads(requests.get(url, auth=auth).content)
+        status = j['stamm']['status']  # 0 defekt, 1 in Betrieb, 128 Testbetrieb, 2048 Wartung
+        lastmw = j['stamm']['mw']      # Letzter verfuegbarer (ungepruefter) 1h-Messwert
+        mw1h = j['mw1h']
+        mw24h = j['mw24h']
+        return lastmw
 
 if __name__ == '__main__':
 
     print "Testing"
     i = InformationFetcher()
     #print i.getEarthRotationTime()
-    print i.getNumEmailMessages()
+    #print i.getNumEmailMessages()
     #print i.getRoomTemp(Room.BATH_ROOM)
     #print i.getRoomHumidity(Room.BATH_ROOM)
     #print i.getOutdoor()
     #print i.getPrediction()
-    print i.getNextISSPass()
-    print i.getAstronauts()
+    #print i.getNextISSPass()
+    #print i.getAstronauts()
     print i.getRoomCo2Level(Room.ANSI_ROOM)
+    print i.getRadiationAverage()
+    print i.getRadiationForOneStation()
