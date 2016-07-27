@@ -1,0 +1,2 @@
+Warning! The current radiation level in your area is high. This is not a joke, the current
+radiation level is {{value}} mycro sievert per hour. Warning! Warning! Warning!

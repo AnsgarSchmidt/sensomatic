@@ -94,6 +94,14 @@ class TemplateMatcher():
         template = self._env.get_template('co2-to-high.txt')
         return template.render(co2=self._informationFetcher.getRoomCo2Level(room))
 
+    def getRadiationToHigh(self, value):
+        template = self._env.get_template('radiation-to-high.txt')
+        return template.render(value=value)
+
+    def getRadiationHigherThenAverage(self, valuehere, valueavr):
+        template = self._env.get_template('radiation-higher-then-average.txt')
+        return template.render(valuehere=valuehere, valueavr=valueavr)
+
 if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
@@ -109,4 +117,5 @@ if __name__ == '__main__':
     #print t.getWorfsTemperature(12.12, -1.21)
     #print t.getWorfsTemperature(12.12, 0.0)
     print t.getCo2ToHigh(Room.ANSI_ROOM)
-
+    print t.getRadiationToHigh(0.232)
+    print t.getRadiationHigherThenAverage(0.1, 0.09)

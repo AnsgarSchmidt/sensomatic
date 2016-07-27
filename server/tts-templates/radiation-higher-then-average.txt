@@ -1,0 +1,3 @@
+The current radiation level in your area is higher then the average in Germany.
+The current radiation level is {{valuehere}} mycro sievert per hour compared to
+{{valueavr}}.
