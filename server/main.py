@@ -94,6 +94,18 @@ def checkCo2(room):
             if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 800:
                 tts.createWavFile(temp.getCo2ToHigh(room), room)
 
+def radiationCheck():
+    print "Radiation check"
+    avr  = info.getRadiationAverage()
+    here = info.getRadiationForOneStation()
+    if here > 0.1:
+        for room in Room.ANNOUNCE_ROOMS:
+            tts.createWavFile(temp.getRadiationToHigh(here), room)
+    if here > avr:
+        for room in Room.ANNOUNCE_ROOMS:
+            if info.isSomeoneIsInTheRoom(room):
+                tts.createWavFile(temp.getRadiationHigherThenAverage(here,avr), room)
+
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
@@ -133,6 +145,7 @@ if __name__ == '__main__':
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
+    schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
 
