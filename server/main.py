@@ -12,6 +12,7 @@ from   Room               import Room
 from   MqttRulez          import MqttRulez
 from   Pinger             import Pinger
 from   InitialState       import InitialState
+from   Climate            import Climate
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -139,13 +140,17 @@ if __name__ == '__main__':
     #initialState = InitialState()
     #initialState.start()
 
+    print "Start Climate Control"
+    climate = Climate()
+    climate.start()
+
     #https://github.com/dbader/schedule
 
     schedule.every(15).minutes.do(checkWaschingMachine)
     schedule.every(10).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
-    schedule.every().hour.do(hourAnnounce)
+    schedule.every().hour.at("00:00").do(hourAnnounce)
     schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
