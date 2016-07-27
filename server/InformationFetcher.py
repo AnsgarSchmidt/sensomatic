@@ -4,15 +4,8 @@ import json
 import redis
 import urllib2
 import ConfigParser
-from backports import ssl
 from Room import Room
 from imapclient import IMAPClient
-import httplib2
-from apiclient import discovery
-import oauth2client
-from oauth2client import client
-from oauth2client import tools
-import datetime
 
 class InformationFetcher():
 
