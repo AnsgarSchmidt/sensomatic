@@ -114,21 +114,21 @@ class InformationFetcher():
     def getRoomTemp(self, room):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room + "/temperature"):
-            return r.get(room + "/temperature")
+            return float(r.get(room + "/temperature"))
         else:
             return None
 
     def getRoomHumidity(self, room):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room + "/humidity"):
-            return r.get(room + "/humidity")
+            return float(r.get(room + "/humidity"))
         else:
             return None
 
     def getRoomCo2Level(self, room):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room + "/co2"):
-            return r.get(room + "/co2")
+            return int(r.get(room + "/co2"))
         else:
             return None
 
