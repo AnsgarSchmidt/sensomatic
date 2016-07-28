@@ -1,7 +1,9 @@
-import mpd
 import os
+import mpd
 import random
+import spotipy
 import ConfigParser
+import spotipy.util as util
 
 class MpdServer():
 
@@ -53,6 +55,16 @@ class MpdServer():
 
     def randomize(self, val):
         self._mpdServer.random(val)
+
+    def add(self, uri):
+        self._mpdServer.add(uri)
+
+class Spotify():
+
+    #7C4sUpWGlTy7IANjruj02I Peter Gabriel
+    #http://spotipy.readthedocs.io/en/latest/
+    def __init__(self):
+        self.sp = spotipy.Spotify()
 
 class Mpd():
 
@@ -136,12 +148,13 @@ if __name__ == "__main__":
     print m.getServerNames()
 
     s = m.getServerbyName('AnsiRoom')
-    print s.getPlaylists()
+    print len(s.getPlaylists())
     print s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
     print s.getServerVersion()
     print s.getVolume()
     s.volume(20)
     s.emptyPlaylist()
-    random.seed
-    s.loadPlaylist(random.choice(s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')))
+    s.add("http://inforadio.de/livemp3")
+    #random.seed
+    #s.loadPlaylist(random.choice(s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')))
     s.play()
