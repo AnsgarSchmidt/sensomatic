@@ -102,19 +102,21 @@ class MqttRulez(threading.Thread):
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        if datetime.datetime.now().hour > 11:
-                            dflist = s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
-                            if len(dflist) > 0:
-                                s.loadPlaylist(random.choice(dflist))
-                            else:
-                                for i in s.getPlaylists('Starred'):
-                                    s.loadPlaylist(i)
-                            s.randomize(0)
-                        else:
-                            for i in s.getPlaylists('Starred'):
-                                s.loadPlaylist(i)
-                            s.randomize(1)
-                        s.volume(80)
+                        s.add("http://inforadio.de/livemp3")
+                        #if datetime.datetime.now().hour > 11:
+                        #    dflist = s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
+                        #    if len(dflist) > 0:
+                        #        s.loadPlaylist(random.choice(dflist))
+                        #    else:
+                        #        for i in s.getPlaylists('Starred'):
+                        #            s.loadPlaylist(i)
+                        #    s.randomize(0)
+                        #else:
+                        #    for i in s.getPlaylists('Starred'):
+                        #        s.loadPlaylist(i)
+                        #    s.randomize(1)
+
+                        s.volume(60)
                         s.play()
                         self._mqclient.publish("bathroom/light/rgb/r","255")
                         time.sleep(1)
@@ -161,9 +163,11 @@ class MqttRulez(threading.Thread):
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        for i in s.getPlaylists('Starred'):
-                            s.loadPlaylist(i)
-                        s.randomize(1)
+                        #for i in s.getPlaylists('Starred'):
+                        #    s.loadPlaylist(i)
+                        #s.randomize(1)
+                        s.add("http://ice1.somafm.com/spacestation-128-mp3")
+                        s.add("http://ice2.somafm.com/spacestation-128-mp3")
                         s.volume(15)
                         s.play()
                         self._mqclient.publish("bathroom/light/rgb/r","255")
