@@ -35,7 +35,7 @@ class TM1638(object):
         GPIO.output(self.stb, True)
 
     def enable(self, intensity=7):
-        self.send_command(0x40)  # Normale mode, Auto Address, write data
+        self.send_command(0x40)                         # Normale mode, Auto Address, write data
         self.send_command(0x80 | 8 | min(7, intensity)) # 80 = 0b10000000, 8 = 0b00001000
 
     def disable(self):
@@ -55,7 +55,7 @@ class TM1638(object):
             GPIO.output(self.clk, True)
 
     def send_data(self, addr, data):
-        self.send_command(0x44)   # Fixed data
+        self.send_command(0x44)       # Fixed data
         GPIO.output(self.stb, False)
         self.send_byte(0xC0 | addr)   # Write to address
         self.send_byte(data)
@@ -91,14 +91,3 @@ class TM1638(object):
             keys |= self.receive() << i
         GPIO.output(self.stb, True)
         return keys
-
-
-
-
-
-
-
-
-
-
-
