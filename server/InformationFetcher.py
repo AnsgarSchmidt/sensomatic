@@ -232,21 +232,27 @@ class InformationFetcher():
 
     def getRadiationAverage(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
-        auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
-        url = self._config.get("INFORMATION","RadiationURL") + "stat.json"
-        j = json.loads(requests.get(url, auth=auth).content)
-        return j['mwavg']['mw']
+        try:
+            auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
+            url = self._config.get("INFORMATION","RadiationURL") + "stat.json"
+            j = json.loads(requests.get(url, auth=auth).content)
+            return j['mwavg']['mw']
+        except:
+            return 0
 
     def getRadiationForOneStation(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
-        auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
-        url = self._config.get("INFORMATION","RadiationURL") + self._config.get("INFORMATION","RadiationStation") + "ct.json"
-        j = json.loads(requests.get(url, auth=auth).content)
-        status = j['stamm']['status']  # 0 defekt, 1 in Betrieb, 128 Testbetrieb, 2048 Wartung
-        lastmw = j['stamm']['mw']      # Letzter verfuegbarer (ungepruefter) 1h-Messwert
-        mw1h = j['mw1h']
-        mw24h = j['mw24h']
-        return lastmw
+        try:
+            auth = HTTPBasicAuth(self._config.get("INFORMATION","RadiationUser"), self._config.get("INFORMATION","RadiationPasswd"))
+            url = self._config.get("INFORMATION","RadiationURL") + self._config.get("INFORMATION","RadiationStation") + "ct.json"
+            j = json.loads(requests.get(url, auth=auth).content)
+            status = j['stamm']['status']  # 0 defekt, 1 in Betrieb, 128 Testbetrieb, 2048 Wartung
+            lastmw = j['stamm']['mw']      # Letzter verfuegbarer (ungepruefter) 1h-Messwert
+            mw1h = j['mw1h']
+            mw24h = j['mw24h']
+            return lastmw
+        except:
+            return 0
 
 if __name__ == '__main__':
 
