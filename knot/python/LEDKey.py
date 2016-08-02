@@ -1,31 +1,105 @@
+import os
 import time
+import redis
 import TM1638
+import datetime
+import threading
+import ConfigParser
 
 DIO = 17
 CLK = 27
 STB = 22
 
-display = TM1638.TM1638(DIO, CLK, STB)
+class LEDKey(threading.Thread):
 
-for i in range(7):
-    display.enable(i)
-    display.set_text("88888888")
-    time.sleep(1)
+    def _readConfig(self):
+        update = False
 
-display.enable(0)
+        if not os.path.isdir(self._homeDir):
+            print "Creating homeDir"
+            os.makedirs(self._homeDir)
 
-for i in range(8):
-    display.set_led(i, 1)
-    display.set_segment(i, i)
-    time.sleep(0.1)
+        if os.path.isfile(self._configFileName):
+            self._config.read(self._configFileName)
+        else:
+            print "Config file not found"
+            update = True
 
-for i in range(8):
-    display.set_led(i, 0)
-    display.set_segment(i, 0)
-    time.sleep(0.1)
+        if not self._config.has_section('MQTT'):
+            print "Adding MQTT part"
+            update = True
+            self._config.add_section("MQTT")
 
-for i in range(1078):
-    display.set_text("%08d"%i)
+        if not self._config.has_option("MQTT", "ServerAddress"):
+            print "No Server Address"
+            update = True
+            self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
 
-time.sleep(6)
-display.disable()
+        if not self._config.has_option("MQTT", "ServerPort"):
+            print "No Server Port"
+            update = True
+            self._config.set("MQTT", "ServerPort", "1883")
+
+        if not self._config.has_section('REDIS'):
+            print "Adding Redis part"
+            update = True
+            self._config.add_section("REDIS")
+
+        if not self._config.has_option("REDIS", "ServerAddress"):
+            print "No Server Address"
+            update = True
+            self._config.set("REDIS", "ServerAddress", "<ServerAddress>")
+
+        if not self._config.has_option("REDIS", "ServerPort"):
+            print "No Server Port"
+            update = True
+            self._config.set("REDIS", "ServerPort", "6379")
+
+        if update:
+            with open(self._configFileName, 'w') as f:
+                self._config.write(f)
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+        self._homeDir        = os.path.expanduser("~/.sensomatic")
+        self._configFileName = self._homeDir + '/config.ini'
+        self._config         = ConfigParser.ConfigParser()
+        self._readConfig()
+        self.tm = TM1638.TM1638(DIO, CLK, STB)
+        self.tm.enable(7)
+        for i in range(8):
+            self.tm.set_segment(i,8,True)
+            self.tm.set_led(i,True)
+        time.sleep(1)
+        for i in range(8):
+            self.tm.set_segment(i,10,False)
+            self.tm.set_led(i,False)
+        self.tm.disable()
+        self.mode = 'nix'
+        self._redis = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"),
+                                        port=self._config.get("REDIS", "ServerPort"), db=0)
+
+    def setMode(self, mode):
+        self.mode = mode
+        self.tm.enable(7)
+
+    def run(self):
+        while True:
+            if self.mode == 'timetemp':
+                now = datetime.datetime.now()
+                temp = 1
+                hum  = 2
+                if self._redis.exists("bathroom/temperature"):
+                    temp = float(redis.get("bathroom/temperature"))
+                if self._redis.exists("bathroom/humidity"):
+                    hum = float(redis.get("bathroom/humidity"))
+                s = "%02d%02d%02d%02d" % (now.hour, now.minute, temp, hum)
+                self.tm.set_text(s)
+            time.sleep(1)
+
+if __name__ == "__main__":
+    l = LEDKey()
+    l.start()
+    l.setMode("timetemp")
+    time.sleep(10)
