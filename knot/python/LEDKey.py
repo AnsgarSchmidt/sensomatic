@@ -91,9 +91,9 @@ class LEDKey(threading.Thread):
                 temp = 1
                 hum  = 2
                 if self._redis.exists("bathroom/temperature"):
-                    temp = float(redis.get("bathroom/temperature"))
+                    temp = float(self._redis.get("bathroom/temperature"))
                 if self._redis.exists("bathroom/humidity"):
-                    hum = float(redis.get("bathroom/humidity"))
+                    hum = float(self._redis.get("bathroom/humidity"))
                 s = "%02d%02d%02d%02d" % (now.hour, now.minute, temp, hum)
                 self.tm.set_text(s)
             time.sleep(1)
