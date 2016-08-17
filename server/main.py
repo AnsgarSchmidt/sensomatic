@@ -92,7 +92,7 @@ def checkCo2(room):
     print "Check co2"
     for room in Room.ANNOUNCE_ROOMS:
         if info.isSomeoneIsInTheRoom(room):
-            if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 800:
+            if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 1500:
                 print "CO2 to high:" + str(info.getRoomCo2Level(room))
                 tts.createWavFile(temp.getCo2ToHigh(room), room)
 
