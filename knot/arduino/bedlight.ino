@@ -1,4 +1,5 @@
 #include "FastLED.h"
+#include <avr/wdt.h>
 
 #define OVERHEAD                  0
 #define NUM_LEDS_OVERHEAD        20
@@ -30,7 +31,7 @@
 #define PLANT_MEASURE_PIN        A0
 #define PLANT_ENABLE_PIN         10
 #define PLANT_ENABLE_DELTA       23
-#define PLANT_UPDATE_VALUE    60000
+#define PLANT_UPDATE_VALUE    30000
 #define PLANT_ENABLE_COUNTER  (PLANT_UPDATE_VALUE - PLANT_ENABLE_DELTA)
 
 #define COMMAND_RGB               0
@@ -56,6 +57,9 @@ volatile uint8_t  BedFireActive   = 0;
 
 void setup() {
 
+  wdt_enable(WDTO_250MS);
+  wdt_reset();
+
   Serial.begin(9600);
 
   pinMode(PLANT_ENABLE_PIN, OUTPUT); 
@@ -65,10 +69,14 @@ void setup() {
   FastLED.addLeds<WS2811,  PIN_BED_LEFT_CENTER, BRG>(BedLedsLeftCenter, NUM_LEDS_BED_LEFT_CENTER ).setCorrection( TypicalLEDStrip );
   FastLED.addLeds<WS2811,  PIN_BED_RIGHT,       BRG>(BedLedsRight,      NUM_LEDS_BED_RIGHT       ).setCorrection( TypicalLEDStrip );
 
+  wdt_reset();
+
   FastLED.clear(true);
   FastLED.show();
 
   PlantCounter = 0;
+
+  wdt_reset();
 
 }
 
@@ -184,6 +192,8 @@ void plantCheck(){
 }
 
 void loop() {
+
+  wdt_reset();
 
   plantCheck();
 
