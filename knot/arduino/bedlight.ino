@@ -8,11 +8,14 @@
 #define NUM_LEDS_SLEEP          144
 #define PIN_SLEEP                 3
 
-#define BED_LEFT_CENTER           2
-#define NUM_LEDS_BED_LEFT_CENTER 32
+#define BED_LEFT                  2
+#define NUM_LEDS_BED_LEFT        18
+#define BED_CENTER                3
+#define NUM_LEDS_BED_CENTER      14
+#define NUM_LEDS_BED_LEFT_CENTER (NUM_LEDS_BED_LEFT + NUM_LEDS_BED_CENTER)
 #define PIN_BED_LEFT_CENTER       4
  
-#define BED_RIGHT                 3
+#define BED_RIGHT                 4
 #define NUM_LEDS_BED_RIGHT       18
 #define PIN_BED_RIGHT             5
 
@@ -27,8 +30,8 @@
 #define PLANT_MEASURE_PIN        A0
 #define PLANT_ENABLE_PIN         10
 #define PLANT_ENABLE_DELTA       23
-#define PLANT_UPDATE_VALUE     1000
-#define PLANT_ENABLE_COUNTER   (PLANT_UPDATE_VALUE - PLANT_ENABLE_DELTA)
+#define PLANT_UPDATE_VALUE    60000
+#define PLANT_ENABLE_COUNTER  (PLANT_UPDATE_VALUE - PLANT_ENABLE_DELTA)
 
 #define COMMAND_RGB               0
 #define COMMAND_HSV               1
@@ -91,7 +94,7 @@ void serialEvent() {
           if(Command == COMMAND_FIRE && Device == SLEEP){
             SleepFireActive  = c;
           }
-          if(Command == COMMAND_FIRE && Device == BED_LEFT_CENTER){
+          if(Command == COMMAND_FIRE && Device == BED_CENTER){
             BedFireActive    = c;
           }
           break;
@@ -113,8 +116,13 @@ void processCommand(){
         SleepLeds[i] = CHSV(data[0], data[1], data[2]);
       } 
     }
-    if(Device == BED_LEFT_CENTER){ 
-      for(uint8_t i = 0; i < NUM_LEDS_BED_LEFT_CENTER; i++){ 
+    if(Device == BED_LEFT){ 
+      for(uint8_t i = 0; i < NUM_LEDS_BED_LEFT; i++){ 
+        BedLedsLeftCenter[NUM_LEDS_BED_CENTER + i] = CHSV(data[(i*3) + 0], data[(i*3) + 1], data[(i*3) + 2]); 
+      }
+    }
+    if(Device == BED_CENTER){ 
+      for(uint8_t i = 0; i < NUM_LEDS_BED_CENTER; i++){ 
         BedLedsLeftCenter[i] = CHSV(data[(i*3) + 0], data[(i*3) + 1], data[(i*3) + 2]); 
       }
     }
@@ -135,8 +143,13 @@ void processCommand(){
         SleepLeds[i] = CRGB(data[0], data[1], data[2]);
       } 
     }
-    if(Device == BED_LEFT_CENTER){ 
-      for(uint8_t i = 0; i < NUM_LEDS_BED_LEFT_CENTER; i++){ 
+    if(Device == BED_LEFT){ 
+      for(uint8_t i = 0; i < NUM_LEDS_BED_LEFT; i++){ 
+        BedLedsLeftCenter[NUM_LEDS_BED_CENTER + i] = CRGB(data[(i*3) + 0], data[(i*3) + 1], data[(i*3) + 2]); 
+      }
+    }
+    if(Device == BED_CENTER){ 
+      for(uint8_t i = 0; i < NUM_LEDS_BED_CENTER; i++){ 
         BedLedsLeftCenter[i] = CRGB(data[(i*3) + 0], data[(i*3) + 1], data[(i*3) + 2]); 
       }
     }
