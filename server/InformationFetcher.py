@@ -252,7 +252,7 @@ class InformationFetcher():
         if r.exists("shower"):
             return "shower"
 
-    def isSomeoneIsInTheRoom(self, room):
+    def isSomeoneInTheRoom(self, room):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room+"/populated"):
             last = float(r.get(room+"/populated"))

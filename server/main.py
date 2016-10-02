@@ -64,7 +64,7 @@ def _readConfig():
 def hourAnnounce():
     print "Announce hour"
     for room in Room.ANNOUNCE_ROOMS:
-        if info.isSomeoneIsInTheRoom(room):
+        if info.isSomeoneInTheRoom(room):
             tts.createWavFile(temp.getHourlyTime(), room)
 
 def wakeup(name, room):
@@ -92,7 +92,7 @@ def checkBath():
 def checkCo2(room):
     print "Check co2"
     for room in Room.ANNOUNCE_ROOMS:
-        if info.isSomeoneIsInTheRoom(room):
+        if info.isSomeoneInTheRoom(room):
             if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 1500:
                 print "CO2 to high:" + str(info.getRoomCo2Level(room))
                 tts.createWavFile(temp.getCo2ToHigh(room), room)
@@ -106,7 +106,7 @@ def radiationCheck():
             tts.createWavFile(temp.getRadiationToHigh(here), room)
     if here > avr:
         for room in Room.ANNOUNCE_ROOMS:
-            if info.isSomeoneIsInTheRoom(room):
+            if info.isSomeoneInTheRoom(room):
                 tts.createWavFile(temp.getRadiationHigherThenAverage(here,avr), room)
 
 def bathShowerUpdate():
