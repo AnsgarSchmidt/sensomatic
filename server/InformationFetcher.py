@@ -119,13 +119,21 @@ class InformationFetcher():
 
     def getSunPosition(self):
         observer = ephem.Observer()
-        observer.lon       = self._config.get("INFORMATION", "Logitude")
-        observer.lat       = self._config.get("INFORMATION", "Latitude")
+        observer.lon       =       self._config.get("INFORMATION", "Logitude" )
+        observer.lat       =       self._config.get("INFORMATION", "Latitude" )
         observer.elevation = float(self._config.get("INFORMATION", "Elevation"))
         sun = ephem.Sun(observer)
         alt = sun.alt * (180 / math.pi)
         az  = sun.az  * (180 / math.pi)
         return alt,az
+
+    def getOutsideLightLevel(self):
+        # For now just calculated
+        sun, _ = self.getSunPosition()
+        if sun > 0:
+            return (10.0 / 9.0) * sun
+        else:
+            return 0
 
     def getNumEmailMessages(self):
         try:
@@ -296,4 +304,5 @@ if __name__ == '__main__':
     #print i.getRoomCo2Level(Room.ANSI_ROOM)
     #print i.getRadiationAverage()
     #print i.getRadiationForOneStation()
-    print i.getSunPosition()
+    #print i.getSunPosition()
+    print i.getOutsideLightLevel()
