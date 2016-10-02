@@ -96,6 +96,16 @@ class InformationFetcher():
             update = True
             self._config.set("INFORMATION", "Elevation", "42.23")
 
+        if not self._config.has_option("INFORMATION", "NASAurl"):
+            print "No NASAurl"
+            update = True
+            self._config.set("INFORMATION", "NASAurl", "https://api.nasa.gov/")
+
+        if not self._config.has_option("INFORMATION", "NASAKey"):
+            print "No NASAKey"
+            update = True
+            self._config.set("INFORMATION", "NASAKey", "magic")
+
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
