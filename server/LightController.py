@@ -113,9 +113,9 @@ class LightController(threading.Thread):
     def ansiRoom(self):
 
         if self._info.isSomeoneInTheRoom(Room.ANSI_ROOM):
-            print "Ansi is in the room"
+
             lightlevel = self._info.getOutsideLightLevel()
-            print lightlevel
+
             if lightlevel < 14.999:
                 now  = datetime.datetime.now()
                 blue = 1.0
@@ -144,7 +144,6 @@ class LightController(threading.Thread):
             else:
                 self.setWorkingLight([0, 0, 0])
         else:
-            print "Ansi is not in the room"
             self.setWorkingLight([0, 0, 0])
 
 if __name__ == "__main__":
