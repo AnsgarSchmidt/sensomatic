@@ -40,10 +40,11 @@ class LightController(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         time.sleep(1)
         while True:
+            print "=========================================="
             self._mqclient.loop()
             self.ansiRoom()
             self._mqclient.loop()
-            time.sleep(100)
+            time.sleep(60)
 
     def _readConfig(self):
         update = False
