@@ -19,5 +19,5 @@ xmpppy
 ISStreamer
 watson-developer-cloud
 geopy
-
+ephem
 
