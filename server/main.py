@@ -13,6 +13,7 @@ from   MqttRulez          import MqttRulez
 from   Pinger             import Pinger
 from   InitialState       import InitialState
 from   Climate            import Climate
+from   LightController    import LightController
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -137,12 +138,16 @@ if __name__ == '__main__':
     cloudantdb.start()
 
     print "Start Inital State"
-    #initialState = InitialState()
-    #initialState.start()
+    initialState = InitialState()
+    initialState.start()
 
     print "Start Climate Control"
     climate = Climate()
     climate.start()
+
+    print "Start Light Control"
+    lightControl = LightController()
+    lightControl.start()
 
     #https://github.com/dbader/schedule
 
