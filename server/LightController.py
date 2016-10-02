@@ -40,7 +40,6 @@ class LightController(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         time.sleep(1)
         while True:
-            print "=========================================="
             self._mqclient.loop()
             self.ansiRoom()
             self._mqclient.loop()
@@ -96,21 +95,27 @@ class LightController(threading.Thread):
     def fill(self, size, val):
         values = ""
         for i in range(size):
-            values += ",%d,%d,%d" %(val[0],val[1],val[2])
+            values += ",%d,%d,%d" % (val[0],val[1],val[2])
+        return values[1:]
+
+    def fillgradient(self, len):
+        values = ""
+        for i in range(len):
+            values += ",%d,%d,%d" % (0,0,0)
         return values[1:]
 
     def setWorkingLight(self, val):
         self._mqclient.publish("ansiroom/bedlight/overhead/colour", self.fill(20, [val[0], val[1], val[2]]))
         self._mqclient.publish("ansiroom/bedlight/center/colour",   self.fill(20, [val[0], val[1], val[2]]))
-        self._mqclient.publish("ansiroom/bedlight/left/colour",     self.fill(5,  [val[0], val[1], val[2]]))
-        self._mqclient.publish("ansiroom/bedlight/right/colour",    self.fill(5,  [val[0], val[1], val[2]]))
+        self._mqclient.publish("ansiroom/bedlight/left/colour",     self.fill(6,  [val[0], val[1], val[2]]))
+        self._mqclient.publish("ansiroom/bedlight/right/colour",    self.fill(6,  [val[0], val[1], val[2]]))
 
     def ansiRoom(self):
 
-        if self._info.isSomeoneIsInTheRoom(Room.ANSI_ROOM):
-
+        if self._info.isSomeoneInTheRoom(Room.ANSI_ROOM):
+            print "Ansi is in the room"
             lightlevel = self._info.getOutsideLightLevel()
-
+            print lightlevel
             if lightlevel < 14.999:
                 now  = datetime.datetime.now()
                 blue = 1.0
@@ -139,6 +144,7 @@ class LightController(threading.Thread):
             else:
                 self.setWorkingLight([0, 0, 0])
         else:
+            print "Ansi is not in the room"
             self.setWorkingLight([0, 0, 0])
 
 if __name__ == "__main__":
