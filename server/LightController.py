@@ -127,8 +127,9 @@ class LightController(threading.Thread):
                     m  = now.hour - 21
                     m *= 60
                     m += now.minute
-                    max = (2 * 60) + 59
-                    blue = m / max
+                    max = 3 * 60
+                    blue = float(m) / max
+                    blue = 1 - blue
 
                 if now.hour in (0, 1, 2, 3, 4, 5):
                     blue = 0.0
