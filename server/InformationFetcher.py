@@ -1,6 +1,8 @@
 import os
 import time
 import json
+import math
+import ephem
 import redis
 import urllib2
 import requests
@@ -79,6 +81,21 @@ class InformationFetcher():
             update = True
             self._config.set("INFORMATION", "RadiationStation", "110000006")
 
+        if not self._config.has_option("INFORMATION", "Latitude"):
+            print "No Latitude"
+            update = True
+            self._config.set("INFORMATION", "Latitude", "52.5148453")
+
+        if not self._config.has_option("INFORMATION", "Logitude"):
+            print "No Logitude"
+            update = True
+            self._config.set("INFORMATION", "Logitude", "13.4389504")
+
+        if not self._config.has_option("INFORMATION", "Elevation"):
+            print "No Elevation"
+            update = True
+            self._config.set("INFORMATION", "Elevation", "42.23")
+
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
@@ -99,6 +116,16 @@ class InformationFetcher():
         minutes = int(  (fraction - degrees) * 60.0                  )
         seconds = int( ((fraction - degrees) * 60.0 - minutes) * 60.0)
         return fraction, degrees, minutes, seconds
+
+    def getSunPosition(self):
+        observer = ephem.Observer()
+        observer.lon       = self._config.get("INFORMATION", "Logitude")
+        observer.lat       = self._config.get("INFORMATION", "Latitude")
+        observer.elevation = float(self._config.get("INFORMATION", "Elevation"))
+        sun = ephem.Sun(observer)
+        alt = sun.alt * (180 / math.pi)
+        az  = sun.az  * (180 / math.pi)
+        return alt,az
 
     def getNumEmailMessages(self):
         try:
@@ -266,6 +293,7 @@ if __name__ == '__main__':
     #print i.getPrediction()
     #print i.getNextISSPass()
     #print i.getAstronauts()
-    print i.getRoomCo2Level(Room.ANSI_ROOM)
-    print i.getRadiationAverage()
-    print i.getRadiationForOneStation()
+    #print i.getRoomCo2Level(Room.ANSI_ROOM)
+    #print i.getRadiationAverage()
+    #print i.getRadiationForOneStation()
+    print i.getSunPosition()
