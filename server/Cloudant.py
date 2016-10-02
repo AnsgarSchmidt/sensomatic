@@ -75,7 +75,6 @@ class Cloudant(threading.Thread):
     def checkDB(self):
         self._cloudant.connect()
         if "usshorizon" in self._cloudant.all_dbs():
-            print "DB exists"
             self._database = self._cloudant['usshorizon']
             return True
         else:
