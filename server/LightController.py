@@ -135,6 +135,10 @@ class LightController(threading.Thread):
 
                 b *= blue
                 self.setWorkingLight([int(r), int(g), int(b)])
+            else:
+                self.setWorkingLight([0, 0, 0])
+        else:
+            self.setWorkingLight([0, 0, 0])
 
 if __name__ == "__main__":
     print "LightController test"
