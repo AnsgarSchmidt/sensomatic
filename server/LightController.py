@@ -116,7 +116,7 @@ class LightController(threading.Thread):
 
             lightlevel = self._info.getOutsideLightLevel()
 
-            if lightlevel < 14.999:
+            if lightlevel < 29.999:
                 now  = datetime.datetime.now()
                 blue = 1.0
                 r    = 255
@@ -135,7 +135,7 @@ class LightController(threading.Thread):
                     blue = 0.0
 
                 if lightlevel > 0:
-                    d = (15.0 - lightlevel) / 15.0
+                    d = (30.0 - lightlevel) / 30.0
                     r *= d
                     g *= d
                     b *= d
