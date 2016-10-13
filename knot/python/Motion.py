@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(9, GPIO.IN)
+    GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     mqclient            = mqtt.Client("ansibedmotion", clean_session=True)
     mqclient.on_connect = on_connect
