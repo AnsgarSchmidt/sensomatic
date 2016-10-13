@@ -61,7 +61,7 @@ class Light(threading.Thread):
 
     def _initGPIO(self):
         self._status = dict()
-	GPIO.setmode(GPIO.BCM)
+	    GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         self._gpios = {Light.LIVING_ROOM, Light.HACKING_ROOM, Light.ANSI_ROOM, Light.TIFFY_ROOM , Light.KITCHEN, Light.CORRIDOR, Light.STORAGE, Light.ENTRANCE, Light.BATHROOM}
         for i in self._gpios:
