@@ -266,7 +266,7 @@ class InformationFetcher():
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room+"/populated"):
             last = float(r.get(room+"/populated"))
-            if (time.time()) - last < (15 * 60):
+            if (time.time()) - last < (5 * 60):
                 return True
         return False
 
