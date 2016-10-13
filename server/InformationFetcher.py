@@ -1,4 +1,3 @@
-import os
 import time
 import json
 import math
@@ -7,9 +6,17 @@ import redis
 import urllib2
 import requests
 import ConfigParser
-from requests.auth import HTTPBasicAuth
-from Room import Room
-from imapclient import IMAPClient
+import httplib2
+import os
+import iso8601
+import datetime
+
+from apiclient         import discovery
+from oauth2client      import client
+from oauth2client      import tools
+from oauth2client.file import Storage
+from requests.auth     import HTTPBasicAuth
+from imapclient        import IMAPClient
 
 class InformationFetcher():
 
@@ -270,10 +277,30 @@ class InformationFetcher():
                 return True
         return False
 
-    def getCalendar(self):
-        SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
-        CLIENT_SECRET_FILE = 'client_secret.json'
-        APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+    def getNextWackeuptime(self):
+        home_dir            = os.path.expanduser('~')
+        credential_dir      = os.path.join(home_dir, '.credentials')
+        if not os.path.exists(credential_dir):
+            os.makedirs(credential_dir)
+        credential_path     = os.path.join(credential_dir, 'calendar-python.json')
+        store               = Storage(credential_path)
+        credentials         = store.get()
+        if not credentials or credentials.invalid:
+            flow            = client.flow_from_clientsecrets('client_secret.json', 'https://www.googleapis.com/auth/calendar.readonly')
+            flow.user_agent = 'sensomatic'
+            credentials     = tools.run_flow(flow, store)
+        http                = credentials.authorize(httplib2.Http())
+        service             = discovery.build('calendar', 'v3', http=http)
+        now                 = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        eventsResult        = service.events().list(calendarId='hrl7gpmm5u34379e2757kanuhg@group.calendar.google.com', timeMin=now, maxResults=10, singleEvents=True, orderBy='startTime').execute()
+        events              = eventsResult.get('items', [])
+
+        if not events:
+            return None
+        event = events[0]
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        #print(start, event['summary'])
+        return iso8601.parse_date(start)
 
     def getRadiationAverage(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
@@ -315,4 +342,5 @@ if __name__ == '__main__':
     #print i.getRadiationAverage()
     #print i.getRadiationForOneStation()
     #print i.getSunPosition()
-    print i.getOutsideLightLevel()
+    #print i.getOutsideLightLevel()
+    print i.getNextWackeuptime()
