@@ -20,4 +20,5 @@ ISStreamer
 watson-developer-cloud
 geopy
 ephem
+google-api-python-client
 
