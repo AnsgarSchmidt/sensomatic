@@ -72,6 +72,7 @@ class AlarmClock(threading.Thread):
         self._mqclient.on_message    = self._on_message
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
+        self._mqclient.loop_start()
         time.sleep(1)
 
     def _on_connect(self, client, userdata, rc, msg):
@@ -90,7 +91,6 @@ class AlarmClock(threading.Thread):
         music              = False
 
         while True:
-            self._mqclient.loop(max_packets=100)
             diff = (starttime - datetime.datetime.now(timezone('Europe/Berlin'))).total_seconds()
 
             #Switch on the light 15 min before event
@@ -99,7 +99,6 @@ class AlarmClock(threading.Thread):
                 lightlevel = int((1.0 - (diff / (60 * 15))) * 100)
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", lightlevel)
                 waking = True
-                self._mqclient.loop(max_packets=100)
 
             #5 Min before slowly turn on the music
             if 0 < diff < (60 * 5):
@@ -122,7 +121,6 @@ class AlarmClock(threading.Thread):
                 starttime, endtime = self._info.getNextWackeuptime()
                 updated = time.time()
 
-            self._mqclient.loop(max_packets=100)
             time.sleep(5)
 
 if __name__ == '__main__':
