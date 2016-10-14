@@ -94,7 +94,7 @@ class Climate(threading.Thread):
         self._mqclient.loop(max_packets=100)
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected with result code %s" % rc
+        print "Connected Climate with result code %s" % rc
 
     def _on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)

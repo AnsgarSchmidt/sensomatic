@@ -67,7 +67,7 @@ class Persistor(threading.Thread):
         self._redis    = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected with result code %s" % rc
+        print "Connected Persistor with result code %s" % rc
         self._mqclient.subscribe("#")
 
     def _on_message(self, client, userdata, msg):

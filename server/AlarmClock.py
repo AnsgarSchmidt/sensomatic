@@ -76,7 +76,7 @@ class AlarmClock(threading.Thread):
         time.sleep(1)
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected with result code %s" % rc
+        print "Connected Alarmclock with result code %s" % rc
 
     def _on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)

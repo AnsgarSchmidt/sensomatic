@@ -24,7 +24,7 @@ class LightController(threading.Thread):
                                         port=self._config.get("REDIS", "ServerPort"), db=0)
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected with result code %s" % rc
+        print "Connected Light Controller with result code %s" % rc
         #self._mqclient.subscribe("#")
 
     def _on_message(self, client, userdata, msg):
