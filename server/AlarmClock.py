@@ -88,6 +88,7 @@ class AlarmClock(threading.Thread):
         updated            = time.time()
         waking             = False
         music              = False
+
         while True:
             self._mqclient.loop(max_packets=100)
             diff = (starttime - datetime.datetime.now(timezone('Europe/Berlin'))).total_seconds()
@@ -96,7 +97,7 @@ class AlarmClock(threading.Thread):
             if 0 < diff < (60 * 15):
                 lightlevel = int((1.0 - (diff / (60 * 15))) * 100)
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", lightlevel)
-                state = 1
+                waking = True
                 self._mqclient.loop(max_packets=100)
 
             #5 Min before slowly turn on the music
