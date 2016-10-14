@@ -14,6 +14,7 @@ from   Pinger             import Pinger
 from   InitialState       import InitialState
 from   Climate            import Climate
 from   LightController    import LightController
+from   Alarmclock         import Alarmclock
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -148,6 +149,10 @@ if __name__ == '__main__':
     print "Start Light Control"
     lightControl = LightController()
     lightControl.start()
+
+    print "Start Alarmclock"
+    alarmclock = Alarmclock()
+    alarmclock.start()
 
     #https://github.com/dbader/schedule
 
