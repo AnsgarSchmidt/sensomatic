@@ -215,19 +215,18 @@ class MqttRulez(threading.Thread):
                 self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
                 if self._redis.exists("ansiwakeup"):
                     print "Ansiwakeup detected motion"
-                    self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0)
                     self._redis.delete("ansiwakeup")
-                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
-                    self._mqclient.publish("ansiroom/light/main", "TOGGLE")
                     Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
-                    self._mqclient.publish("corridor/light/main", "TOGGLE")
+                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
+                    self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
+                    self._mqclient.publish("corridor/light/main",             "TOGGLE")
+                    self._mqclient.publish("ansiroom/light/main",             "TOGGLE")
+                    self._mqclient.publish("bathroom/light/main",             "TOGGLE")
                     s = Mpd().getServerbyName("Bath")
                     s.volume(40)
                     s.emptyPlaylist()
-                    s.randomize(False)
                     s.add("http://inforadio.de/livemp3")
                     s.play()
-                    self._mqclient.publish("bathroom/light/main", "TOGGLE")
 
         if keys[0] == Room.TIFFY_ROOM:
 
