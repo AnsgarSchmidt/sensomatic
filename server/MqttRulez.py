@@ -6,10 +6,11 @@ import paho.mqtt.client as mqtt
 import time
 import random
 import datetime
-from Tts import Tts
-from Room import Room
-from Template import TemplateMatcher
-from Mpd import Mpd
+from Tts        import Tts
+from Room       import Room
+from Template   import TemplateMatcher
+from Mpd        import Mpd
+from Chromecast import Chromecast
 
 class MqttRulez(threading.Thread):
 
@@ -212,6 +213,19 @@ class MqttRulez(threading.Thread):
             if keys[1] == "motion":
                 print "motion in ansi room detected"
                 self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
+                if self._redis.exists("ansiwakeup"):
+                    self._redis.delete("ansiwakeup")
+                    print "Ansiwakeup detected motion"
+                    self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0)
+                    self._mqclient.publish("ansiroom/light/main", "TOGGLE")
+                    self._mqclient.publish("corridor/light/main", "TOGGLE")
+                    self._mqclient.publish("bathroom/light/main", "TOGGLE")
+                    Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
+                    s = Mpd().getServerbyName("AnsiRoom")
+                    s.volume(40)
+                    s.emptyPlaylist()
+                    s.add("http://inforadio.de/livemp3")
+                    s.play()
 
         if keys[0] == Room.TIFFY_ROOM:
 
