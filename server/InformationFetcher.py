@@ -278,29 +278,27 @@ class InformationFetcher():
         return False
 
     def getNextWackeuptime(self):
-        home_dir            = os.path.expanduser('~')
-        credential_dir      = os.path.join(home_dir, '.credentials')
-        if not os.path.exists(credential_dir):
-            os.makedirs(credential_dir)
-        credential_path     = os.path.join(credential_dir, 'calendar-python.json')
+        credential_path     = os.path.join(self._homeDir, 'calendar-python.json')
+        secret_path         = os.path.join(self._homeDir, 'client_secret.json'  )
         store               = Storage(credential_path)
         credentials         = store.get()
         if not credentials or credentials.invalid:
-            flow            = client.flow_from_clientsecrets('client_secret.json', 'https://www.googleapis.com/auth/calendar.readonly')
-            flow.user_agent = 'sensomatic'
+            flow            = client.flow_from_clientsecrets(secret_path, 'https://www.googleapis.com/auth/calendar.readonly')
+            flow.user_agent = 'Sensomatic Home Automatisation'
             credentials     = tools.run_flow(flow, store)
         http                = credentials.authorize(httplib2.Http())
         service             = discovery.build('calendar', 'v3', http=http)
-        now                 = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        now                 = datetime.datetime.utcnow().isoformat() + 'Z'
         eventsResult        = service.events().list(calendarId='hrl7gpmm5u34379e2757kanuhg@group.calendar.google.com', timeMin=now, maxResults=10, singleEvents=True, orderBy='startTime').execute()
         events              = eventsResult.get('items', [])
 
         if not events:
-            return None
+            return None, None
         event = events[0]
         start = event['start'].get('dateTime', event['start'].get('date'))
+        end   = event['end'].get('dateTime', event['start'].get('date'))
         #print(start, event['summary'])
-        return iso8601.parse_date(start)
+        return iso8601.parse_date(start), iso8601.parse_date(end)
 
     def getRadiationAverage(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
