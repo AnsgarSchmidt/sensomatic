@@ -224,6 +224,7 @@ class MqttRulez(threading.Thread):
                     s = Mpd().getServerbyName("AnsiRoom")
                     s.volume(40)
                     s.emptyPlaylist()
+                    s.randomize(False)
                     s.add("http://inforadio.de/livemp3")
                     s.play()
 
