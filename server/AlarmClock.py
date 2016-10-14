@@ -95,6 +95,7 @@ class AlarmClock(threading.Thread):
 
             #Switch on the light 15 min before event
             if 0 < diff < (60 * 15):
+                print "light"
                 lightlevel = int((1.0 - (diff / (60 * 15))) * 100)
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", lightlevel)
                 waking = True
@@ -114,6 +115,7 @@ class AlarmClock(threading.Thread):
                 Chromecast().volume('Chromeansi', 0.6)
                 waking = False
                 music  = False
+                print "ENDE"
                 self._redis.setex("ansiwakeup", 60 * 60 * 5, time.time())
 
             if (time.time() - updated) > (60 * 15):
