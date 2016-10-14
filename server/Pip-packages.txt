@@ -23,4 +23,5 @@ ephem
 google-api-python-client
 rfc3339
 iso8601
+httplib2
 
