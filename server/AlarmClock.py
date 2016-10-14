@@ -123,9 +123,9 @@ class AlarmClock(threading.Thread):
                 updated = time.time()
 
             self._mqclient.loop(max_packets=100)
-            time.sleep(1)
+            time.sleep(5)
 
 if __name__ == '__main__':
     a = AlarmClock()
     a.start()
-    time.sleep(420)
+    time.sleep(5)
