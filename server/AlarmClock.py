@@ -81,7 +81,7 @@ class AlarmClock(threading.Thread):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect"
+        print "Disconnect Alarmclock"
 
     def run(self):
         starttime, endtime = self._info.getNextWackeuptime()

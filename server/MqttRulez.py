@@ -256,7 +256,7 @@ class MqttRulez(threading.Thread):
         self._process(msg.topic, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect"
+        print "Disconnect MQTTRulez"
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)

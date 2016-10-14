@@ -100,7 +100,7 @@ class Climate(threading.Thread):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect"
+        print "Disconnect Climate"
 
     def getConfigHumidity(self, room):
         now = datetime.datetime.now()

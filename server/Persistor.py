@@ -75,7 +75,7 @@ class Persistor(threading.Thread):
         self._redis.setex(msg.topic, 60 * 10, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect"
+        print "Disconnect Persistor"
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
