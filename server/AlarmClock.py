@@ -89,37 +89,27 @@ class AlarmClock(threading.Thread):
         waking             = False
         music              = False
         while True:
-
             self._mqclient.loop(max_packets=100)
-
             diff = (starttime - datetime.datetime.now(timezone('Europe/Berlin'))).total_seconds()
-
-            print diff
 
             #Switch on the light 15 min before event
             if 0 < diff < (60 * 15):
-                print "Light on"
                 lightlevel = int((1.0 - (diff / (60 * 15))) * 100)
-                print lightlevel
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", lightlevel)
                 state = 1
                 self._mqclient.loop(max_packets=100)
 
             #5 Min before slowly turn on the music
             if 0 < diff < (60 * 5):
-                print "Music"
                 if not music:
                     Chromecast().volume('Chromeansi', 0)
                     Chromecast().playMusicURL('Chromeansi', "http://inforadio.de/livemp3")
                     music = True
                 volume = (1.0 - (diff / (60 * 5))) * 0.6
-                print volume
                 Chromecast().volume('Chromeansi', volume)
 
             if diff < 0 and waking:
-                #max light
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 100)
-                #max volume
                 Chromecast().volume('Chromeansi', 0.6)
                 waking = False
                 music  = False
@@ -130,7 +120,6 @@ class AlarmClock(threading.Thread):
                 updated = time.time()
 
             self._mqclient.loop(max_packets=100)
-
             time.sleep(1)
 
 if __name__ == '__main__':
