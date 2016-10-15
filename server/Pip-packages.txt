@@ -17,6 +17,8 @@ xively-python
 jabberbot
 xmpppy
 ISStreamer
+pandoc
+pypandoc
 watson-developer-cloud
 geopy
 ephem
