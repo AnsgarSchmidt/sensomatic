@@ -9,40 +9,58 @@ class Chromecast():
         return pychromecast.get_chromecasts_as_dict().keys()
 
     def playMusicURL(self, castName, url):
-        cast = pychromecast.get_chromecast(friendly_name=castName)
-        cast.wait()
-        mc = cast.media_controller
-        mc.play_media(url, 'audio/mpeg')
-        mc.play()
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            mc = cast.media_controller
+            mc.play_media(url, 'audio/mpeg')
+            mc.play()
+        except:
+            pass
 
     def stop(self, castName):
-        cast = pychromecast.get_chromecast(friendly_name=castName)
-        cast.wait()
-        cast.quit_app()
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            cast.quit_app()
+        except:
+            pass
 
     def volume(self, castName, volume):
-        cast = pychromecast.get_chromecast(friendly_name=castName)
-        cast.wait()
-        cast.set_volume(volume)
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            cast.set_volume(volume)
+        except:
+            pass
 
     def getVolume(self, castName):
-        cast = pychromecast.get_chromecast(friendly_name='Chromeansi')
-        cast.wait()
-        return cast.status.volume_level
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            return cast.status.volume_level
+        except:
+            return 0
 
     def getDisplayName(self, castName):
-        cast = pychromecast.get_chromecast(friendly_name='Chromeansi')
-        cast.wait()
-        return cast.status.display_name
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            return cast.status.display_name
+        except:
+            return ""
 
     def test(self):
-        cast = pychromecast.get_chromecast(friendly_name='Chromeansi')
-        cast.wait()
-        print(cast.device)
-        print(cast.status)
-        mc = cast.media_controller
-        print(mc.status)
-        print (pychromecast.get_possible_app_ids())
+        try:
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            print(cast.device)
+            print(cast.status)
+            mc = cast.media_controller
+            print(mc.status)
+            print (pychromecast.get_possible_app_ids())
+        except:
+            pass
 
 if __name__ == '__main__':
     print "Test"
