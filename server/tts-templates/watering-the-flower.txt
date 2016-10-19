@@ -1,4 +1,4 @@
 You need to water the plant in the livingroom. The current soil
-moisture level is only {{ level }}. I recomment keeping it below 500.
+moisture level is only {{ level }}. I recommend keeping it below 500.
 
 If you want I can do it for you but I need software to do it. Smile.
