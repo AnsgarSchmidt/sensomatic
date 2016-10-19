@@ -103,15 +103,24 @@ class AlarmClock(threading.Thread):
             #5 Min before slowly turn on the music
             if 0 < diff < (60 * 5):
                 if not music:
-                    Chromecast().volume('Chromeansi', 0)
-                    Chromecast().playMusicURL('Chromeansi', "http://inforadio.de/livemp3")
-                    music = True
+                    try:
+                        Chromecast().volume('Chromeansi', 0)
+                        Chromecast().playMusicURL('Chromeansi', "http://inforadio.de/livemp3")
+                        music = True
+                    except:
+                        music = False
                 volume = (1.0 - (diff / (60 * 5))) * 0.6
-                Chromecast().volume('Chromeansi', volume)
+                try:
+                    Chromecast().volume('Chromeansi', volume)
+                except:
+                    pass
 
             if diff < 0 and waking:
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 100)
-                Chromecast().volume('Chromeansi', 0.6)
+                try:
+                    Chromecast().volume('Chromeansi', 0.6)
+                except:
+                    pass
                 waking = False
                 music  = False
                 print "ENDE"
