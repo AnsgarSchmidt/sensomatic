@@ -73,7 +73,15 @@ def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
 
 def checkWaschingMachine():
-    print "Check wasching machine"
+    print "Check washing machine"
+    if _redis.exists("WashingmachineReady"):
+        print "Washing machine ready"
+        timestamp = float(_redis.get("WashingmachineReady"))
+        for room in Room.ANNOUNCE_ROOMS:
+            if info.isSomeoneInTheRoom(room):
+                tts.createWavFile(temp.getWashingMachineReady(timestamp), room)
+    else:
+        print "Wasching machine inactive"
 
 def goSleep():
     print "Go to sleep"
