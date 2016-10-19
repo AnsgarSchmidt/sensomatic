@@ -1,0 +1,8 @@
+Byte 1  Device    0 Master
+                  1 Bedlight
+                  2 Plantwall
+                  3 Outside
+Byte 2 Command
+Byte 3 Subcommand
+
+Byte 4 Data
