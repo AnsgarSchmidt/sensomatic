@@ -6,11 +6,12 @@ import paho.mqtt.client as mqtt
 import time
 import random
 import datetime
-from Tts        import Tts
-from Room       import Room
-from Template   import TemplateMatcher
-from Mpd        import Mpd
-from Chromecast import Chromecast
+from Tts                import Tts
+from Room               import Room
+from Template           import TemplateMatcher
+from Mpd                import Mpd
+from Chromecast         import Chromecast
+from InformationFetcher import  InformationFetcher
 
 class MqttRulez(threading.Thread):
 
@@ -73,16 +74,12 @@ class MqttRulez(threading.Thread):
             if keys[1] == "button":
                 print "button"
 
-                #Wasching machine
+                #Finish Washing Machine
                 if v == "1":
-                    if self._redis.exists("Waschingmachine"):
-                        print "Ack empty wasching machine"
-                        self._redis.delete("Waschingmachine")
-                        self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), Room.BATH_ROOM)
-                    else:
-                        print "Ack start wasching machine"
-                        self._redis.setex("Waschingmachine", 60 * 60 * 24 * 1, time.time())
-                        self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
+                    if self._redis.exists("WashingmachineReady"):
+                        print "Ack emptying washing machine"
+                        self._redis.delete("WashingmachineReady")
+                        self._tts.createWavFile(self._template.getAcknowledgeEmtyingWashingMachine(), Room.BATH_ROOM)
 
                 #Ansi shower
                 if v == "2":
@@ -202,6 +199,31 @@ class MqttRulez(threading.Thread):
                 print "motion in bath detected"
                 self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
 
+            if keys[1] == "washingmachine":
+
+                if keys[2] == "current":
+                    current = float(v)
+
+                    # OFF
+                    if current < 0.02:
+                        if self._redis.exists("WashingmachineActive"):
+                            print "Ack washing machine ready"
+                            self._redis.delete("WashingmachineActive")
+                            self._redis.setex("WashingmachineReady", 60 * 60 * 24 * 1, time.time())
+                            for room in Room.ANNOUNCE_ROOMS:
+                                if self._info.isSomeoneInTheRoom(room):
+                                    self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), room)
+
+                    # STANDBY
+                    if 0.02 <= current < 0.08:
+                        if not self._redis.exists("WashingmachineActive"):
+                            self._redis.setex("WashingmachineActive", 60 * 60 * 24 * 1, time.time())
+                            self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
+
+                    # WASHING
+                    if current >= 0.8:
+                        pass
+
         if keys[0] == Room.LIVING_ROOM:
 
             if keys[1] == "motion":
@@ -246,6 +268,7 @@ class MqttRulez(threading.Thread):
         self._redis    = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
         self._tts      = Tts()
         self._template = TemplateMatcher()
+        self._info     = InformationFetcher()
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
