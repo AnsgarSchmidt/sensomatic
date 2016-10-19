@@ -81,4 +81,9 @@ class Tts():
 
 if __name__ == '__main__':
     t = Tts()
-    t.createWavFile("<voice-transformation type='Custom' glottal_tension='-80%'>This is a test</voice-transformation>", Room.ANSI_ROOM)
+    t.createWavFile("""
+    <voice-transformation type='Custom' glottal_tension='-80%' breathiness="60%" > The numeric ranges of the different attributes indicate the extent to which the attribute affects the voice. </voice-transformation>
+<express-as type="GoodNews">
+   I am pleased to inform you that your mortgage loan application was approved.
+</express-as>
+""", Room.ANSI_ROOM)

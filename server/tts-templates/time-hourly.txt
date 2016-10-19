@@ -1,1 +1,3 @@
+<voice-transformation type='Custom' glottal_tension='-80%' breathiness="60%" >
 It's {{ hour }} o'clock. Outside temperature is {{ temp }} degrees celcius.
+</voice-transformation>
