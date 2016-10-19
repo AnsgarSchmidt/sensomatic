@@ -81,4 +81,4 @@ class Tts():
 
 if __name__ == '__main__':
     t = Tts()
-    t.createWavFile("This is a test", Room.ANSI_ROOM)
+    t.createWavFile("<voice-transformation type='Custom' glottal_tension='-80%'>This is a test</voice-transformation>", Room.ANSI_ROOM)
