@@ -26,6 +26,10 @@ class TemplateMatcher():
         template = self._env.get_template('acknowledge-end-washing-machine.txt')
         return template.render()
 
+    def getAcknowledgeEmtyingWashingMachine(self):
+        template = self._env.get_template('acknowledge-empty-washing-machine.txt')
+        return template.render()
+
     def getAcknowledgeStartShower(self, name):
         template = self._env.get_template('acknowledge-start-shower.txt')
         return template.render(name=name)
