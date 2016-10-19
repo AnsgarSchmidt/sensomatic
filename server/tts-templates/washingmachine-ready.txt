@@ -1,1 +1,1 @@
-Washing machine is ready since {% if hours > 0 %}{{ hours }} hour{% if hours > 2 %}s{%endif%} and {% endif %}{% if minutes > 0 %}{{ minutes }} minute{%if minutes > 2%}s{%endif%}{% endif %}. Please take care of it now! You know it will start to smell. 
+Washing machine is ready since {% if hours > 0 %}{{ hours }} hour{% if hours > 2 %}s{%endif%} and {% endif %}{% if minutes > 0 %}{{ minutes }} minute{%if minutes > 2%}s{%endif%}{% endif %}. Please take care of it now! You know it will start to smell.
