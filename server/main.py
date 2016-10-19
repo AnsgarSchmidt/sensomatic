@@ -15,6 +15,7 @@ from   InitialState       import InitialState
 from   Climate            import Climate
 from   LightController    import LightController
 from   AlarmClock         import AlarmClock
+from   HS100              import HS100
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -72,16 +73,7 @@ def wakeup(name, room):
     tts.createWavFile(temp.getWakeupText(name), room)
 
 def checkWaschingMachine():
-    washingtime = (60.0 * 60.0 * 2.5) #normal washing time
     print "Check wasching machine"
-    if _redis.exists("Waschingmachine"):
-        print "Wasching machine active"
-        timestamp = float(_redis.get("Waschingmachine"))
-        if (timestamp + washingtime < time.time()):
-            print "Waschmaschine ready"
-            tts.createWavFile(temp.getWashingMachineReady(timestamp + washingtime), Room.LIVING_ROOM)
-    else:
-        print "Wasching machine inactive"
 
 def goSleep():
     print "Go to sleep"
@@ -153,6 +145,10 @@ if __name__ == '__main__':
     print "Start Alarmclock"
     alarmclock = AlarmClock()
     alarmclock.start()
+
+    print "Start Washing Machine"
+    washingmachine = HS100("192.168.1.42", "bathroom/washingmachine/")
+    washingmachine.start()
 
     #https://github.com/dbader/schedule
 
