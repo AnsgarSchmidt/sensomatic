@@ -3,6 +3,53 @@ Byte 1  Device    0 Master
                   2 Plantwall
                   3 Outside
 Byte 2 Command
-Byte 3 Subcommand
-
-Byte 4 Data
+Byte 3               Subcommand
+Byte 4                                    Data
+       0 Ping
+                     0 Ping               5 Bytes in->out
+       1 Light
+                     0 Overhead           1 Byte Light type (0=RGB, 1=Sunrise, 2=Fire) 2 Byte Number of ColorValues or Fire/Sunrise level Rest Trippels with color
+                     1 Left bed                     same
+                     2 Center bed                   same
+                     3 Right bed                    same
+                     4 Sleeparea                    same
+                    10 Plant 0            1 Byte Intensity
+                    11 Plant 1                      same
+                    12 Plant 2                      same
+                    13 Plant 3                      same
+       2 Measure
+                     0 Plant  0           2 Byte Measurement as 16 Bit Value
+                     1 Plant  1                     same
+                     2 Plant  2                     same
+                     3 Plant  3                     same
+                     4 Plant  4                     same
+                     5 Plant  5                     same
+                     6 Plant  6                     same
+                     7 Plant  7                     same
+                     8 Plant  8                     same
+                     9 Plant  9                     same
+                    10 Plant 10                     same
+                    11 Plant 11                     same
+                    12 Plant 12                     same
+                   100 Air qualiy                   same
+                   101 Combastable gas              same
+                   102 Light                        same
+                   103 Temperature                  same
+                   104 Humidity                     same
+       3 Valve
+                     0 Plant  0           1 Byte Servo angle 
+                     1 Plant  1                     same
+                     2 Plant  2                     same
+                     3 Plant  3                     same
+                     4 Plant  4                     same
+                     5 Plant  5                     same
+                     6 Plant  6                     same
+                     7 Plant  7                     same
+                     8 Plant  8                     same
+                     9 Plant  9                     same
+                    10 Plant 10                     same
+                    11 Plant 11                     same
+                    12 Plant 12                     same
+       4 Pump and Water
+                     0 Pump 0              1 Byte seconds to run
+                    10 Water level         1 Byte water level
