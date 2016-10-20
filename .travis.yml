@@ -28,5 +28,3 @@ install: "pip install -r $TEST_DIR/Pip-packages.txt"
 
 # command to run tests
 script: cd $TEST_DIR && nosetests -v Test.py 
-
-
