@@ -69,9 +69,6 @@ def hourAnnounce():
         if info.isSomeoneInTheRoom(room):
             tts.createWavFile(temp.getHourlyTime(), room)
 
-def wakeup(name, room):
-    tts.createWavFile(temp.getWakeupText(name), room)
-
 def checkWaschingMachine():
     print "Check washing machine"
     if _redis.exists("WashingmachineReady"):
@@ -168,18 +165,6 @@ if __name__ == '__main__':
     schedule.every().hour.at("00:42").do(radiationCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
-
-    schedule.every().monday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
-    schedule.every().tuesday.at("07:00").do(wakeup,   "Ansi", Room.ANSI_ROOM)
-    schedule.every().wednesday.at("07:00").do(wakeup, "Ansi", Room.ANSI_ROOM)
-    schedule.every().thursday.at("07:00").do(wakeup,  "Ansi", Room.ANSI_ROOM)
-    schedule.every().friday.at("07:00").do(wakeup,    "Ansi", Room.ANSI_ROOM)
-
-    schedule.every().monday.at("10:30").do(wakeup,    "Phawx", Room.TIFFY_ROOM)
-    schedule.every().tuesday.at("10:30").do(wakeup,   "Phawx", Room.TIFFY_ROOM)
-    schedule.every().wednesday.at("10:30").do(wakeup, "Phawx", Room.TIFFY_ROOM)
-    schedule.every().thursday.at("10:30").do(wakeup,  "Phawx", Room.TIFFY_ROOM)
-    schedule.every().friday.at("10:30").do(wakeup,    "Phawx", Room.TIFFY_ROOM)
 
     schedule.every().sunday.at("22:42").do(goSleep)
     schedule.every().monday.at("22:42").do(goSleep)
