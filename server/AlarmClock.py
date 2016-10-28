@@ -118,7 +118,7 @@ class AlarmClock(threading.Thread):
             if diff < 0 and waking:
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 100)
                 try:
-                    Chromecast().volume('Chromeansi', 0.6)
+                    Chromecast().volume('Chromeansi', 0.7)
                 except:
                     pass
                 waking = False
