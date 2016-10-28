@@ -15,6 +15,7 @@ class Chromecast():
             mc = cast.media_controller
             mc.play_media(url, 'audio/mpeg')
             mc.play()
+            cast.disconnect()
         except:
             pass
 
@@ -23,6 +24,7 @@ class Chromecast():
             cast = pychromecast.get_chromecast(friendly_name=castName)
             cast.wait()
             cast.quit_app()
+            cast.disconnect()
         except:
             pass
 
@@ -31,6 +33,7 @@ class Chromecast():
             cast = pychromecast.get_chromecast(friendly_name=castName)
             cast.wait()
             cast.set_volume(volume)
+            cast.disconnect()
         except:
             pass
 
@@ -38,7 +41,9 @@ class Chromecast():
         try:
             cast = pychromecast.get_chromecast(friendly_name=castName)
             cast.wait()
-            return cast.status.volume_level
+            level = cast.status.volume_level
+            cast.disconnect()
+            return level
         except:
             return 0
 
@@ -46,11 +51,13 @@ class Chromecast():
         try:
             cast = pychromecast.get_chromecast(friendly_name=castName)
             cast.wait()
-            return cast.status.display_name
+            name =  cast.status.display_name
+            cast.disconnect()
+            return name
         except:
             return ""
 
-    def test(self):
+    def test(self, castName):
         try:
             cast = pychromecast.get_chromecast(friendly_name=castName)
             cast.wait()
@@ -58,7 +65,8 @@ class Chromecast():
             print(cast.status)
             mc = cast.media_controller
             print(mc.status)
-            print (pychromecast.get_possible_app_ids())
+            #print (pychromecast.get_possible_app_ids())
+            cast.disconnect()
         except:
             pass
 
@@ -75,5 +83,6 @@ if __name__ == '__main__':
     #c.stop('Chromeansi')
     #print c.getVolume('Chromeansi')
     #print c.getDisplayName('Chromeansi')
-    c.test()
+    for i in range(100):
+        c.test('Chromeansi')
     #c.stop('Chromeansi')
