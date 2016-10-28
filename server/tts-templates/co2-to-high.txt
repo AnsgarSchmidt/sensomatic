@@ -1,1 +1,4 @@
-Current c o 2 level is {{ co2 }} parts per million. It is to high! Please open a window.
+<speak version="1.0">
+Current c o 2 level is <say-as interpret-as="number" format="ordinal">{{ co2 }}</say-as> parts per million.
+It is to high! Please open a window.
+</speak>
