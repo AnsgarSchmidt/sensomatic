@@ -2,25 +2,25 @@
 #include <CmdMessenger.h>
 #include <avr/wdt.h>
 
-#define PIN_RX      1 // Serial
-#define PIN_TX      2 // Serial
-#define PIN_LED_G   3 // LED G
-#define PIN_D4      4 // 
-#define PIN_DHT     5 // Hum and Temp Sensor
-#define PIN_D6      6 // 
-#define PIN_D7      7 // 
-#define PIN_D8      8 // 
-#define PIN_LED_B   9 // LED B
-#define PIN_LED_R  10 // LED R
-#define PIN_MOSI   11 // Programming
-#define PIN_MISO   12 // Programming
-#define PIN_SCK    13 // Programming
-#define PIN_BUTTON A0 // Button
-#define PIN_LIGHT  A1 // Light
-#define PIN_MOTION A2 // Motion
-#define PIN_A3     A3 // 
-#define PIN_A4     A4 //
-#define PIN_A5     A5 // 
+#define PIN_RX       1 // Serial
+#define PIN_TX       2 // Serial
+#define PIN_LED_G    3 // LED G
+#define PIN_D4       4 // 
+#define PIN_DHT      5 // Hum and Temp Sensor
+#define PIN_D6       6 // 
+#define PIN_D7       7 // 
+#define PIN_D8       8 // 
+#define PIN_LED_B    9 // LED B
+#define PIN_LED_R   10 // LED R
+#define PIN_MOSI    11 // Programming
+#define PIN_MISO    12 // Programming
+#define PIN_SCK     13 // Programming
+#define PIN_BUTTON  A0 // Button
+#define PIN_LIGHT   A1 // Light
+#define PIN_MOTION  A2 // Motion
+#define PIN_COMBUST A3 // Combustible 
+#define PIN_A4      A4 //
+#define PIN_A5      A5 // 
 
 #define AVERAGE_COUNTER  100
 
@@ -38,23 +38,25 @@ enum{
   kGetTemp,         // 5
   kGetHumidity,     // 6
   kGetLight,        // 7
-  knix8,
+  kGetCombustible,  // 8
   knix9,
   kTemp,            // 10          
   kHumidity,        // 11
   kLight,           // 12
   kButtonPressed,   // 13
   kMotionDetected,  // 14 
+  kCombustible,     // 15
 };
 
 void attachCommandCallbacks(){
-  cmdMessenger.attach(              OnUnknownCommand);
-  cmdMessenger.attach(kSetR,        OnSetR          );
-  cmdMessenger.attach(kSetG,        OnSetG          );
-  cmdMessenger.attach(kSetB,        OnSetB          );
-  cmdMessenger.attach(kGetTemp,     OnGetTemp       );
-  cmdMessenger.attach(kGetHumidity, OnGetHumidity   );
-  cmdMessenger.attach(kGetLight,    OnGetLight      );
+  cmdMessenger.attach(                 OnUnknownCommand);
+  cmdMessenger.attach(kSetR,           OnSetR          );
+  cmdMessenger.attach(kSetG,           OnSetG          );
+  cmdMessenger.attach(kSetB,           OnSetB          );
+  cmdMessenger.attach(kGetTemp,        OnGetTemp       );
+  cmdMessenger.attach(kGetHumidity,    OnGetHumidity   );
+  cmdMessenger.attach(kGetLight,       OnGetLight      );
+  cmdMessenger.attach(kGetCombustible, OnGetCombustible);
 }
 
 void OnUnknownCommand(){
@@ -95,6 +97,14 @@ void OnGetLight(){
   cmdMessenger.sendCmd(kLight, light / AVERAGE_COUNTER);
 }
 
+void OnGetCombustible(){
+  uint32_t comp = 0;
+  for (uint8_t i = 0; i < AVERAGE_COUNTER; i++){
+    comp += analogRead(PIN_COMBUST);
+  }
+  cmdMessenger.sendCmd(kCombustible, comp / AVERAGE_COUNTER);  
+}
+
 void setup() {
   Serial.begin(9600);
   dht.begin();
@@ -104,8 +114,9 @@ void setup() {
   analogWrite(PIN_LED_R, 0);
   analogWrite(PIN_LED_G, 0);
   analogWrite(PIN_LED_B, 0);
-  pinMode(PIN_LIGHT, INPUT);
-  pinMode(PIN_BUTTON, INPUT);
+  pinMode(PIN_LIGHT,   INPUT);
+  pinMode(PIN_BUTTON,  INPUT);
+  pinMode(PIN_COMBUST, INPUT);
   cmdMessenger.sendCmd(kAcknowledge, "Arduino ready!");
 }
 
