@@ -83,12 +83,13 @@ class HS100(threading.Thread):
             try:
                 rt = self.get_emeter_realtime()
                 if rt is not None:
-                    self._mqclient.publish(self.namespace + "voltage", rt['voltage'])
-                    self._mqclient.publish(self.namespace + "current", rt['current'])
+                    self._mqclient.publish(self.namespace + "voltage", rt['voltage']    )
+                    self._mqclient.publish(self.namespace + "current", rt['current']    )
+                    self._mqclient.publish(self.namespace + "state",   self.get_state() )
             except:
                 print "Error connecting HS100:" + self.namespace
 
-    def state(self):
+    def get_state(self):
         response = self.get_info()
         return response["system"]["get_sysinfo"]["relay_state"]
 
