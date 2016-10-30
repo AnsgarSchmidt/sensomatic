@@ -260,7 +260,7 @@ class InformationFetcher():
         return int((time.time()-start)/60.0)
 
     def getWhoIsInBathShower(self):
-        return "Ansi"
+        return "Ansi or Phawx" # TODO fix name
 
     def getBathOrShower(self):
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
@@ -273,7 +273,7 @@ class InformationFetcher():
         r = redis.StrictRedis(host=self._config.get("REDIS","ServerAddress"), port=self._config.get("REDIS","ServerPort"), db=0)
         if r.exists(room+"/populated"):
             last = float(r.get(room+"/populated"))
-            if (time.time()) - last < (5 * 60):
+            if (time.time()) - last < (5 * 60): # 5 min
                 return True
         return False
 
