@@ -68,21 +68,11 @@ class MqttRulez(threading.Thread):
 
         if keys[0] == Room.BATH_ROOM:
 
-            if keys[1] == "temp":
-                print "temp"
-
             if keys[1] == "button":
                 print "button"
 
-                #Finish Washing Machine
-                if v == "1":
-                    if self._redis.exists("WashingmachineReady"):
-                        print "Ack emptying washing machine"
-                        self._redis.delete("WashingmachineReady")
-                        self._tts.createWavFile(self._template.getAcknowledgeEmtyingWashingMachine(), Room.BATH_ROOM)
-
                 #Ansi shower
-                if v == "2":
+                if v == "1":
                     if self._redis.exists("shower"):
                         print "Stop shower"
                         self._redis.delete("shower")
@@ -113,7 +103,7 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("bathroom/light/rgb","255,255,255")
 
                 #Tiffy shower
-                if v == "3":
+                if v == "4":
                     if self._redis.exists("shower"):
                         print "Stop shower"
                         self._redis.delete("shower")
@@ -126,7 +116,7 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("bathroom/light/rgb","255,255,255")
 
                 #Ansi bath
-                if v == "4":
+                if v == "2":
                     if self._redis.exists("bath"):
                         print "Stop bath"
                         self._redis.delete("bath")
@@ -187,6 +177,13 @@ class MqttRulez(threading.Thread):
                     # WASHING
                     if current >= 0.8:
                         pass
+
+                if keys[2] == "state":
+                    if int(v) == 0:
+                        if self._redis.exists("WashingmachineReady"):
+                            print "Ack emptying washing machine"
+                            self._redis.delete("WashingmachineReady")
+                            self._tts.createWavFile(self._template.getAcknowledgeEmtyingWashingMachine(), Room.BATH_ROOM)
 
         if keys[0] == Room.LIVING_ROOM:
 
