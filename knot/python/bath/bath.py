@@ -100,12 +100,10 @@ class TasksThread(threading.Thread):
 
 def on_connect(client, userdata, rc):
     print("Connected with result code "+str(rc))
-    client.subscribe("bathroom/light/+")
+    client.subscribe("bathroom/light/rgb/+")
 
 def on_message(client, userdata, msg):
     print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
-    parts   = msg.topic.split("/")
-    channel = parts[2]
     vals    = msg.payload.split(",")
     sendQueue.put("2,%d;" % int(vals[0]))
     sendQueue.put("3,%d;" % int(vals[1]))
