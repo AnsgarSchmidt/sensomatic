@@ -17,16 +17,17 @@
 #define PIN_SCK    13 // Programming
 #define PIN_BUTTON A0 // Button
 #define PIN_LIGHT  A1 // Light
-#define PIN_A2     A2 //
+#define PIN_MOTION A2 // Motion
 #define PIN_A3     A3 // 
 #define PIN_A4     A4 //
 #define PIN_A5     A5 // 
 
 #define AVERAGE_COUNTER  100
 
-CmdMessenger cmdMessenger = CmdMessenger(Serial, ',', ';');
+CmdMessenger cmdMessenger          = CmdMessenger(Serial, ',', ';');
 DHT          dht(PIN_DHT, DHT22);
-bool         reported = false;
+bool         reported              = false;
+uint64_t     motionreportedCounter = 0;
 
 enum{
   kAcknowledge,     // 0 
@@ -43,6 +44,7 @@ enum{
   kHumidity,        // 11
   kLight,           // 12
   kButtonPressed,   // 13
+  kMotionDetected,  // 14 
 };
 
 void attachCommandCallbacks(){
@@ -205,8 +207,24 @@ void checkButtons(){
 
 }
 
+void checkMotion(){
+   bool motion = digitalRead(PIN_MOTION);
+   if (motion){
+    if (motionreportedCounter == 0){
+     cmdMessenger.sendCmd(kMotionDetected, 23);    
+    }
+    motionreportedCounter++;
+    if (motionreportedCounter > 50000){
+      motionreportedCounter = 0;
+    }
+   }else{
+    motionreportedCounter = 0;
+   }
+}
+
 void loop() {  
   cmdMessenger.feedinSerialData();
   wdt_reset();
   checkButtons();
+  checkMotion();
 }
