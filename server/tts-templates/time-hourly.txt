@@ -1,3 +1,1 @@
-<voice-transformation type="Soft" strength="60%">
 It's {{ hour }} o'clock. Outside temperature is {{ temp }} degrees celcius.
-</voice-transformation>
