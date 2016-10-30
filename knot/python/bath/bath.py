@@ -10,12 +10,15 @@ class ReceiveThread(threading.Thread):
 
     def __init__(self, ser, mqclient):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self._ser      = ser
         self._mqclient = mqclient
 
     def run(self):
+        line = self._ser.readline() # To clear buffer
         while True:
             line    = self._ser.readline()
+            #print "<<<<<<<<< " + line
             element = line.split(',')
             command = int(element[0])
             if (command == 0):
@@ -26,7 +29,7 @@ class ReceiveThread(threading.Thread):
             if (command == 2):
                 print "Set R"
             if (command == 3):
-                print "Set R"
+                print "Set G"
             if (command == 4):
                 print "Set B"
             if (command == 5):
@@ -35,6 +38,8 @@ class ReceiveThread(threading.Thread):
                 print "GetHumidity"
             if (command == 7):
                 print "GetLight"
+            if (command == 8):
+                print "GetCombustible"
             if (command == 10):
                 temp = float(element[1].split(";")[0])
                 #print "Temp:%f" % temp
@@ -51,18 +56,28 @@ class ReceiveThread(threading.Thread):
                 button = int(element[1].split(";")[0])
                 print "Button Pressed:%d" % button
                 self._mqclient.publish("bathroom/button", button)
+            if (command == 14):
+                print "Motion detected!"
+                self._mqclient.publish("bathroom/motion", 1)
+            if (command == 15):
+                comp = float(element[1].split(";")[0])
+                # print "Temp:%f" % comp
+                self._mqclient.publish("bathroom/combustible", comp)
+
 
 class SendThread(threading.Thread):
     """Threaded serial send"""
 
     def __init__(self, queue, ser):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self._queue = queue
         self._ser   = ser
 
     def run(self):
         while True:
             line = self._queue.get()
+            #print ">>>>>>>>>>>" + line
             self._ser.write(line + "\n")
             self._queue.task_done()
             time.sleep(0.5) # Give him time to react
@@ -72,6 +87,7 @@ class TasksThread(threading.Thread):
 
     def __init__(self, queue):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self._queue = queue
 
     def run(self):
@@ -80,6 +96,7 @@ class TasksThread(threading.Thread):
             self._queue.put("5;") # Temperature
             self._queue.put("6;") # Humidity
             self._queue.put("7;") # Light
+            self._queue.put("8;") # Combustible
 
 def on_connect(client, userdata, rc):
     print("Connected with result code "+str(rc))
@@ -105,15 +122,10 @@ if __name__ == "__main__":
     mqclient.on_message = on_message
 
     receive = ReceiveThread(ser, mqclient)
-    receive.setDaemon(True)
+    send    = SendThread(sendQueue, ser)
+    tasks   = TasksThread(sendQueue)
     receive.start()
-
-    send = SendThread(sendQueue, ser)
-    send.setDaemon(True)
     send.start()
-
-    tasks = TasksThread(sendQueue)
-    tasks.setDaemon(True)
     tasks.start()
 
     mqclient.loop_forever()
