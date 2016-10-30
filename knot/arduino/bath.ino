@@ -31,12 +31,12 @@ bool         reported = false;
 enum{
   kAcknowledge,     // 0 
   kError,           // 1
-  kSetRgb,          // 2
-  kGetTemp,         // 3
-  kGetHumidity,     // 4
-  kGetLight,        // 5
-  knix6,
-  knix7,
+  kSetR,            // 2
+  kSetG,            // 3
+  kSetB,            // 4
+  kGetTemp,         // 5
+  kGetHumidity,     // 6
+  kGetLight,        // 7
   knix8,
   knix9,
   kTemp,            // 10          
@@ -47,7 +47,9 @@ enum{
 
 void attachCommandCallbacks(){
   cmdMessenger.attach(              OnUnknownCommand);
-  cmdMessenger.attach(kSetRgb,      OnSetRgb        );
+  cmdMessenger.attach(kSetR,        OnSetR          );
+  cmdMessenger.attach(kSetG,        OnSetG          );
+  cmdMessenger.attach(kSetB,        OnSetB          );
   cmdMessenger.attach(kGetTemp,     OnGetTemp       );
   cmdMessenger.attach(kGetHumidity, OnGetHumidity   );
   cmdMessenger.attach(kGetLight,    OnGetLight      );
@@ -57,15 +59,21 @@ void OnUnknownCommand(){
   cmdMessenger.sendCmd(kError,"Command without attached callback");
 }
 
-void OnSetRgb(){
+void OnSetR(){
   int16_t r = cmdMessenger.readInt16Arg();
-  int16_t g = cmdMessenger.readInt16Arg();
-  int16_t b = cmdMessenger.readInt16Arg();
-
   analogWrite(PIN_LED_R, r);
-  analogWrite(PIN_LED_G, g);
-  analogWrite(PIN_LED_B, b);
+  cmdMessenger.sendCmdStart(kAcknowledge);
+}
 
+void OnSetG(){
+  int16_t g = cmdMessenger.readInt16Arg();
+  analogWrite(PIN_LED_G, g);
+  cmdMessenger.sendCmdStart(kAcknowledge);
+}
+
+void OnSetB(){
+  int16_t b = cmdMessenger.readInt16Arg();
+  analogWrite(PIN_LED_B, b);
   cmdMessenger.sendCmdStart(kAcknowledge);
 }
 
