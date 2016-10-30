@@ -16,6 +16,7 @@ from   Climate            import Climate
 from   LightController    import LightController
 from   AlarmClock         import AlarmClock
 from   HS100              import HS100
+from   Mpd                import Mpd
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -86,6 +87,10 @@ def goSleep():
 
 def checkBath():
     print "Checking bath"
+    if _redis.exists("PlayRadioInBath") and not info.isSomeoneInTheRoom(Room.BATH_ROOM):
+        s = Mpd().getServerbyName("Bath")
+        s.stop()
+        _redis.delete("PlayRadioInBath")
 
 def checkCo2(room):
     print "Check co2"
@@ -158,7 +163,7 @@ if __name__ == '__main__':
     #https://github.com/dbader/schedule
 
     schedule.every(15).minutes.do(checkWaschingMachine)
-    schedule.every(10).minutes.do(checkBath)
+    schedule.every( 1).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)

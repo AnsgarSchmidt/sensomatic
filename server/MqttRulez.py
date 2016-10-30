@@ -152,6 +152,13 @@ class MqttRulez(threading.Thread):
             if keys[1] == "motion":
                 print "motion in bath detected"
                 self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
+                if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
+                    self._redis.setex(Room.BATH_ROOM + "PlayRadioInBath", 60 * 60, time.time())
+                    s = Mpd().getServerbyName("Bath")
+                    s.emptyPlaylist()
+                    s.add("http://inforadio.de/livemp3")
+                    s.volume(40)
+                    s.play()
 
             if keys[1] == "washingmachine":
 
