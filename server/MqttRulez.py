@@ -157,7 +157,7 @@ class MqttRulez(threading.Thread):
                     s = Mpd().getServerbyName("Bath")
                     s.emptyPlaylist()
                     s.add("http://inforadio.de/livemp3")
-                    s.volume(40)
+                    s.volume(42)
                     s.play()
 
             if keys[1] == "washingmachine":
