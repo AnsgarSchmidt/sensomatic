@@ -96,7 +96,7 @@ def checkCo2(room):
     print "Check co2"
     for room in Room.ANNOUNCE_ROOMS:
         if info.isSomeoneInTheRoom(room):
-            if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 2200:
+            if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 2300:
                 print "CO2 to high:" + str(info.getRoomCo2Level(room))
                 tts.createWavFile(temp.getCo2ToHigh(room), room)
 
@@ -110,7 +110,7 @@ def radiationCheck():
     if here > avr:
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
-                tts.createWavFile(temp.getRadiationHigherThenAverage(here,avr), room)
+                tts.createWavFile(temp.getRadiationHigherThenAverage(here, avr), room)
 
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
