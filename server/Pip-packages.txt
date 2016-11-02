@@ -27,3 +27,4 @@ rfc3339
 iso8601
 httplib2
 pytz
+pafy
