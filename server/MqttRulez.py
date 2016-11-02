@@ -291,6 +291,9 @@ class MqttRulez(threading.Thread):
                 #Ansi Read
                 if v == "1":
                     print "Activating Reading in AnsiRoom"
+                    if self._redis.exists("AnsiRoomFallingAsleep"):
+                        self._redis.delete("AnsiRoomFallingAsleep")
+
                     self._redis.setex("AnsiRoomReading", 60 * 60 * 1, time.time())
 
                 # Ansi Sleep
