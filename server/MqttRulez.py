@@ -285,6 +285,23 @@ class MqttRulez(threading.Thread):
 
         if keys[0] == Room.ANSI_ROOM:
 
+            if keys[1] == "button":
+                print "button"
+
+                #Ansi Read
+                if v == "1":
+                    print "Activating Reading in AnsiRoom"
+                    self._redis.setex("AnsiRoomReading", 60 * 60 * 1, time.time())
+
+                # Ansi Sleep
+                if v == "2":
+                    print "Activating Sleeping Sequence in AnsiRoom"
+
+                    if self._redis.exists("AnsiRoomReading"):
+                        self._redis.delete("AnsiRoomReading")
+
+                    self._redis.setex("AnsiRoomFallingAsleep", 60 * 60 * 5, time.time()) # Will be removed automatically
+
             if keys[1] == "motion":
                 print "motion in ansi room detected"
                 self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
