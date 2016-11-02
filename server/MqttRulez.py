@@ -291,14 +291,14 @@ class MqttRulez(threading.Thread):
                 if self._redis.exists("ansiwakeup"):
                     print "Ansiwakeup detected motion"
                     self._redis.delete("ansiwakeup")
-                    try:
-                       Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
-                    except:
-                        pass
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
                     self._mqclient.publish("corridor/light/main",             "TOGGLE")
                     self._mqclient.publish("ansiroom/light/main",             "TOGGLE")
                     self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
+                    try:
+                       Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
+                    except:
+                        pass
 
         if keys[0] == Room.TIFFY_ROOM:
 
