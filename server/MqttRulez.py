@@ -279,6 +279,21 @@ class MqttRulez(threading.Thread):
 
         if keys[0] == Room.LIVING_ROOM:
 
+            if keys[1] == "button":
+                print "button"
+
+                #Breakfast
+                if v == "1":
+                    print "Breakfast"
+
+                # Lunch
+                if v == "2":
+                    print "Lunch"
+
+                # Dinner
+                if v == "3":
+                    print "Dinner"
+
             if keys[1] == "motion":
                 print "motion in livingroom detected"
                 self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
