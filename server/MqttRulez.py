@@ -124,6 +124,7 @@ class MqttRulez(threading.Thread):
                         s.volume(15)
                         s.play()
 
+                # Ansi nix
                 if v == "3":
                     print "Switching off everyting in the bathroom"
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
@@ -163,7 +164,54 @@ class MqttRulez(threading.Thread):
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
                         Mpd().getServerbyName("Bath").stop()
 
+                # Tiffy nix
                 if v == "6":
+                    print "Switching off everyting in the bathroom"
+                    self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                    if self._redis.exists("shower"):
+                        self._redis.delete("shower")
+                    if self._redis.exists("bath"):
+                        self._redis.delete("bath")
+                    Mpd().getServerbyName("Bath").stop()
+
+                # Guest shower
+                if v == "7":
+                    if self._redis.exists("shower"):
+                        print "Stop shower"
+                        self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                        self._redis.delete("shower")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndShower('Guest'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
+                    else:
+                        print "Start shower"
+                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Guest'), Room.BATH_ROOM)
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._mqclient.publish("bathroom/light/rgb", "255,255,255")
+                        s = Mpd().getServerbyName("Bath")
+                        s.emptyPlaylist()
+                        for i in s.getPlaylists('Starred'):
+                            s.loadPlaylist(i)
+                        s.randomize(1)
+                        s.volume(62)
+                        s.play()
+
+                # Guest bath
+                if v == "8":
+                    if self._redis.exists("bath"):
+                        print "Stop bath"
+                        self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                        self._redis.delete("bath")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndBath('Guest'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
+                    else:
+                        print "Start bath"
+                        self._mqclient.publish("bathroom/light/rgb", "0,25,255")
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartBath('Guest'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
+
+                # Guest nix
+                if v == "9":
                     print "Switching off everyting in the bathroom"
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                     if self._redis.exists("shower"):
@@ -284,7 +332,10 @@ class MqttRulez(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.loop_start()
         while True:
-            self._process()
+            try:
+                self._process()
+            except:
+                pass
 
 if __name__ == '__main__':
     print "Start"
