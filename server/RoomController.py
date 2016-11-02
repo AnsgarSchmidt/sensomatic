@@ -19,22 +19,22 @@ class RoomController(threading.Thread):
         self._configFileName   = self._homeDir + '/config.ini'
         self._config           = ConfigParser.ConfigParser()
         self._readConfig()
-        self._mqclient         = mqtt.Client("LightController", clean_session=True)
+        self._mqclient         = mqtt.Client("RoomController", clean_session=True)
         self._redis            = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"),
-                                                 port=self._config.get("REDIS", "ServerPort"), db=0)
+                                                   port=self._config.get("REDIS", "ServerPort"), db=0)
         self._lastWorkingLight = [0, 0, 0]
         self._lastBedLight     = [0, 0, 0]
         self._SoundActive      = False
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected Light Controller with result code %s" % rc
+        print "Connected Room Controller with result code %s" % rc
         #self._mqclient.subscribe("#")
 
     def _on_message(self, client, userdata, msg):
         print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect LightController"
+        print "Disconnect Room Controller"
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
