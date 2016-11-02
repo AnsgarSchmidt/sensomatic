@@ -1,3 +1,4 @@
+import pafy
 import pychromecast
 
 class Chromecast():
@@ -7,6 +8,18 @@ class Chromecast():
 
     def getNames(self):
         return pychromecast.get_chromecasts_as_dict().keys()
+
+    def playYoutube(self, castName, youtube_id):
+        try:
+            audiostream = pafy.new("https://www.youtube.com/watch?v="+youtube_id).getbestaudio()
+            cast = pychromecast.get_chromecast(friendly_name=castName)
+            cast.wait()
+            mc = cast.media_controller
+            mc.play_media(audiostream.url, 'audio/'+audiostream.extension)
+            mc.play()
+            cast.disconnect()
+        except:
+            pass
 
     def playMusicURL(self, castName, url):
         try:
@@ -65,7 +78,7 @@ class Chromecast():
             print(cast.status)
             mc = cast.media_controller
             print(mc.status)
-            #print (pychromecast.get_possible_app_ids())
+            print (pychromecast.get_possible_app_ids())
             cast.disconnect()
         except:
             pass
@@ -83,6 +96,7 @@ if __name__ == '__main__':
     #c.stop('Chromeansi')
     #print c.getVolume('Chromeansi')
     #print c.getDisplayName('Chromeansi')
-    for i in range(100):
-        c.test('Chromeansi')
     #c.stop('Chromeansi')
+    #c.test('Chromeansi')
+    c.playYoutube('Chromeansi', '0fYL_qiDYf0')
+    #c.volume('Chromeansi', 0.6)
