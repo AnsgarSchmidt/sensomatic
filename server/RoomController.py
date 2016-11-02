@@ -176,6 +176,7 @@ class RoomController(threading.Thread):
             if diff > max:
                 print "END Falling Asleep Function"
                 self._redis.delete("AnsiRoomFallingAsleep")
+                self._mqclient.publish("ansiroom/bedlight/sleep/fire", 0)
                 Chromecast().stop('Chromeansi')
 
         elif self._redis.exists("AnsiRoomReading"):
