@@ -172,7 +172,7 @@ def Sunrise(device, num, percentage):
         s = 255.0 - (  (51.0 / 2000.0)         * (percentage * percentage)  )
         v =         ( (255.0 /  100.0)         * percentage                 )
         a, b, c = colorsys.hsv_to_rgb( (h / 255.0), (s / 255.0), (v / 255.0) )
-        RGB(device,fill(num, [int(a * 255),int(b * 255),int(c * 255)]))
+        RGB(device, fill(num, [int(a * 255),int(b * 255),int(c * 255)]))
 
 if __name__ == "__main__":
 
