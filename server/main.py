@@ -13,7 +13,7 @@ from   MqttRulez          import MqttRulez
 from   Pinger             import Pinger
 from   InitialState       import InitialState
 from   Climate            import Climate
-from   LightController    import LightController
+from   RoomController     import RoomController
 from   AlarmClock         import AlarmClock
 from   HS100              import HS100
 from   Mpd                import Mpd
@@ -88,8 +88,8 @@ def goSleep():
 def checkBath():
     print "Checking bath"
     if _redis.exists("PlayRadioInBath") and not info.isSomeoneInTheRoom(Room.BATH_ROOM):
-        s = Mpd().getServerbyName("Bath")
-        s.stop()
+        Mpd().getServerbyName("Bath").stop()
+        #self._mqclient.publish("bathroom/light/rgb", "0,0,0")
         _redis.delete("PlayRadioInBath")
 
 def checkCo2(room):
@@ -148,8 +148,8 @@ if __name__ == '__main__':
     climate = Climate()
     climate.start()
 
-    print "Start Light Control"
-    lightControl = LightController()
+    print "Start Room Control"
+    lightControl = RoomController()
     lightControl.start()
 
     print "Start Alarmclock"

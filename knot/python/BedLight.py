@@ -78,7 +78,7 @@ class SendThread(threading.Thread):
                 time.sleep(0.05)
             self._queue.task_done()
             #print "DONE"
-            time.sleep(1)
+            time.sleep(0.5)
 
 def on_connect(client, userdata, rc):
     print("Connected with result code "+str(rc))
@@ -123,6 +123,7 @@ def on_message(client, userdata, msg):
             RGB(DEVICES['BED_RIGHT'], c)
 
 def RGB(device, values):
+
     if device > 4 or device < 0:
         return
     s = ''
@@ -133,22 +134,29 @@ def RGB(device, values):
     sendQueue.put(s)
 
 def HSV(device, values):
+
     if device > 4 or device < 0:
         return
+
     s = ''
     s += struct.pack("!BB", 1, device)
+
     for i in values:
         s += struct.pack('!{0}B'.format(len(i)), *i)
+
     s += ";"
     sendQueue.put(s)
 
 def fill(size, val):
     values = []
+
     for i in range(size):
         values.append(val)
+
     return values
 
 def Fire(device, intensity):
+
     if intensity < 1:
         s = struct.pack('!BBB', 2, device, 0)
         s += ";"
@@ -160,13 +168,17 @@ def Fire(device, intensity):
         sendQueue.put(s)
 
 def Sunrise(device, num, percentage):
+
     if device > 2 or device < 0:
         return
+
     if percentage < 0:
         RGB(device, fill(num, [0, 0, 0]))
         return
+
     if percentage > 99:
         RGB(device, fill(num, [255, 255, 255]))
+
     else:
         h =         ( (250.0 +  (85.0 / 100.0) * percentage)        % 256   )
         s = 255.0 - (  (51.0 / 2000.0)         * (percentage * percentage)  )
