@@ -78,56 +78,42 @@ class MqttRulez(threading.Thread):
                 if v == "1":
                     if self._redis.exists("shower"):
                         print "Stop shower"
+                        self._mqclient.publish("bathroom/light/rgb","0,0,0")
                         self._redis.delete("shower")
                         self._tts.createWavFile(self._template.getAcknowledgeEndShower('Ansi'), Room.BATH_ROOM)
                         Mpd().getServerbyName("Bath").stop()
-                        self._mqclient.publish("bathroom/light/rgb","0,0,0")
                     else:
                         print "Start shower"
-                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
+                        self._mqclient.publish("bathroom/light/rgb","255,255,255")
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        s.add("http://inforadio.de/livemp3")
-                        #if datetime.datetime.now().hour > 11:
-                        #    dflist = s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
-                        #    if len(dflist) > 0:
-                        #        s.loadPlaylist(random.choice(dflist))
-                        #    else:
-                        #        for i in s.getPlaylists('Starred'):
-                        #            s.loadPlaylist(i)
-                        #    s.randomize(0)
-                        #else:
-                        #    for i in s.getPlaylists('Starred'):
-                        #        s.loadPlaylist(i)
-                        #    s.randomize(1)
+                        if datetime.datetime.now().hour > 11:
+                            dflist = s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
+                            if len(dflist) > 0:
+                                s.loadPlaylist(random.choice(dflist))
+                                s.randomize(0)
+                            else:
+                                for i in s.getPlaylists('Starred'):
+                                    s.loadPlaylist(i)
+                                s.randomize(1)
+                        else:
+                            s.add("http://inforadio.de/livemp3")
                         s.volume(60)
                         s.play()
-                        self._mqclient.publish("bathroom/light/rgb","255,255,255")
 
-                #Tiffy shower
-                if v == "4":
-                    if self._redis.exists("shower"):
-                        print "Stop shower"
-                        self._redis.delete("shower")
-                        self._tts.createWavFile(self._template.getAcknowledgeEndShower('Phawx'), Room.BATH_ROOM)
-                        self._mqclient.publish("bathroom/light/rgb","0,0,0")
-                    else:
-                        print "Start shower"
-                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
-                        self._redis.setex("shower", 60 * 60 * 2, time.time())
-                        self._mqclient.publish("bathroom/light/rgb","255,255,255")
-
-                #Ansi bath
+                # Ansi bath
                 if v == "2":
                     if self._redis.exists("bath"):
                         print "Stop bath"
+                        self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._redis.delete("bath")
                         self._tts.createWavFile(self._template.getAcknowledgeEndBath('Ansi'), Room.BATH_ROOM)
                         Mpd().getServerbyName("Bath").stop()
-                        self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                     else:
                         print "Start bath"
+                        self._mqclient.publish("bathroom/light/rgb", "255,42,23")
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Ansi'), Room.BATH_ROOM)
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
                         s = Mpd().getServerbyName("Bath")
@@ -137,30 +123,71 @@ class MqttRulez(threading.Thread):
                         s.randomize(1)
                         s.volume(15)
                         s.play()
-                        self._mqclient.publish("bathroom/light/rgb","255,42,23")
+
+                if v == "3":
+                    print "Switching off everyting in the bathroom"
+                    self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                    if self._redis.exists("shower"):
+                        self._redis.delete("shower")
+                    if self._redis.exists("bath"):
+                        self._redis.delete("bath")
+                    Mpd().getServerbyName("Bath").stop()
+
+                #Tiffy shower
+                if v == "4":
+                    if self._redis.exists("shower"):
+                        print "Stop shower"
+                        self._mqclient.publish("bathroom/light/rgb","0,0,0")
+                        self._redis.delete("shower")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndShower('Phawx'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
+                    else:
+                        print "Start shower"
+                        self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
+                        self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        self._mqclient.publish("bathroom/light/rgb","255,255,255")
+                        Mpd().getServerbyName("Bath").stop()
 
                 #Tiffy bath
                 if v == "5":
                     if self._redis.exists("bath"):
                         print "Stop bath"
-                        self._tts.createWavFile(self._template.getAcknowledgeEndBath('Phawx'), Room.BATH_ROOM)
-                        self._redis.delete("bath")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                        self._redis.delete("bath")
+                        self._tts.createWavFile(self._template.getAcknowledgeEndBath('Phawx'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
                     else:
                         print "Start bath"
-                        self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
-                        self._redis.setex("bath", 60 * 60 * 5, time.time())
                         self._mqclient.publish("bathroom/light/rgb","0,25,255")
+                        self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
+                        Mpd().getServerbyName("Bath").stop()
+
+                if v == "6":
+                    print "Switching off everyting in the bathroom"
+                    self._mqclient.publish("bathroom/light/rgb", "0,0,0")
+                    if self._redis.exists("shower"):
+                        self._redis.delete("shower")
+                    if self._redis.exists("bath"):
+                        self._redis.delete("bath")
+                    Mpd().getServerbyName("Bath").stop()
 
             if keys[1] == "motion":
                 print "motion in bath detected"
                 self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
                 if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
-                    self._redis.setex("PlayRadioInBath", 60 * 60, time.time())
+                    self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
                     s = Mpd().getServerbyName("Bath")
                     s.emptyPlaylist()
                     s.add("http://inforadio.de/livemp3")
-                    s.volume(42)
+                    if datetime.datetime.now().hour in (1, 2, 3, 4, 5, 6, 7):
+                        s.volume(1)
+                    if datetime.datetime.now().hour in (8,9):
+                        s.volume(42)
+                    if datetime.datetime.now().hour in (10,11,12,13,14,15,16,17,18,19,20):
+                        s.volume(62)
+                    if datetime.datetime.now().hour in (21, 22, 23, 0):
+                        s.volume(32)
                     s.play()
 
             if keys[1] == "washingmachine":
