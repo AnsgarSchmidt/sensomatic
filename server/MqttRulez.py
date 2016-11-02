@@ -4,6 +4,7 @@ import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 import time
+import Queue
 import random
 import datetime
 from Tts                import Tts
@@ -62,7 +63,9 @@ class MqttRulez(threading.Thread):
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
 
-    def _process(self, k, v):
+    def _process(self):
+
+        k, v = self._workingQueue.get()
 
         keys = k.split("/")
 
@@ -206,11 +209,14 @@ class MqttRulez(threading.Thread):
                 if self._redis.exists("ansiwakeup"):
                     print "Ansiwakeup detected motion"
                     self._redis.delete("ansiwakeup")
-                    Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
-                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
+                    try:
+                       Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
+                    except:
+                        pass
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
                     self._mqclient.publish("corridor/light/main",             "TOGGLE")
                     self._mqclient.publish("ansiroom/light/main",             "TOGGLE")
+                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
 
         if keys[0] == Room.TIFFY_ROOM:
 
@@ -226,11 +232,12 @@ class MqttRulez(threading.Thread):
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-        self._mqclient = mqtt.Client("MqttRulez", clean_session=True)
-        self._redis    = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
-        self._tts      = Tts()
-        self._template = TemplateMatcher()
-        self._info     = InformationFetcher()
+        self._mqclient       = mqtt.Client("MqttRulez", clean_session=True)
+        self._redis          = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
+        self._tts            = Tts()
+        self._template       = TemplateMatcher()
+        self._info           = InformationFetcher()
+        self._workingQueue   = Queue.Queue()
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
@@ -238,7 +245,7 @@ class MqttRulez(threading.Thread):
 
     def _on_message(self, client, userdata, msg):
         #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
-        self._process(msg.topic, msg.payload)
+        self._workingQueue.put((msg.topic, msg.payload))
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect MQTTRulez"
@@ -248,7 +255,9 @@ class MqttRulez(threading.Thread):
         self._mqclient.on_connect    = self._on_connect
         self._mqclient.on_message    = self._on_message
         self._mqclient.on_disconnect = self._on_disconnect
-        self._mqclient.loop_forever()
+        self._mqclient.loop_start()
+        while True:
+            self._process()
 
 if __name__ == '__main__':
     print "Start"
