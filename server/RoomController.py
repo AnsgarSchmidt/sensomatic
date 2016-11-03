@@ -178,6 +178,7 @@ class RoomController(threading.Thread):
                 self._redis.delete("AnsiRoomFallingAsleep")
                 self._mqclient.publish("ansiroom/bedlight/sleep/fire", 0)
                 Chromecast().stop('Chromeansi')
+                self._SoundActive = False
 
         elif self._redis.exists("AnsiRoomReading"):
             print "Reading scenario in Ansiroom"

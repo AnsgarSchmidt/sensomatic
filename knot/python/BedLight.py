@@ -129,7 +129,7 @@ def RGB(device, values):
     s = ''
     s += struct.pack("!BB", 0, device)
     for i in values:
-        s += struct.pack('!{0}B'.format(len(i)), *i)
+        s += struct.pack('!{0}B'.format(len(i)), * i)
     s += ";"
     sendQueue.put(s)
 
