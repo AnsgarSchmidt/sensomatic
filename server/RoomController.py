@@ -25,6 +25,7 @@ class RoomController(threading.Thread):
         self._lastWorkingLight = [0, 0, 0]
         self._lastBedLight     = [0, 0, 0]
         self._SoundActive      = False
+        self._FastCheck        = False
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected Room Controller with result code %s" % rc
@@ -43,9 +44,15 @@ class RoomController(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.loop_start()
         time.sleep(1)
+
         while True:
+            self._FastCheck = True
             self.ansiRoom()
-            time.sleep(30)
+
+            if self._FastCheck:
+                time.sleep(1)
+            else:
+                time.sleep(30)
 
     def _readConfig(self):
         update = False
@@ -144,6 +151,8 @@ class RoomController(threading.Thread):
 
         if self._redis.exists("AnsiRoomFallingAsleep"):
 
+            self._FastCheck = False
+
             diff = (time.time() - float(self._redis.get("AnsiRoomFallingAsleep")))
             max  = 60.0 * int(self._config.get("SLEEP", "DurationInMinutes"))
 
@@ -181,9 +190,11 @@ class RoomController(threading.Thread):
                 self._SoundActive = False
 
         elif self._redis.exists("AnsiRoomReading"):
-            print "Reading scenario in Ansiroom"
+
+            self._FastCheck = False
             self.setBedLight([150, 150, 10])
             val = [255, 0, 0]
+
             if self._lastWorkingLight[0] != val[0] or self._lastWorkingLight[1] != val[1] or self._lastWorkingLight[2] != val[2]:
                 self._mqclient.publish("ansiroom/bedlight/overhead/colour", self.fill(20, [val[0], val[1], val[2]]))
                 self._mqclient.publish("ansiroom/bedlight/center/colour",   self.fill(20, [val[0], val[1], val[2]]))
@@ -193,6 +204,7 @@ class RoomController(threading.Thread):
 
         elif self._info.isSomeoneInTheRoom(Room.ANSI_ROOM):
 
+            self._FastCheck = False
             self.setBedLight([0, 0, 0])
             lightlevel = self._info.getOutsideLightLevel()
 
@@ -234,6 +246,3 @@ if __name__ == "__main__":
     l = RoomController()
     l.start()
     time.sleep(23)
-
-
-#_,_,_,weather,_,_,_ = InformationFetcher().getOutdoor()
