@@ -329,7 +329,7 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
                     self._mqclient.publish("corridor/light/main",             "TOGGLE")
                     self._mqclient.publish("ansiroom/light/main",             "TOGGLE")
-                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.ANSI_ROOM)
+                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.BATH_ROOM)
                     try:
                        Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
                     except:
