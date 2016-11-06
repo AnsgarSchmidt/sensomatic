@@ -300,6 +300,16 @@ class InformationFetcher():
         #print(start, event['summary'])
         return iso8601.parse_date(start), iso8601.parse_date(end)
 
+    def getCheeringLightColours(self):
+        try:
+            j = json.loads(requests.get("http://api.thingspeak.com/channels/1417/field/2/last.json").content)
+            print j
+            value = j['field2'].lstrip('#')
+            lv = len(value)
+            return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3)) , j['entry_id']
+        except:
+            return None, None
+
     def getRadiationAverage(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
         try:
@@ -341,4 +351,5 @@ if __name__ == '__main__':
     #print i.getRadiationForOneStation()
     #print i.getSunPosition()
     #print i.getOutsideLightLevel()
-    print i.getNextWackeuptime()
+    #print i.getNextWackeuptime()
+    print i.getCheeringLightColours()
