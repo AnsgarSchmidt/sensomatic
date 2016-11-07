@@ -230,7 +230,7 @@ class MqttRulez(threading.Thread):
                     self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
                     s = Mpd().getServerbyName("Bath")
                     s.emptyPlaylist()
-                    s.add("http://inforadio.de/livemp3")
+                    s.add("http://dradio-ogg-dwissen-l.akacast.akamaistream.net/7/192/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dwissen_l")
                     if datetime.datetime.now().hour in (1, 2, 3, 4, 5, 6, 7):
                         self._mqclient.publish("bathroom/light/rgb", "255,25,0")
                         s.volume(1)
