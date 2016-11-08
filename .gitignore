@@ -62,5 +62,7 @@ bin/
 include/
 local/
 
-
 server/client_secret.json
+
+# alexa amazon lambda
+alexa/ZipFiles
