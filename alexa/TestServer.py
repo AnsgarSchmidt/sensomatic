@@ -34,9 +34,8 @@ def PostCommand():
     return "Process command request"
 
 if __name__ == '__main__':
-    mqclient = mqtt.Client("alexa", clean_session=True)
+    mqclient = mqtt.Client("alexa", clean_session = True)
     mqclient.connect("cortex", 1883, 60)
     mqclient.loop_start()
-
-    app.run(debug=True, port=2342)
+    app.run(debug = False, port = 2342)
 

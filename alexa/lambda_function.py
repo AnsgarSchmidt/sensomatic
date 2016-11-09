@@ -71,7 +71,7 @@ def handle_light(intent, session):
     if intent.get('slots', {}) and "room" in intent.get('slots', {}):
         room               = intent['slots']['room']['value']
         state              = intent['slots']['state']['value']
-        speech_output      = "Du hast den Raum " + room + " ausgesucht. Ich mache das Licht dort " + state
+        speech_output      = "Du hast den Raum " + room + " ausgesucht. Ich schalte das Licht dort."
         should_end_session = True
 
         passwd = ""
