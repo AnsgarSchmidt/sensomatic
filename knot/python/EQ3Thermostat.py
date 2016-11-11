@@ -263,4 +263,5 @@ class EQ3Thermostat(threading.Thread):
 if __name__ == '__main__':
     h = EQ3Thermostat()
     h.start()
-    time.sleep(256)
+    while True:
+        time.sleep(256)
