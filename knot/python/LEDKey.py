@@ -102,4 +102,5 @@ if __name__ == "__main__":
     l = LEDKey()
     l.start()
     l.setMode("timetemp")
-    time.sleep(10)
+    while True:
+        time.sleep(100)
