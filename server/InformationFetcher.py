@@ -113,6 +113,17 @@ class InformationFetcher():
             update = True
             self._config.set("INFORMATION", "NASAKey", "magic")
 
+        if not self._config.has_option("INFORMATION", "BattleNetKey"):
+            print "No BattleNetKey"
+            update = True
+            self._config.set("INFORMATION", "BattleNetKey", "magic")
+
+        if not self._config.has_option("INFORMATION", "BattleNetSecret"):
+            print "No BattleNetSecret"
+            update = True
+            self._config.set("INFORMATION", "BattleNetSecret", "magic")
+
+
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
@@ -334,6 +345,40 @@ class InformationFetcher():
         except:
             return 0
 
+    def getWoWAchievementPoints(self, realm, character):
+        try:
+            url = "https://us.api.battle.net/wow/character/" + realm + "/" + character + "?fields=stats&locale=en_US&apikey=" + self._config.get("INFORMATION","BattleNetKey")
+            j = json.loads(requests.get(url).content)
+            return j['achievementPoints']
+        except:
+            return 0
+
+    def getWoWHealth(self, realm, character):
+        try:
+            url = "https://us.api.battle.net/wow/character/" + realm + "/" + character + "?fields=stats&locale=en_US&apikey=" + self._config.get("INFORMATION","BattleNetKey")
+            j = json.loads(requests.get(url).content)
+            return j['stats']['health']
+        except:
+            return 0
+
+    def getWoWPower(self, realm, character):
+        try:
+            url = "https://us.api.battle.net/wow/character/" + realm + "/" + character + "?fields=stats&locale=en_US&apikey=" + self._config.get(
+                "INFORMATION", "BattleNetKey")
+            j = json.loads(requests.get(url).content)
+            return j['stats']['power']
+        except:
+            return 0
+
+    def getWoWTotalHonorableKills(self, realm, character):
+        try:
+            url = "https://us.api.battle.net/wow/character/" + realm + "/" + character + "?fields=stats&locale=en_US&apikey=" + self._config.get(
+                "INFORMATION", "BattleNetKey")
+            j = json.loads(requests.get(url).content)
+            return j['totalHonorableKills']
+        except:
+            return 0
+
 if __name__ == '__main__':
 
     print "Testing"
@@ -353,3 +398,7 @@ if __name__ == '__main__':
     #print i.getOutsideLightLevel()
     #print i.getNextWackeuptime()
     print i.getCheeringLightColours()
+    print i.getWoWAchievementPoints("Garrosh", "Phawx")
+    print i.getWoWHealth("Garrosh", "Phawx")
+    print i.getWoWPower("Garrosh", "Phawx")
+    print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
