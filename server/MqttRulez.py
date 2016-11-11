@@ -337,6 +337,7 @@ class MqttRulez(threading.Thread):
                         self._redis.delete("AnsiRoomReading")
 
                     self._redis.setex("AnsiRoomFallingAsleep", 60 * 60 * 5, time.time()) # Will be removed automatically
+                    self._mqclient.publish("ansiroom/settemp", "5")
 
             if keys[1] == "motion":
                 print "motion in ansi room detected"
