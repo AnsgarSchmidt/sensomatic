@@ -85,9 +85,12 @@ class TwitterPusher(threading.Thread):
 
     def _on_message(self, client, userdata, msg):
         #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
-        print "Tweeting %s" % msg.payload
-        results = self._twitter.statuses.update(status=msg.payload)
-        print results['user']['statuses_count']
+        try:
+            print "Tweeting %s" % msg.payload
+            results = self._twitter.statuses.update(status=msg.payload)
+            print results['user']['statuses_count']
+        except:
+            pass
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect TwitterPusher"
