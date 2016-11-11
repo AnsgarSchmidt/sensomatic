@@ -118,6 +118,8 @@ class EQ3Thermostat(threading.Thread):
             try:
                 print "Setting temperature to %f" % float(v)
                 self.set_temperature(float(v))
+                time.sleep(10) # Paranoia mode
+                self.set_temperature(float(v))
             except:
                 print "error:%s" %v
 
