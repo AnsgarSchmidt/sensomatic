@@ -97,7 +97,8 @@ class Tank(threading.Thread):
         self._mqclient.subscribe("livingroom/tank/#")
 
     def _on_message(self, client, userdata, msg):
-        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        pass
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect MQTTRulez"
@@ -150,7 +151,6 @@ class Tank(threading.Thread):
         else:
             self._mqclient.publish("livingroom/tank/bluelight", self._moonpercentage)
             self._mqclient.publish("livingroom/tank/settemp",   self._config.get("TANK", "NightTemp"))
-            print self._moonpercentage
 
     def publishTwitter(self):
         if self._twitterdaystate is not self._daystate:
