@@ -91,15 +91,19 @@ class MqttRulez(threading.Thread):
                         s.stop()
                         s.emptyPlaylist()
                         if datetime.datetime.now().hour > 10:
+                            print "Using Drei ???"
                             dflist = s.getPlaylists('Drei ???|Die drei ???')
                             if len(dflist) > 0:
+                                print "found %d entries" % len(dflist)
                                 s.loadPlaylist(random.choice(dflist))
                                 s.randomize(0)
                             else:
+                                print "Using Starred"
                                 for i in s.getPlaylists('Starred'):
                                     s.loadPlaylist(i)
                                 s.randomize(1)
                         else:
+                            print "Using Inforadio"
                             s.add("http://inforadio.de/livemp3")
                         s.volume(60)
                         s.play()
@@ -232,7 +236,7 @@ class MqttRulez(threading.Thread):
                     s = Mpd().getServerbyName("Bath")
                     s.stop()
                     s.emptyPlaylist()
-                    s.add("http://dradio-ogg-dwissen-l.akacast.akamaistream.net/7/192/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dwissen_l")
+                    s.add("http://inforadio.de/livemp3")
                     if datetime.datetime.now().hour in (1, 2, 3, 4, 5, 6, 7):
                         self._mqclient.publish("bathroom/light/rgb", "255,25,0")
                         s.volume(1)
