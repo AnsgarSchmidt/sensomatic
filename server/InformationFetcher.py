@@ -1,15 +1,16 @@
+import os
 import time
 import json
 import math
-import ephem
 import redis
+import ephem
+import astral
 import urllib2
-import requests
-import ConfigParser
-import httplib2
-import os
 import iso8601
+import requests
+import httplib2
 import datetime
+import ConfigParser
 
 from apiclient         import discovery
 from oauth2client      import client
@@ -145,6 +146,12 @@ class InformationFetcher():
         seconds = int( ((fraction - degrees) * 60.0 - minutes) * 60.0)
         return fraction, degrees, minutes, seconds
 
+    def getMoonLevel(self, cityName = "Bangkok"):
+        a                  = astral.Astral()
+        a.solar_depression = 'civil'
+        city               = a[cityName]
+        return city.moon_phase()
+
     def getSunPosition(self):
         observer = ephem.Observer()
         observer.lon       =       self._config.get("INFORMATION", "Logitude" )
@@ -154,6 +161,18 @@ class InformationFetcher():
         alt = sun.alt * (180 / math.pi)
         az  = sun.az  * (180 / math.pi)
         return alt,az
+
+    def getSunTimes(self, cityName = "Bangkok", offset = 11):
+        a                  = astral.Astral()
+        a.solar_depression = 'civil'
+        city               = a[cityName]
+        sun                = city.sun(date=datetime.date.today(), local=False)
+        dawn               = sun['dawn'].replace(tzinfo=None)    + datetime.timedelta(hours=offset)
+        sunrise            = sun['sunrise'].replace(tzinfo=None) + datetime.timedelta(hours=offset)
+        noon               = sun['noon'].replace(tzinfo=None)    + datetime.timedelta(hours=offset)
+        sunset             = sun['sunset'].replace(tzinfo=None)  + datetime.timedelta(hours=offset)
+        dusk               = sun['dusk'].replace(tzinfo=None)    + datetime.timedelta(hours=offset)
+        return dawn, sunrise, noon, sunset, dusk
 
     def getOutsideLightLevel(self):
         # For now just calculated
@@ -398,7 +417,9 @@ if __name__ == '__main__':
     #print i.getOutsideLightLevel()
     #print i.getNextWackeuptime()
     print i.getCheeringLightColours()
-    print i.getWoWAchievementPoints("Garrosh", "Phawx")
-    print i.getWoWHealth("Garrosh", "Phawx")
-    print i.getWoWPower("Garrosh", "Phawx")
-    print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
+    #print i.getWoWAchievementPoints("Garrosh", "Phawx")
+    #print i.getWoWHealth("Garrosh", "Phawx")
+    #print i.getWoWPower("Garrosh", "Phawx")
+    #print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
+    print i.getSunTimes("Berlin", 6)
+    print i.getMoonLevel("Berlin")
