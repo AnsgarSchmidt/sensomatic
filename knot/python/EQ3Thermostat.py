@@ -111,8 +111,11 @@ class EQ3Thermostat(threading.Thread):
         if "boost" == v:
             print "Boosting"
         else:
-            print "Setting temperature to %s" % v
-            #self.set_temperature(v)
+            try:
+                print "Setting temperature to %f" % float(v)
+                # self.set_temperature(float(v))
+            except:
+                print "error:%s" %v
 
     def _update(self):
         """Reads the current temperature from the thermostat. We need to kill
