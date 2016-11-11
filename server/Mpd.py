@@ -20,7 +20,7 @@ class MpdServer():
             self._mpdServer.ping()
             return True
         except:
-            print "Error connecting MPD"
+            print "Error connecting MPD %s" % self._serverAddress
             return False
 
     def getPlaylists(self, startsWith = None):
@@ -140,16 +140,12 @@ class Mpd():
 
 if __name__ == "__main__":
     print "MPD"
-
-    single = MpdServer("Bath", "bathserver")
-    single2 = MpdServer("Bath", "bathserver", 6600)
-
     m = Mpd()
     print m.getServerNames()
 
-    s = m.getServerbyName('AnsiRoom')
+    s = m.getServerbyName('Bath')
     print len(s.getPlaylists())
-    print s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
+    print s.getPlaylists('Drei ???|Die drei ???')
     print s.getServerVersion()
     print s.getVolume()
     s.volume(20)
