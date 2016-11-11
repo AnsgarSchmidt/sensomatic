@@ -28,3 +28,4 @@ iso8601
 httplib2
 pytz
 pafy
+astral
