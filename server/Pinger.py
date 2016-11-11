@@ -70,12 +70,12 @@ class Pinger(threading.Thread):
         self._mqclient.loop_start()
         while True:
 
-            a = ping.quiet_ping('192.168.1.103', timeout=1, count=1)
+            a = ping.quiet_ping(self._config.get("PINGER","AnsiIP"), timeout=1, count=1)
             if a[0] == 0:
                 print "Ansi ist da"
                 self._mqclient.publish("ansi/wlanPresents","True")
 
-            t = ping.quiet_ping('192.168.1.112', timeout=1, count=1)
+            t = ping.quiet_ping(self._config.get("PINGER","TiffyIP"), timeout=1, count=1)
             if t[0] == 0:
                 print "Tiffy ist da"
                 self._mqclient.publish("tiffy/wlanPresents","True")
