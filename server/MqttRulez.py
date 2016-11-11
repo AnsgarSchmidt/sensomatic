@@ -1,18 +1,18 @@
 import os
-import redis
-import threading
-import ConfigParser
-import paho.mqtt.client as mqtt
 import time
+import redis
 import Queue
 import random
 import datetime
-from Tts                import Tts
-from Room               import Room
-from Template           import TemplateMatcher
-from Mpd                import Mpd
-from Chromecast         import Chromecast
-from InformationFetcher import  InformationFetcher
+import threading
+import ConfigParser
+import paho.mqtt.client   as     mqtt
+from   Tts                import Tts
+from   Room               import Room
+from   Template           import TemplateMatcher
+from   Mpd                import Mpd
+from   Chromecast         import Chromecast
+from   InformationFetcher import InformationFetcher
 
 class MqttRulez(threading.Thread):
 
@@ -326,6 +326,7 @@ class MqttRulez(threading.Thread):
                 if self._redis.exists("ansiwakeup"):
                     print "Ansiwakeup detected motion"
                     self._redis.delete("ansiwakeup")
+                    self._mqclient.publish("ansiroom/settemp",                "boost" )
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
                     self._mqclient.publish("corridor/light/main",             "TOGGLE")
                     self._mqclient.publish("ansiroom/light/main",             "TOGGLE")
