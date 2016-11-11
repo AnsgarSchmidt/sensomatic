@@ -108,12 +108,16 @@ class EQ3Thermostat(threading.Thread):
     def _process(self):
         k, v = self._workingQueue.get()
         keys = k.split("/")
+        
         if "boost" == v:
             print "Boosting"
+            self.activate_boostmode()
+            time.sleep(30)
+            self.deactivate_boostmode()
         else:
             try:
                 print "Setting temperature to %f" % float(v)
-                # self.set_temperature(float(v))
+                self.set_temperature(float(v))
             except:
                 print "error:%s" %v
 
