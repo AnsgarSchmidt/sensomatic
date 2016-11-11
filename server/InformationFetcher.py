@@ -421,5 +421,5 @@ if __name__ == '__main__':
     #print i.getWoWHealth("Garrosh", "Phawx")
     #print i.getWoWPower("Garrosh", "Phawx")
     #print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
-    print i.getSunTimes("Berlin", 6)
-    print i.getMoonLevel("Berlin")
+    print i.getSunTimes("Port Of Spain", 0)
+    print i.getMoonLevel("Port Of Spain")
