@@ -108,11 +108,11 @@ class EQ3Thermostat(threading.Thread):
     def _process(self):
         k, v = self._workingQueue.get()
         keys = k.split("/")
-        
+
         if "boost" == v:
             print "Boosting"
             self.activate_boostmode()
-            time.sleep(30)
+            time.sleep(100)
             self.deactivate_boostmode()
         else:
             try:
@@ -199,7 +199,6 @@ class EQ3Thermostat(threading.Thread):
     def set_temperature(self, temperature):
         """Transform the temperature in celcius to make it readable to the thermostat."""
         temperature = hex(int(2 * float(temperature)))[2:]
-        print temperature
         p = subprocess.Popen(["gatttool", "-b", self._address, "--char-write-req",
                               "-a", "0x0411", "-n", "41{}".format(temperature)],
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
