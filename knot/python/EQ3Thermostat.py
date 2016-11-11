@@ -108,8 +108,8 @@ class EQ3Thermostat(threading.Thread):
     def _process(self):
         k, v = self._workingQueue.get()
         keys = k.split("/")
-        print "Setting temperature to %f" % float(v)
-        self.set_temperature(float(v))
+        print "Setting temperature to %s" % v
+        self.set_temperature(v)
 
     def _update(self):
         """Reads the current temperature from the thermostat. We need to kill
@@ -189,6 +189,7 @@ class EQ3Thermostat(threading.Thread):
     def set_temperature(self, temperature):
         """Transform the temperature in celcius to make it readable to the thermostat."""
         temperature = hex(int(2 * float(temperature)))[2:]
+        print temperature
         p = subprocess.Popen(["gatttool", "-b", self._address, "--char-write-req",
                               "-a", "0x0411", "-n", "41{}".format(temperature)],
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
