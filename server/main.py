@@ -18,6 +18,7 @@ from   AlarmClock         import AlarmClock
 from   HS100              import HS100
 from   Mpd                import Mpd
 from   TwitterPusher      import TwitterPusher
+from   Tank               import Tank
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -173,6 +174,11 @@ if __name__ == '__main__':
     print "Start TwitterPusher"
     twitterpusher = TwitterPusher()
     twitterpusher.start()
+    time.sleep(2)
+
+    print "Start Tank"
+    tank = Tank()
+    tank.start()
     time.sleep(2)
 
     #https://github.com/dbader/schedule
