@@ -164,4 +164,5 @@ if __name__ == '__main__':
     # Take some time
     time.sleep(5)
     print h.get_temperature()
-    #h.set_temperature(20)
+    h.set_temperature(20)
+    print h.get_temperature()
