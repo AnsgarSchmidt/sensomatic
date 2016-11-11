@@ -141,7 +141,7 @@ class EQ3(object):
                               "-a", "0x0411", "-n", "11{}{}".format(temperature, duration_min)],
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    def set_time(self, datetimeobj = datetime.datime.now()):
+    def set_time(self, datetimeobj = datetime.datetime.now()):
         """Takes a datetimeobj (like datetime.datetime.now()) and sets the time
         in the thermostat."""
         command_prefix = "03"
