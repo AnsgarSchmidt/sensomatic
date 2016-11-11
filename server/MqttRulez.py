@@ -88,9 +88,10 @@ class MqttRulez(threading.Thread):
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
                         s = Mpd().getServerbyName("Bath")
+                        s.stop()
                         s.emptyPlaylist()
-                        if datetime.datetime.now().hour > 11:
-                            dflist = s.getPlaylists('Drei ???|Die drei ??? \xe2\x80\x93')
+                        if datetime.datetime.now().hour > 10:
+                            dflist = s.getPlaylists('Drei ???|Die drei ???')
                             if len(dflist) > 0:
                                 s.loadPlaylist(random.choice(dflist))
                                 s.randomize(0)
@@ -229,6 +230,7 @@ class MqttRulez(threading.Thread):
                 if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
                     self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
                     s = Mpd().getServerbyName("Bath")
+                    s.stop()
                     s.emptyPlaylist()
                     s.add("http://dradio-ogg-dwissen-l.akacast.akamaistream.net/7/192/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dwissen_l")
                     if datetime.datetime.now().hour in (1, 2, 3, 4, 5, 6, 7):
