@@ -17,6 +17,7 @@ from   RoomController     import RoomController
 from   AlarmClock         import AlarmClock
 from   HS100              import HS100
 from   Mpd                import Mpd
+from   TwitterPusher      import TwitterPusher
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -127,38 +128,52 @@ if __name__ == '__main__':
     print "Start Persistor"
     persistor = Persistor()
     persistor.start()
+    time.sleep(2)
 
     print "Start MqttRulez"
     rulez = MqttRulez()
     rulez.start()
+    time.sleep(2)
 
     print "Start Pinger"
     pinger = Pinger()
     pinger.start()
+    time.sleep(2)
 
     print "Start Cloudant"
     cloudantdb = Cloudant()
     cloudantdb.start()
+    time.sleep(2)
 
     print "Start Inital State"
     initialState = InitialState()
     initialState.start()
+    time.sleep(2)
 
     print "Start Climate Control"
     climate = Climate()
     climate.start()
+    time.sleep(2)
 
     print "Start Room Control"
     lightControl = RoomController()
     lightControl.start()
+    time.sleep(2)
 
     print "Start Alarmclock"
     alarmclock = AlarmClock()
     alarmclock.start()
+    time.sleep(2)
 
     print "Start Washing Machine"
     washingmachine = HS100("192.168.1.42", "bathroom/washingmachine/")
     washingmachine.start()
+    time.sleep(2)
+
+    print "Start TwitterPusher"
+    twitterpusher = TwitterPusher()
+    twitterpusher.start()
+    time.sleep(2)
 
     #https://github.com/dbader/schedule
 
