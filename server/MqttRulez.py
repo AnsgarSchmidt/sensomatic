@@ -79,13 +79,15 @@ class MqttRulez(threading.Thread):
                     if self._redis.exists("shower"):
                         print "Stop shower"
                         self._mqclient.publish("bathroom/light/rgb","0,0,0")
+                        Mpd().getServerbyName("Bath").stop()
                         self._redis.delete("shower")
                         self._tts.createWavFile(self._template.getAcknowledgeEndShower('Ansi'), Room.BATH_ROOM)
-                        Mpd().getServerbyName("Bath").stop()
                     else:
                         print "Start shower"
                         self._mqclient.publish("bathroom/light/rgb","255,255,255")
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Ansi'), Room.BATH_ROOM)
                         s = Mpd().getServerbyName("Bath")
                         s.stop()
@@ -121,6 +123,8 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("bathroom/light/rgb", "255,42,23")
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Ansi'), Room.BATH_ROOM)
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
                         for i in s.getPlaylists('Starred'):
@@ -152,6 +156,8 @@ class MqttRulez(threading.Thread):
                         print "Start shower"
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Phawx'), Room.BATH_ROOM)
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         self._mqclient.publish("bathroom/light/rgb","255,255,255")
                         Mpd().getServerbyName("Bath").stop()
 
@@ -167,6 +173,8 @@ class MqttRulez(threading.Thread):
                         print "Start bath"
                         self._mqclient.publish("bathroom/light/rgb","0,25,255")
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Phawx'), Room.BATH_ROOM)
                         Mpd().getServerbyName("Bath").stop()
 
@@ -193,6 +201,8 @@ class MqttRulez(threading.Thread):
                         print "Start shower"
                         self._tts.createWavFile(self._template.getAcknowledgeStartShower('Guest'), Room.BATH_ROOM)
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
@@ -214,6 +224,8 @@ class MqttRulez(threading.Thread):
                         print "Start bath"
                         self._mqclient.publish("bathroom/light/rgb", "0,25,255")
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
+                        if self._redis.exists("PlayRadioInBath"):
+                            self._redis.delete("PlayRadioInBath")
                         self._tts.createWavFile(self._template.getAcknowledgeStartBath('Guest'), Room.BATH_ROOM)
                         Mpd().getServerbyName("Bath").stop()
 
