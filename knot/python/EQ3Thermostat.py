@@ -12,7 +12,7 @@ import time
 #disconnect <MAC>
 #exit
 
-class EQ3(object):
+class EQ3Thermostat(object):
 
     def __init__(self, address):
         self.address     = address
