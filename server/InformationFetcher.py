@@ -146,11 +146,22 @@ class InformationFetcher():
         seconds = int( ((fraction - degrees) * 60.0 - minutes) * 60.0)
         return fraction, degrees, minutes, seconds
 
-    def getMoonLevel(self, cityName = "Bangkok"):
+    def getMoonPhase(self, cityName = "Bangkok"):
+        #0 = New moon, 7 = First quarter, 14 = Full moon, 21 = Last quarter
         a                  = astral.Astral()
         a.solar_depression = 'civil'
         city               = a[cityName]
         return city.moon_phase()
+
+    def getMoonPosition(self):
+        observer = ephem.Observer()
+        observer.lon       =       self._config.get("INFORMATION", "Logitude" )
+        observer.lat       =       self._config.get("INFORMATION", "Latitude" )
+        observer.elevation = float(self._config.get("INFORMATION", "Elevation"))
+        moon = ephem.Moon(observer)
+        alt = moon.alt * (180 / math.pi)
+        az  = moon.az  * (180 / math.pi)
+        return alt, az
 
     def getSunPosition(self):
         observer = ephem.Observer()
@@ -422,4 +433,6 @@ if __name__ == '__main__':
     #print i.getWoWPower("Garrosh", "Phawx")
     #print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
     print i.getSunTimes("Port Of Spain", 0)
-    print i.getMoonLevel("Port Of Spain")
+    print i.getMoonPhase("Port Of Spain")
+    print i.getSunPosition()
+    print i.getMoonPosition()
