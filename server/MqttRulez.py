@@ -117,6 +117,7 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._redis.delete("bath")
                         self._tts.createWavFile(self._template.getAcknowledgeEndBath('Ansi'), Room.BATH_ROOM)
+                        self._mqclient.publish("ansiroom/settemp", "boost")
                         Mpd().getServerbyName("Bath").stop()
                     else:
                         print "Start bath"
@@ -338,7 +339,7 @@ class MqttRulez(threading.Thread):
                         self._redis.delete("AnsiRoomReading")
 
                     self._redis.setex("AnsiRoomFallingAsleep", 60 * 60 * 5, time.time()) # Will be removed automatically
-                    self._mqclient.publish("ansiroom/settemp", "5")
+                    self._mqclient.publish("ansiroom/settemp", "10")
 
             if keys[1] == "motion":
                 print "motion in ansi room detected"
