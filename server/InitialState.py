@@ -103,12 +103,16 @@ class InitialState(threading.Thread):
         d = self.getData()
 
         try:
-            self.iss.log("Bathroom Temperature",          float(d['bathroom'] ['temperature']                ['value']))
-            self.iss.log("Bathroom Humidity",             float(d['bathroom'] ['humidity']                   ['value']))
-            self.iss.log("Bathroom Combustible",          float(d['bathroom'] ['combustible']                ['value']))
-            self.iss.log("Bathroom Wachingmachine Power", float(d['bathroom'] ['washingmachine'] ['current'] ['value']))
-            self.iss.log("Ansiroom Temperature",          float(d['ansiroom'] ['temperature']                ['value']))
-            self.iss.log("Ansiroom Co2",                  float(d['ansiroom'] ['co2']                        ['value']))
+            self.iss.log("Bathroom Temperature",          float(d['bathroom']                      ['temperature'] ['value']))
+            self.iss.log("Bathroom Humidity",             float(d['bathroom']                      ['humidity']    ['value']))
+            self.iss.log("Bathroom Combustible",          float(d['bathroom']                      ['combustible'] ['value']))
+            self.iss.log("Bathroom Wachingmachine Power", float(d['bathroom']   ['washingmachine'] ['current']     ['value']))
+            self.iss.log("Ansiroom Temperature",          float(d['ansiroom']                      ['temperature'] ['value']))
+            self.iss.log("Ansiroom Co2",                  float(d['ansiroom']                      ['co2']         ['value']))
+            self.iss.log("Livingroom Temperature",        float(d['livingroom'] ['tank']           ['airtemp']     ['value']))
+            self.iss.log("Livingroom Humidity",           float(d['livingroom'] ['tank']           ['humidity']    ['value']))
+            self.iss.log("Tank Temperature",              float(d['livingroom'] ['tank']           ['watertemp']   ['value']))
+
             self.iss.flush()
         except:
             print "Error reconnect"
@@ -117,7 +121,7 @@ class InitialState(threading.Thread):
     def run(self):
         while True:
             self.pushData()
-            time.sleep(500)
+            time.sleep(60 * 10) # 10 Minutes
 
 if __name__ == "__main__":
     print "InitialState"
