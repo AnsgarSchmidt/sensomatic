@@ -183,12 +183,16 @@ class MqttRulez(threading.Thread):
                 if v == "6":
                     print "Switching off everyting in the bathroom"
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
-                    self._tts.createWavFile(self._template.getAcknowledgeDeactivateBath('Phawx'), Room.BATH_ROOM)
+                    #self._tts.createWavFile(self._template.getAcknowledgeDeactivateBath('Phawx'), Room.BATH_ROOM)
                     if self._redis.exists("shower"):
                         self._redis.delete("shower")
                     if self._redis.exists("bath"):
                         self._redis.delete("bath")
-                    Mpd().getServerbyName("Bath").stop()
+                    b = Mpd().getServerbyName("Bath")
+                    b.stop()
+                    b.emptyPlaylist()
+                    b.add("file:///mnt/tts/naturesounds.ogg")
+                    b.play()
 
                 # Guest shower
                 if v == "7":
