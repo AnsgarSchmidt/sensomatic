@@ -67,10 +67,10 @@ class Tank(threading.Thread):
             update = True
             self._config.set("TANK", "DayTemp", "23")
 
-        if not self._config.has_option("TANK", "FurtilizerInterval"):
-            print "No Tank FurtilizerInterval"
+        if not self._config.has_option("TANK", "FertilizerInterval"):
+            print "No Tank FertilizerInterval"
             update = True
-            self._config.set("TANK", "FurtilizerInterval", "3600")
+            self._config.set("TANK", "FertilizerInterval", "3600")
 
         if update:
             with open(self._configFileName, 'w') as f:
@@ -164,11 +164,11 @@ class Tank(threading.Thread):
                 self._mqclient.publish("twitter", "Switching light scene to night.")
             self._twitterdaystate = self._daystate
 
-    def publishFirtilizer(self):
+    def publishFertilizer(self):
         now = time.time()
         if self._daystate == Tank.DAY:
-            if (now - self._lastfurtilizer) > int(self._config.get("TANK", "FurtilizerInterval")):
-                self._mqclient.publish("livingroom/tank/furtilizer", 1)
+            if (now - self._lastfurtilizer) > int(self._config.get("TANK", "FertilizerInterval")):
+                self._mqclient.publish("livingroom/tank/fertilizer", 1)
                 self._lastfurtilizer = now
 
     def run(self):
@@ -182,7 +182,7 @@ class Tank(threading.Thread):
             self.updateSunAndSun()
             self.publishMQTT()
             self.publishTwitter()
-            self.publishFirtilizer()
+            self.publishFertilizer()
             time.sleep(15)
 
 if __name__ == '__main__':
