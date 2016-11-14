@@ -169,6 +169,7 @@ class Tank(threading.Thread):
         if self._daystate == Tank.DAY:
             if (now - self._lastfurtilizer) > int(self._config.get("TANK", "FertilizerInterval")):
                 self._mqclient.publish("livingroom/tank/fertilizer", 1)
+                self._mqclient.publish("twitter", "Adding some material of natural or synthetic origin (other than liming materials). " + str(now))
                 self._lastfurtilizer = now
 
     def run(self):
@@ -189,6 +190,6 @@ if __name__ == '__main__':
     print "Start"
     t = Tank()
     t.start()
-    time.sleep(230)
+    time.sleep(23)
     print "End"
 
