@@ -41,7 +41,7 @@ class ReceiveThread(threading.Thread):
             if (command == 8):
                 print "GetCombustible"
             if (command == 10):
-                temp = float(element[1].split(";")[0])
+                temp = float(element[1].split(";")[0]) - (26.1-22.7)
                 #print "Temp:%f" % temp
                 self._mqclient.publish("bathroom/temperature", temp)
             if (command == 11):
