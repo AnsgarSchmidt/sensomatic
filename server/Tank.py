@@ -134,7 +134,7 @@ class Tank(threading.Thread):
 
         if (0 < moonPhase < 14):
             moonphasepercentage = 1.0 - ( (14.0 - (moonPhase       ) ) / 14.0)
-        elif (14 < moon < 28):
+        elif (14 < moonPhase < 28):
             moonphasepercentage =       ( (14.0 - (moonPhase - 14.0) ) / 14.0)
 
         if moonElevation > 0:
