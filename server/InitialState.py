@@ -104,14 +104,15 @@ class InitialState(threading.Thread):
 
         try:
             if "bathroom" in d:
-                self.iss.log("Bathroom Temperature",          float(d['bathroom']                      ['temperature'] ['value']))
-                self.iss.log("Bathroom Humidity",             float(d['bathroom']                      ['humidity']    ['value']))
-                self.iss.log("Bathroom Combustible",          float(d['bathroom']                      ['combustible'] ['value']))
+                if "temperature" in d['bathroom']:
+                    self.iss.log("Bathroom Temperature",          float(d['bathroom']                      ['temperature'] ['value']))
+                    self.iss.log("Bathroom Humidity",             float(d['bathroom']                      ['humidity']    ['value']))
+                    self.iss.log("Bathroom Combustible",          float(d['bathroom']                      ['combustible'] ['value']))
                 if "washingmachine" in d['bathroom']:
                     self.iss.log("Bathroom Wachingmachine Power", float(d['bathroom']   ['washingmachine'] ['current']     ['value']))
             if "ansiroom" in d:
-                self.iss.log("Ansiroom Temperature",          float(d['ansiroom']                      ['temperature'] ['value']))
-                self.iss.log("Ansiroom Co2",                  float(d['ansiroom']                      ['co2']         ['value']))
+                self.iss.log("Ansiroom Temperature",              float(d['ansiroom']                      ['temperature'] ['value']))
+                self.iss.log("Ansiroom Co2",                      float(d['ansiroom']                      ['co2']         ['value']))
             if "livingroom" in d:
                 if "tank" in d['livingroom']:
                     self.iss.log("Livingroom Temperature",        float(d['livingroom'] ['tank']           ['airtemp']     ['value']))
