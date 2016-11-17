@@ -103,16 +103,20 @@ class InitialState(threading.Thread):
         d = self.getData()
 
         try:
-            self.iss.log("Bathroom Temperature",          float(d['bathroom']                      ['temperature'] ['value']))
-            self.iss.log("Bathroom Humidity",             float(d['bathroom']                      ['humidity']    ['value']))
-            self.iss.log("Bathroom Combustible",          float(d['bathroom']                      ['combustible'] ['value']))
-            self.iss.log("Bathroom Wachingmachine Power", float(d['bathroom']   ['washingmachine'] ['current']     ['value']))
-            self.iss.log("Ansiroom Temperature",          float(d['ansiroom']                      ['temperature'] ['value']))
-            self.iss.log("Ansiroom Co2",                  float(d['ansiroom']                      ['co2']         ['value']))
-            self.iss.log("Livingroom Temperature",        float(d['livingroom'] ['tank']           ['airtemp']     ['value']))
-            self.iss.log("Livingroom Humidity",           float(d['livingroom'] ['tank']           ['humidity']    ['value']))
-            self.iss.log("Tank Temperature",              float(d['livingroom'] ['tank']           ['watertemp']   ['value']))
-
+            if "bathroom" in d:
+                self.iss.log("Bathroom Temperature",          float(d['bathroom']                      ['temperature'] ['value']))
+                self.iss.log("Bathroom Humidity",             float(d['bathroom']                      ['humidity']    ['value']))
+                self.iss.log("Bathroom Combustible",          float(d['bathroom']                      ['combustible'] ['value']))
+                if "washingmachine" in d['bathroom']:
+                    self.iss.log("Bathroom Wachingmachine Power", float(d['bathroom']   ['washingmachine'] ['current']     ['value']))
+            if "ansiroom" in d:
+                self.iss.log("Ansiroom Temperature",          float(d['ansiroom']                      ['temperature'] ['value']))
+                self.iss.log("Ansiroom Co2",                  float(d['ansiroom']                      ['co2']         ['value']))
+            if "livingroom" in d:
+                if "tank" in d['livingroom']:
+                    self.iss.log("Livingroom Temperature",        float(d['livingroom'] ['tank']           ['airtemp']     ['value']))
+                    self.iss.log("Livingroom Humidity",           float(d['livingroom'] ['tank']           ['humidity']    ['value']))
+                    self.iss.log("Tank Temperature",              float(d['livingroom'] ['tank']           ['watertemp']   ['value']))
             self.iss.flush()
         except:
             print "Trying to connect to InitialState"
