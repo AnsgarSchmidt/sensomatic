@@ -118,6 +118,7 @@ class InitialState(threading.Thread):
                     self.iss.log("Livingroom Temperature",        float(d['livingroom'] ['tank']           ['airtemp']     ['value']))
                     self.iss.log("Livingroom Humidity",           float(d['livingroom'] ['tank']           ['humidity']    ['value']))
                     self.iss.log("Tank Temperature",              float(d['livingroom'] ['tank']           ['watertemp']   ['value']))
+                    self.iss.log("Tank Heater",                   float(d['livingroom'] ['tank']           ['heater']      ['value']))
             self.iss.flush()
         except:
             print "Trying to connect to InitialState"
