@@ -115,7 +115,7 @@ class InitialState(threading.Thread):
 
             self.iss.flush()
         except:
-            print "Error reconnect"
+            print "Trying to connect to InitialState"
             self.connectInitialState()
 
     def run(self):
