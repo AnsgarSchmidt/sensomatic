@@ -15,72 +15,78 @@ class Tank(threading.Thread):
     NIGHT  = 3
 
     def _readConfig(self):
-        update = False
 
-        if not os.path.isdir(self._homeDir):
-            print "Creating homeDir"
-            os.makedirs(self._homeDir)
+        if self._configMTime != os.stat(self._configFileName).st_mtime:
 
-        if os.path.isfile(self._configFileName):
-            self._config.read(self._configFileName)
-        else:
-            print "Config file not found"
-            update = True
+            print "Reread config file for tank"
+            self._configMTime = os.stat(self._configFileName).st_mtime
+            update = False
 
-        if not self._config.has_section('MQTT'):
-            print "Adding MQTT part"
-            update = True
-            self._config.add_section("MQTT")
+            if not os.path.isdir(self._homeDir):
+                print "Creating homeDir"
+                os.makedirs(self._homeDir)
 
-        if not self._config.has_option("MQTT", "ServerAddress"):
-            print "No Server Address"
-            update = True
-            self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
+            if os.path.isfile(self._configFileName):
+                self._config.read(self._configFileName)
+            else:
+                print "Config file not found"
+                update = True
 
-        if not self._config.has_option("MQTT", "ServerPort"):
-            print "No Server Port"
-            update = True
-            self._config.set("MQTT", "ServerPort", "1883")
+            if not self._config.has_section('MQTT'):
+                print "Adding MQTT part"
+                update = True
+                self._config.add_section("MQTT")
 
-        if not self._config.has_section('TANK'):
-            print "Adding Tank part"
-            update = True
-            self._config.add_section("TANK")
+            if not self._config.has_option("MQTT", "ServerAddress"):
+                print "No Server Address"
+                update = True
+                self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
 
-        if not self._config.has_option("TANK", "Location"):
-            print "No Tank Virtual Location"
-            update = True
-            self._config.set("TANK", "Location", "Port Of Spain")
+            if not self._config.has_option("MQTT", "ServerPort"):
+                print "No Server Port"
+                update = True
+                self._config.set("MQTT", "ServerPort", "1883")
 
-        if not self._config.has_option("TANK", "LocationOffset"):
-            print "No Tank Virtual Location Offset"
-            update = True
-            self._config.set("TANK", "LocationOffset", "0")
+            if not self._config.has_section('TANK'):
+                print "Adding Tank part"
+                update = True
+                self._config.add_section("TANK")
 
-        if not self._config.has_option("TANK", "NightTemp"):
-            print "No Tank Night Temperature"
-            update = True
-            self._config.set("TANK", "NightTemp", "21")
+            if not self._config.has_option("TANK", "Location"):
+                print "No Tank Virtual Location"
+                update = True
+                self._config.set("TANK", "Location", "Port Of Spain")
 
-        if not self._config.has_option("TANK", "DayTemp"):
-            print "No Tank Day Temperature"
-            update = True
-            self._config.set("TANK", "DayTemp", "23")
+            if not self._config.has_option("TANK", "LocationOffset"):
+                print "No Tank Virtual Location Offset"
+                update = True
+                self._config.set("TANK", "LocationOffset", "0")
 
-        if not self._config.has_option("TANK", "FertilizerInterval"):
-            print "No Tank FertilizerInterval"
-            update = True
-            self._config.set("TANK", "FertilizerInterval", "3600")
+            if not self._config.has_option("TANK", "NightTemp"):
+                print "No Tank Night Temperature"
+                update = True
+                self._config.set("TANK", "NightTemp", "23")
 
-        if update:
-            with open(self._configFileName, 'w') as f:
-                self._config.write(f)
+            if not self._config.has_option("TANK", "DayTemp"):
+                print "No Tank Day Temperature"
+                update = True
+                self._config.set("TANK", "DayTemp", "24")
+
+            if not self._config.has_option("TANK", "FertilizerInterval"):
+                print "No Tank FertilizerInterval"
+                update = True
+                self._config.set("TANK", "FertilizerInterval", "3600")
+
+            if update:
+                with open(self._configFileName, 'w') as f:
+                    self._config.write(f)
 
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self._homeDir         = os.path.expanduser("~/.sensomatic")
         self._configFileName  = self._homeDir + '/config.ini'
+        self._configMTime     = 0
         self._config          = ConfigParser.ConfigParser()
         self._readConfig()
         self._template        = TemplateMatcher()
@@ -103,7 +109,7 @@ class Tank(threading.Thread):
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect MQTTRulez"
 
-    def updateSunAndSun(self):
+    def updateSunAndMoon(self):
         now                               = datetime.datetime.today()
         dawn, sunrise, noon, sunset, dusk = self._info.getSunTimes(self._config.get("TANK", "Location"), int(self._config.get("TANK", "LocationOffset")))
         moonPhase                         = self._info.getMoonPhase(self._config.get("TANK", "Location"))
@@ -180,7 +186,8 @@ class Tank(threading.Thread):
         self._mqclient.loop_start()
 
         while True:
-            self.updateSunAndSun()
+            self._readConfig()
+            self.updateSunAndMoon()
             self.publishMQTT()
             self.publishTwitter()
             self.publishFertilizer()
