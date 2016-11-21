@@ -5,19 +5,22 @@
 #include <Ticker.h>
 #include <DHT.h>
 
-#define DALLAS_PIN                         2
-#define DHT_PIN                            4
-#define DHT_TYPE                       DHT22
-#define FURTILIZER_PIN                    15
-#define FURTILIZER_TIME                  1.3
-#define HEATER_PIN                        13
-#define HEATER_DELTA                     0.5 
-#define WHITE_LED_PIN                     12
-#define BLUE_LED_PIN                      14
-#define SSID                     "XXX"
-#define SSID_PASSWD   "XXX"
-#define MQTT_SERVER                 "cortex"
-#define MQTT_CLIENT                   "tank"
+#define DALLAS_PIN                            2
+#define DHT_PIN                               4
+#define DHT_TYPE                          DHT22
+#define FURTILIZER_PIN                       15
+#define FURTILIZER_TIME                     1.3
+#define HEATER_PIN                           13
+#define HEATER_DELTA                        0.0 
+#define WHITE_LED_PIN                        12
+#define BLUE_LED_PIN                         14
+#define SSID                              "XXX"
+#define SSID_PASSWD            "XXXXXXXXXXXXXX"
+#define MQTT_SERVER                    "cortex"
+#define MQTT_CLIENT                "TankClient"
+#define TEMP_CAL                          23.80
+#define TEMP_MEASURE                      22.89
+#define TEMP_DELTA    (TEMP_CAL - TEMP_MEASURE)
 
 WiFiClient                        espClient;
 PubSubClient                mqtt(espClient);
@@ -31,7 +34,7 @@ uint64_t                        counter = 0;
 float                         watertemp = 0;
 float                           airtemp = 0;
 float                          humidity = 0;
-uint8_t                        settemp = 23;
+float                        settemp = 23.0;
 bool                       heaterON = false;
 
 void setup() {
@@ -51,7 +54,7 @@ void setup() {
   mqttConnector();
   delay(100);
   dallas.begin();
-  dallas.setWaitForConversion(true);
+  //dallas.setWaitForConversion(true);
   dallas.getAddress(dallasAddress, 0);
   dallas.setResolution(dallasAddress, TEMP_12_BIT);
   dallas.setResolution(TEMP_12_BIT);
@@ -168,13 +171,13 @@ void measure(){
 void msgString(float f){
   uint8_t h = floor(f); 
   uint8_t l = (f - h) * pow(10, 2);
-  snprintf (msg, sizeof(msg), "%d.%d", h, l);  
+  snprintf (msg, sizeof(msg), "%d.%02d", h, l);      
 }
 
 void sendMessage(){  
   msgString(watertemp);
   mqtt.publish("livingroom/tank/watertemp", msg);  
-  msgString(airtemp);
+  msgString(airtemp + TEMP_DELTA);
   mqtt.publish("livingroom/tank/airtemp", msg);  
   msgString(humidity);
   mqtt.publish("livingroom/tank/humidity", msg);      
