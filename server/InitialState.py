@@ -71,7 +71,6 @@ class InitialState(threading.Thread):
         self._redis          = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"),
                                                  port=self._config.get("REDIS", "ServerPort"),
                                                  db=0)
-        self.connectInitialState()
 
     def getData(self):
         data = {'timestamp':time.time()}
@@ -96,7 +95,7 @@ class InitialState(threading.Thread):
             self.iss.log("Uplink", "Initial Connect")
             self.iss.flush()
         except:
-            print "Error sending initial state sleep"
+            print "Error sending initial state. Sleep for one hour."
             time.sleep(60 * 60) # one hour
 
     def pushData(self):
