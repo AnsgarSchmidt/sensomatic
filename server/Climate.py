@@ -143,7 +143,7 @@ class Climate(threading.Thread):
 
     def run(self):
         humwait     = 60
-        tempwait    = 10
+        tempwait    = 100
         humcounter  = humwait
         tempcounter = tempwait
 
