@@ -322,6 +322,9 @@ class MqttRulez(threading.Thread):
                 print "motion in livingroom detected"
                 self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
 
+            if keys[1] == "tank" and keys[2] == "humidity":
+                self._mqclient.publish("livingroom/humidity", v)
+
         if keys[0] == Room.ANSI_ROOM:
 
             if keys[1] == "button":
