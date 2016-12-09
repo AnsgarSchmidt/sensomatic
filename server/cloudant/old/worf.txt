@@ -1,0 +1,18 @@
+{
+  "_id": "_design/worf",
+  "language": "javascript",
+  "views": {
+    "all": {
+      "map": "function(doc) {\n  if(doc.timestamp && doc.livingroom.worf){\n    var center = 0;\n    var east = 0;\n    var west = 0;\n    var moon = 0;\n    var watertemp = 0;\n    var platetemp = 0;\n    var heat = 0;\n\n    if (doc.livingroom.worf.center_cloud) { center = doc.livingroom.worf.center_cloud.value}\n    if (doc.livingroom.worf.east_cloud) { east = doc.livingroom.worf.east_cloud.value}\n    if (doc.livingroom.worf.west_cloud) { west = doc.livingroom.worf.west_cloud.value}\n    if (doc.livingroom.worf.moon && doc.livingroom.worf.moon.value) { moon = doc.livingroom.worf.moon.value}\n    if (doc.livingroom.worf.watertemp) { watertemp = doc.livingroom.worf.watertemp.value}\n    if (doc.livingroom.worf.platetemp) { platetemp = doc.livingroom.worf.platetemp.value}\n    if (doc.livingroom.worf.heatpercent) { heat = doc.livingroom.worf.heatpercent.value}\n    \n    var data = {\"light\":\n                        {\"center\": center,\n                         \"west\": west,\n                         \"east\": east,\n                         \"moon\": moon\n                        },\n                \"heat\": heat,\n                \"temp\": {\"water\": watertemp,\n                         \"plate\": platetemp}\n    };\n    emit(doc.timestamp, data);\n  }  \n}"
+    },
+    "watertemp": {
+      "map": "function(doc) {\n    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\n    if(doc.timestamp && doc.livingroom.worf.watertemp.value){\n      var a = new Date(doc.timestamp * 1000);\n      var year = a.getFullYear();\n      var month = a.getMonth();\n      var date = a.getDate();\n      var hours = a.getHours();\n      var minutes = a.getMinutes();\n      var seconds = a.getSeconds();\n      var formattedTime = year.toString() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds ;\n      emit(formattedTime, doc.livingroom.worf.watertemp.value);\n    }\n}"
+    },
+    "light": {
+      "map": "function(doc) {\n  if(doc.timestamp && \n     doc.livingroom && \n     doc.livingroom.worf && \n     doc.livingroom.worf.center_cloud && \n     doc.livingroom.worf.west_cloud && \n     doc.livingroom.worf.east_cloud){\n        var light = { \"center\":doc.livingroom.worf.center_cloud.value,\n                      \"west\":doc.livingroom.worf.west_cloud.value,\n                      \"east\":doc.livingroom.worf.east_cloud.value\n                    };\n        emit(doc.timestamp, light);\n  }  \n}"
+    }
+  },
+  "shows": {
+    "recipe": "function(doc, req) { return '<h1>' + doc.livingroom.worf.watertemp. + '</h1>' }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "_id": "_design/tank",
+  "views": {
+    "all": {
+      "map": "function(doc) {\n  if(doc.timestamp && doc.livingroom.tank){\n\n    var sun       = 0;\n    var moon      = 0;\n    var heater    = 0;\n    var watertemp = 0;\n    var settemp   = 0;\n    var airtemp   = 0;\n    var humidity  = 0;\n\n    if (doc.livingroom.tank.whitelight) { sun       = doc.livingroom.tank.whitelight.value }\n    if (doc.livingroom.tank.bluelight)  { moon      = doc.livingroom.tank.bluelight.value  }\n    if (doc.livingroom.tank.heater)     { heater    = doc.livingroom.tank.heater.value     }\n    if (doc.livingroom.tank.watertemp)  { watertemp = doc.livingroom.tank.watertemp.value  }\n    if (doc.livingroom.tank.settemp)    { settemp   = doc.livingroom.tank.settemp.value    }    \n    if (doc.livingroom.tank.airtemp)    { airtemp   = doc.livingroom.tank.airtemp.value    }\n    if (doc.livingroom.tank.humidity)   { humidity  = doc.livingroom.tank.humidity.value   }\n    \n    var data = {\"sun\":       sun,\n                \"moon\":      moon,\n                \"heater\":    heater,\n                \"watertemp\": watertemp,\n                \"settemp\":   settemp,\n                \"airtemp\":   airtemp,\n                \"humidity\":  humidity\n    };\n    emit(doc.timestamp, data);\n  }  \n}"
+    }
+  },
+  "language": "javascript"
+}

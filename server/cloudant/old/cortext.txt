@@ -1,0 +1,9 @@
+{
+  "_id": "_design/cortex",
+  "views": {
+    "internet": {
+      "map": "function(doc) {\n   if(doc.timestamp && doc.cortex.wan.rx.value){\n     \n       var inet = { \"wanRX\":doc.cortex.wan.rx.value,\n                    \"wanTX\":doc.cortex.wan.tx.value,\n                    \"phawxansiRX\":doc.cortex.phawxansi.rx.value,\n                    \"phawxansiTX\":doc.cortex.phawxansi.tx.value,\n                    \"cortexRX\":doc.cortex.cortex.rx.value,\n                    \"cortexTX\":doc.cortex.cortex.tx.value,\n              };\n     emit(doc.timestamp, inet);\n    }\n}"
+    }
+  },
+  "language": "javascript"
+}
