@@ -1,0 +1,9 @@
+{
+  "_id": "_design/bathroom",
+  "views": {
+    "humidity": {
+      "map": "function(doc) {\n   if(doc.timestamp && doc.bathroom.humidity.value){\n     emit(doc.timestamp, doc.bathroom.humidity.value);\n    }\n}"
+    }
+  },
+  "language": "javascript"
+}

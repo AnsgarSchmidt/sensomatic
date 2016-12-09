@@ -1,0 +1,18 @@
+{
+  "_id": "_design/ansiroom",
+  "views": {
+    "co2": {
+      "map": "function(doc) {\n if(doc.timestamp && doc.ansiroom.co2.value){\n     emit(doc.timestamp, doc.ansiroom.co2.value);\n    }\n}"
+    },
+    "temp": {
+      "map": "function(doc) {\n if(doc.timestamp && doc.ansiroom.temperature.value){\n     emit(doc.timestamp, doc.ansiroom.temperature.value);\n    }\n}"
+    },
+    "bedplant": {
+      "map": "function(doc) {\n if(doc.timestamp && doc.ansiroom.bed.plant.value){\n     emit(doc.timestamp, doc.ansiroom.bed.plant.value);\n    }\n}"
+    },
+    "air": {
+      "map": "function(doc) {\n if(doc.timestamp && doc.ansiroom && (doc.ansiroom.co2 || doc.ansiroom.temperature)){\n\n  \tvar co2         = 0\n  \tvar temperature = 0\n\n    if (doc.ansiroom.co2)         { co2         = doc.ansiroom.co2.value}\n    if (doc.ansiroom.temperature) { temperature = doc.ansiroom.temperature.value}\n    \n    var data = {\"co2\": co2,\n                \"temperature\": temperature\n               }\n    emit(doc.timestamp, data)\n  }  \n}"
+    }
+  },
+  "language": "javascript"
+}
