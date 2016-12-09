@@ -1,0 +1,13 @@
+applications:
+- path: .
+  memory: 64M
+  instances: 1
+  domain: mybluemix.net
+  name: uss-horizon
+  host: uss-horizon
+  disk_quota: 1024M
+  buildpack: python_buildpack
+  services:
+  - Conversation
+  - Cloudant USS Horizon
+  - Tone Analyzer
