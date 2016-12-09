@@ -35,10 +35,10 @@ def get_welcome_response():
     session_attributes = {}
     card_title         = "Welcome"
     speech_output      = """
-                         Willkommen auf der <say-as interpret-as=\"spell-out\">USS</say-as> Horizon.
+                         Willkommen auf der USS Horizon.
                          Ich kann zum Beispiel das Licht im wohnzimmer, kueche, esstisch, flur, ansiraum, tiffyraum, badezimmer
                          an und ausschalten."""
-    reprompt_text      = "Ja genau. Herzlich willkommen auf der <say-as interpret-as=\"spell-out\">USS</say-as> Horizon"
+    reprompt_text      = "Ja genau. Herzlich willkommen auf der USS Horizon"
     should_end_session = True
 
     return build_response(session_attributes, build_speechlet_response(
@@ -80,8 +80,10 @@ def handle_light(intent, session):
         command   = "light"
         url       = "http://aws.23-5.eu:2342/api/v1.0/command"
         data      = {"command" : command, "value" : state, "room": room, "pass": passwd}
-        print(requests.post(url, data).content)
-
+        try:
+            print(requests.post(url, data).content)
+        except:
+            speech_output = "Ich habe Probleme die USS Horizon zu erreichen. Vermutlich interstellare Stoerungen."
     else:
         speech_output      = "Es wurde kein Raum ausgesucht."
         should_end_session = True
