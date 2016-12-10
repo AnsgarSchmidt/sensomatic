@@ -5,18 +5,20 @@
 #include <Ticker.h>
 #include <DHT.h>
 
-#define DALLAS_PIN                            2
-#define DHT_PIN                               4
+#define USER_PIN                             D0
+#define NIX_PIN                              D1
+#define DHT_PIN                              D2
+#define WATER_LEVEL_PIN                      D3
+#define DALLAS_PIN                           D4
+#define BLUE_LED_PIN                         D5
+#define WHITE_LED_PIN                        D6
+#define HEATER_PIN                           D7
+#define FURTILIZER_PIN                       D8
 #define DHT_TYPE                          DHT22
-#define FURTILIZER_PIN                       15
 #define FURTILIZER_TIME                     1.3
-#define HEATER_PIN                           13
 #define HEATER_DELTA                        0.0 
-#define WHITE_LED_PIN                        12
-#define BLUE_LED_PIN                         14
-#define WATER_LEVEL_PIN                       5
-#define SSID                        "XXX"
-#define SSID_PASSWD      "XXX"
+#define SSID                        "xxx"
+#define SSID_PASSWD      "xxx"
 #define MQTT_SERVER                    "cortex"
 #define MQTT_CLIENT                "TankClient"
 #define TEMP_CAL                          23.00
@@ -41,15 +43,16 @@ bool                           waterOK = false;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(     LED_BUILTIN,     OUTPUT      );
-  digitalWrite(LED_BUILTIN,     FALSE       );
-  pinMode(     FURTILIZER_PIN,  OUTPUT      );
-  digitalWrite(FURTILIZER_PIN,  TRUE        );
-  pinMode(     HEATER_PIN,      OUTPUT      );
-  digitalWrite(HEATER_PIN,      FALSE       );
-  analogWrite( WHITE_LED_PIN,   PWMRANGE    );
-  analogWrite( BLUE_LED_PIN,    PWMRANGE    );
-  pinMode(     WATER_LEVEL_PIN, INPUT       ); //Pullup in hardware
+  analogWriteFreq(100);
+  pinMode(     LED_BUILTIN,     OUTPUT   );
+  digitalWrite(LED_BUILTIN,     FALSE    );
+  pinMode(     FURTILIZER_PIN,  OUTPUT   );
+  digitalWrite(FURTILIZER_PIN,  TRUE     );
+  pinMode(     HEATER_PIN,      OUTPUT   );
+  digitalWrite(HEATER_PIN,      FALSE    );
+  analogWrite( WHITE_LED_PIN,   PWMRANGE );
+  analogWrite( BLUE_LED_PIN,    PWMRANGE );
+  pinMode(     WATER_LEVEL_PIN, INPUT    );
   setup_wifi();
   delay(100);
   mqtt.setServer(MQTT_SERVER, 1883);
@@ -166,7 +169,6 @@ void mqttConnector() {
 
 void measure(){
   waterOK = digitalRead(WATER_LEVEL_PIN);
-  
   dallas.requestTemperatures();
   
   float t = 0;
