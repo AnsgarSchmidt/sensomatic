@@ -14,39 +14,42 @@
 #define HEATER_DELTA                        0.0 
 #define WHITE_LED_PIN                        12
 #define BLUE_LED_PIN                         14
-#define SSID                              "XXX"
-#define SSID_PASSWD            "XXXXXXXXXXXXXX"
+#define WATER_LEVEL_PIN                       5
+#define SSID                        "XXX"
+#define SSID_PASSWD      "XXX"
 #define MQTT_SERVER                    "cortex"
 #define MQTT_CLIENT                "TankClient"
-#define TEMP_CAL                          23.80
-#define TEMP_MEASURE                      22.89
+#define TEMP_CAL                          23.00
+#define TEMP_MEASURE                      23.00
 #define TEMP_DELTA    (TEMP_CAL - TEMP_MEASURE)
 
-WiFiClient                        espClient;
-PubSubClient                mqtt(espClient);
-OneWire                 oneWire(DALLAS_PIN);
-DallasTemperature          dallas(&oneWire);
-DeviceAddress                 dallasAddress;
-DHT                  dht(DHT_PIN, DHT_TYPE);
-Ticker                     furtilizerTicker;
-char                               msg[500];
-uint64_t                        counter = 0;
-float                         watertemp = 0;
-float                           airtemp = 0;
-float                          humidity = 0;
-float                        settemp = 23.0;
-bool                       heaterON = false;
+WiFiClient                           espClient;
+PubSubClient                   mqtt(espClient);
+OneWire                    oneWire(DALLAS_PIN);
+DallasTemperature             dallas(&oneWire);
+DeviceAddress                    dallasAddress;
+DHT                     dht(DHT_PIN, DHT_TYPE);
+Ticker                        furtilizerTicker;
+char                                  msg[500];
+uint64_t                           counter = 0;
+float                          watertemp = 0.0;
+float                            airtemp = 0.0;
+float                           humidity = 0.0;
+float                           settemp = 23.0;
+bool                          heaterON = false;
+bool                           waterOK = false;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(     LED_BUILTIN,    OUTPUT  );
-  digitalWrite(LED_BUILTIN,    FALSE   );
-  pinMode(     FURTILIZER_PIN, OUTPUT  );
-  digitalWrite(FURTILIZER_PIN, TRUE    );
-  pinMode(     HEATER_PIN,     OUTPUT  );
-  digitalWrite(HEATER_PIN,     FALSE   );
-  analogWrite( WHITE_LED_PIN,  PWMRANGE);
-  analogWrite( BLUE_LED_PIN,   PWMRANGE);
+  pinMode(     LED_BUILTIN,     OUTPUT      );
+  digitalWrite(LED_BUILTIN,     FALSE       );
+  pinMode(     FURTILIZER_PIN,  OUTPUT      );
+  digitalWrite(FURTILIZER_PIN,  TRUE        );
+  pinMode(     HEATER_PIN,      OUTPUT      );
+  digitalWrite(HEATER_PIN,      FALSE       );
+  analogWrite( WHITE_LED_PIN,   PWMRANGE    );
+  analogWrite( BLUE_LED_PIN,    PWMRANGE    );
+  pinMode(     WATER_LEVEL_PIN, INPUT       ); //Pullup in hardware
   setup_wifi();
   delay(100);
   mqtt.setServer(MQTT_SERVER, 1883);
@@ -54,7 +57,7 @@ void setup() {
   mqttConnector();
   delay(100);
   dallas.begin();
-  //dallas.setWaitForConversion(true);
+  dallas.setWaitForConversion(true);
   dallas.getAddress(dallasAddress, 0);
   dallas.setResolution(dallasAddress, TEMP_12_BIT);
   dallas.setResolution(TEMP_12_BIT);
@@ -162,10 +165,32 @@ void mqttConnector() {
 }
 
 void measure(){
+  waterOK = digitalRead(WATER_LEVEL_PIN);
+  
   dallas.requestTemperatures();
-  watertemp = dallas.getTempC(dallasAddress);
-  airtemp   = dht.readTemperature();
-  humidity  = dht.readHumidity();
+  
+  float t = 0;
+  
+  t = dallas.getTempC(dallasAddress);
+  if(t <= 40 && t >= 10){
+    watertemp = t;  
+  }else{
+    mqtt.publish("livingroom/tank/error", "watertemp");        
+  }
+
+  t = dht.readTemperature();
+  if(t <= 50 && t >= 5){
+    airtemp = t;
+  }else{
+    mqtt.publish("livingroom/tank/error", "airtemp");            
+  }
+
+  t = dht.readHumidity();
+  if(t <= 100 && t >= 10){
+    humidity = t;
+  }else{
+    mqtt.publish("livingroom/tank/error", "humidity");                
+  }
 }
 
 void msgString(float f){
@@ -175,6 +200,8 @@ void msgString(float f){
 }
 
 void sendMessage(){  
+  snprintf(msg, sizeof(msg), "%ld", millis());
+  mqtt.publish("livingroom/tank/uptime", msg);
   msgString(watertemp);
   mqtt.publish("livingroom/tank/watertemp", msg);  
   msgString(airtemp + TEMP_DELTA);
@@ -182,7 +209,9 @@ void sendMessage(){
   msgString(humidity);
   mqtt.publish("livingroom/tank/humidity", msg);      
   msgString(float(heaterON));
-  mqtt.publish("livingroom/tank/heater", msg);      
+  mqtt.publish("livingroom/tank/heater", msg);
+  msgString(float(waterOK));
+  mqtt.publish("livingroom/tank/waterlevel", msg);        
 }
 
 void heaterCheck(){
