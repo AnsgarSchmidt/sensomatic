@@ -72,23 +72,47 @@ class TwitterPusher(threading.Thread):
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
         self._mqclient       = mqtt.Client("TwitterPusher", clean_session=True)
-        self._twitter        = Twitter(auth=OAuth(self._config.get("TWITTER", "accesstoken"),
-                                                  self._config.get("TWITTER", "accesstokensecret"),
-                                                  self._config.get("TWITTER", "consumerkey"),
-                                                  self._config.get("TWITTER", "consumersecret")
-                                                 )
-                                      )
+        self._oauth          = OAuth(self._config.get("TWITTER", "accesstoken"),
+                                     self._config.get("TWITTER", "accesstokensecret"),
+                                     self._config.get("TWITTER", "consumerkey"),
+                                     self._config.get("TWITTER", "consumersecret")
+                                    )
+        self._twitter        = Twitter(                             auth=self._oauth)
+        self._twittermedia   = Twitter(domain='upload.twitter.com', auth=self._oauth)
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected TwitterPusher with result code %s" % rc
-        self._mqclient.subscribe("twitter")
+        self._mqclient.subscribe("twitter/#")
+
+    def _send_picture(self, pictureFileName, text):
+        try:
+            with open(pictureFileName, "rb") as imagefile:
+                imagedata = imagefile.read()
+            id_img1 = self._twittermedia.media.upload(media=imagedata)["media_id_string"]
+            results = self._twitter.statuses.update(status=text, media_ids=id_img1)
+            print results['user']['statuses_count']
+        except:
+            pass
+
+    def _send_text(self, text):
+        try:
+            print "Tweeting %s" % text
+            results = self._twitter.statuses.update(status=text)
+            print results['user']['statuses_count']
+        except:
+            pass
 
     def _on_message(self, client, userdata, msg):
-        #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         try:
-            print "Tweeting %s" % msg.payload
-            results = self._twitter.statuses.update(status=msg.payload)
-            print results['user']['statuses_count']
+            keys = msg.topic.split("/")
+            print keys
+            if keys[1] == "text":
+                print "TEXT"
+                self._send_text(msg.payload)
+            if keys[1] == "picture":
+                print "PICTURE"
+                self._send_picture(keys[2], msg.payload)
         except:
             pass
 

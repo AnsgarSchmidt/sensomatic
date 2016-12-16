@@ -161,13 +161,13 @@ class Tank(threading.Thread):
     def publishTwitter(self):
         if self._twitterdaystate is not self._daystate:
             if self._daystate == Tank.DAWN:
-                self._mqclient.publish("twitter", "Switching light scene to dawn and rise the light level.")
+                self._mqclient.publish("twitter/text", "Switching light scene to dawn and rise the light level.")
             if self._daystate == Tank.DAY:
-                self._mqclient.publish("twitter", "Switching light scene to day.")
+                self._mqclient.publish("twitter/text", "Switching light scene to day.")
             if self._daystate == Tank.SUNSET:
-                self._mqclient.publish("twitter", "Switching light scene to sunset and lover the light level.")
+                self._mqclient.publish("twitter/text", "Switching light scene to sunset and lover the light level.")
             if self._daystate == Tank.NIGHT:
-                self._mqclient.publish("twitter", "Switching light scene to night.")
+                self._mqclient.publish("twitter/text", "Switching light scene to night.")
             self._twitterdaystate = self._daystate
 
     def publishFertilizer(self):
@@ -175,7 +175,7 @@ class Tank(threading.Thread):
         if self._daystate == Tank.DAY:
             if (now - self._lastfurtilizer) > int(self._config.get("TANK", "FertilizerInterval")):
                 self._mqclient.publish("livingroom/tank/fertilizer", 1)
-                self._mqclient.publish("twitter", "Adding some material of natural or synthetic origin (other than liming materials). " + str(now))
+                self._mqclient.publish("twitter/text", "Adding some material of natural or synthetic origin (other than liming materials). " + str(now))
                 self._lastfurtilizer = now
 
     def run(self):
