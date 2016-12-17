@@ -77,6 +77,11 @@ class Tank(threading.Thread):
                 update = True
                 self._config.set("TANK", "FertilizerInterval", "3600")
 
+            if not self._config.has_option("TANK", "GraphInterval"):
+                print "No Tank GraphInterval"
+                update = True
+                self._config.set("TANK", "GraphInterval", "9000")
+
             if update:
                 with open(self._configFileName, 'w') as f:
                     self._config.write(f)
