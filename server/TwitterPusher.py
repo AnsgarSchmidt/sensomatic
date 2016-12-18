@@ -9,6 +9,7 @@ class TwitterPusher(threading.Thread):
 
     def _readConfig(self):
         update = False
+        stop = False
 
         if not os.path.isdir(self._homeDir):
             print "Creating homeDir"
@@ -60,9 +61,29 @@ class TwitterPusher(threading.Thread):
             update = True
             self._config.set("TWITTER", "AccessTokenSecret", "<AccessTokenSecret>")
 
+        if not self._config.has_section('CHARTS'):
+            print "Adding Charts part"
+            update = True
+            self._config.add_section("CHARTS")
+
+        if not self._config.has_option("CHARTS", "ChartsDir"):
+            print "No ChartsDir name"
+            update = True
+            stop = True
+            self._config.set("CHARTS", "ChartsDir", "<Chartsdir>")
+
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
+
+        if stop:
+            print "Please check config file"
+            sys.exit(0)
+
+    def _checkChartFolder(self):
+        if not os.path.isdir(self._chartDir):
+            print "Creating chartsDir"
+            os.makedirs(self._chartDir)
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -79,6 +100,8 @@ class TwitterPusher(threading.Thread):
                                     )
         self._twitter        = Twitter(                             auth=self._oauth)
         self._twittermedia   = Twitter(domain='upload.twitter.com', auth=self._oauth)
+        self._chartDir        = self._config.get("CHARTS", "ChartsDir")
+        self._checkChartFolder()
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected TwitterPusher with result code %s" % rc
@@ -86,7 +109,7 @@ class TwitterPusher(threading.Thread):
 
     def _send_picture(self, pictureFileName, text):
         try:
-            with open(pictureFileName, "rb") as imagefile:
+            with open(self._chartDir + "/" + pictureFileName, "rb") as imagefile:
                 imagedata = imagefile.read()
             id_img1 = self._twittermedia.media.upload(media=imagedata)["media_id_string"]
             results = self._twitter.statuses.update(status=text, media_ids=id_img1)
