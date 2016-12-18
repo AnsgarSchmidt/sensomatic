@@ -7,6 +7,14 @@ import paho.mqtt.client   as     mqtt
 from   InformationFetcher import InformationFetcher
 from   Template           import TemplateMatcher
 
+SECOND =   1
+MINUTE =  60 * SECOND
+HOUR   =  60 * MINUTE
+DAY    =  24 * HOUR
+WEEK   =   7 * DAY
+MONTH  =  31 * DAY
+YEAR   = 365 * DAY
+
 class Tank(threading.Thread):
 
     DAWN   = 0
@@ -21,6 +29,7 @@ class Tank(threading.Thread):
             print "Reread config file for tank"
             self._configMTime = os.stat(self._configFileName).st_mtime
             update = False
+            stop   = False
 
             if not os.path.isdir(self._homeDir):
                 print "Creating homeDir"
@@ -82,9 +91,29 @@ class Tank(threading.Thread):
                 update = True
                 self._config.set("TANK", "GraphInterval", "9000")
 
+            if not self._config.has_section('CHARTS'):
+                print "Adding Charts part"
+                update = True
+                self._config.add_section("CHARTS")
+
+            if not self._config.has_option("CHARTS", "ChartsDir"):
+                print "No ChartsDir name"
+                update = True
+                stop = True
+                self._config.set("CHARTS", "ChartsDir", "<Chartsdir>")
+
+            if not self._config.has_option("CHARTS", "DPI"):
+                print "No DPI"
+                update = True
+                self._config.set("CHARTS", "DPI", "1000")
+
             if update:
                 with open(self._configFileName, 'w') as f:
                     self._config.write(f)
+
+            if stop:
+                print "Please check config file"
+                sys.exit(0)
 
     def __init__(self):
         threading.Thread.__init__(self)
