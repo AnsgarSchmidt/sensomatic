@@ -14,8 +14,6 @@ couchapp push ansiroom https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix:24b4
 couchapp push livingroom https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix:24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925@3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com:443/usshorizon
 couchapp push bathroom https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix:24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925@3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com:443/usshorizon
 
-
-
 #rev=`curl -X GET ${URL}_design/ansiroom 2>/dev/null | python -c "import sys, json; print json.load(sys.stdin)['_rev']"`
 #curl -X PUT "${URL}_design/ansiroom?rev=${rev}" --data-binary @ansiroom.txt 2>/dev/null
 
