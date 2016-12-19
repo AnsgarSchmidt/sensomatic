@@ -112,8 +112,9 @@ class TwitterPusher(threading.Thread):
         try:
             with open(self._chartDir + "/" + pictureFileName, "rb") as imagefile:
                 imagedata = imagefile.read()
-            id_img1 = self._twittermedia.media.upload(media=imagedata)["media_id_string"]
-            results = self._twitter.statuses.update(status=text, media_ids=id_img1)
+            uploadresult = self._twittermedia.media.upload(media=imagedata)["media_id_string"]
+            print uploadresult
+            results      = self._twitter.statuses.update(status=text, media_ids=uploadresult["media_id_string"])
             print results['user']['statuses_count']
         except:
             pass
@@ -127,10 +128,9 @@ class TwitterPusher(threading.Thread):
             pass
 
     def _on_message(self, client, userdata, msg):
-        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         try:
             keys = msg.topic.split("/")
-            print keys
             if keys[1] == "text":
                 print "TEXT"
                 self._send_text(msg.payload)
