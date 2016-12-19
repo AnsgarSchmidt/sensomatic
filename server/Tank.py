@@ -1,11 +1,16 @@
 import os
 import time
+import json
+import pytz
 import datetime
+import requests
 import threading
 import ConfigParser
+import matplotlib.pyplot  as     plt
 import paho.mqtt.client   as     mqtt
 from   InformationFetcher import InformationFetcher
 from   Template           import TemplateMatcher
+from   requests.auth      import HTTPBasicAuth
 
 SECOND =   1
 MINUTE =  60 * SECOND
@@ -86,15 +91,15 @@ class Tank(threading.Thread):
                 update = True
                 self._config.set("TANK", "FertilizerInterval", "3600")
 
-            if not self._config.has_option("TANK", "GraphInterval"):
-                print "No Tank GraphInterval"
-                update = True
-                self._config.set("TANK", "GraphInterval", "9000")
-
             if not self._config.has_section('CHARTS'):
                 print "Adding Charts part"
                 update = True
                 self._config.add_section("CHARTS")
+
+            if not self._config.has_option("CHARTS", "GraphInterval"):
+                print "No Tank GraphInterval"
+                update = True
+                self._config.set("CHARTS", "GraphInterval", "9000")
 
             if not self._config.has_option("CHARTS", "ChartsDir"):
                 print "No ChartsDir name"
@@ -105,7 +110,7 @@ class Tank(threading.Thread):
             if not self._config.has_option("CHARTS", "DPI"):
                 print "No DPI"
                 update = True
-                self._config.set("CHARTS", "DPI", "1000")
+                self._config.set("CHARTS", "DPI", "1024")
 
             if update:
                 with open(self._configFileName, 'w') as f:
@@ -114,6 +119,11 @@ class Tank(threading.Thread):
             if stop:
                 print "Please check config file"
                 sys.exit(0)
+
+    def _checkChartFolder(self):
+        if not os.path.isdir(self._chartDir):
+            print "Creating chartsDir"
+            os.makedirs(self._chartDir)
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -129,8 +139,13 @@ class Tank(threading.Thread):
         self._daystate        = Tank.NIGHT
         self._twitterdaystate = Tank.NIGHT
         self._lastfurtilizer  = 0
+        self._lastcharts      = 0
         self._sunpercentage   = 0
         self._moonpercentage  = 0
+        self._chartDir        = self._config.get("CHARTS", "ChartsDir")
+        self._chartDPI        = int(self._config.get("CHARTS", "DPI"))
+        self._checkChartFolder()
+        plt.rcdefaults()
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected Tank with result code %s" % rc
@@ -212,6 +227,96 @@ class Tank(threading.Thread):
                 self._mqclient.publish("twitter/text", "Adding some material of natural or synthetic origin (other than liming materials). " + str(now))
                 self._lastfurtilizer = now
 
+    def getCloudantData(self, start, end):
+        auth = HTTPBasicAuth(self._config.get("CLOUDANT", "username"),
+                             self._config.get("CLOUDANT", "password"))
+        url = "%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (self._config.get("CLOUDANT", "serveraddress"), start, end)
+        j = json.loads(requests.get(url, auth=auth).content)
+        return j['rows']
+
+    def getAll(self):
+        return self.getCloudantData(time.time() - 10 * YEAR, time.time())
+
+    def get1Year(self):
+        return self.getCloudantData(time.time() - YEAR, time.time())
+
+    def get1Month(self):
+        return self.getCloudantData(time.time() - MONTH, time.time())
+
+    def get1Week(self):
+        return self.getCloudantData(time.time() - WEEK, time.time())
+
+    def get1Day(self):
+        return self.getCloudantData(time.time() -  DAY, time.time())
+
+    def get1Hour(self):
+        return self.getCloudantData(time.time() -  HOUR, time.time())
+
+    def calculateCharts(self):
+        data = self.get1Week()
+        print "Data fetched"
+        tz              = pytz.timezone('Europe/Berlin')
+        timekey         = [None] * len(data)
+        timeval         = [None] * len(data)
+        watertemp       = [None] * len(data)
+        watermax        = 0.0
+        watermin        = 99.0
+        heater          = [False] * len(data)
+        heatergraph     = [23.8] * len(data)
+        waterlevelgraph = [23.6] * len(data)
+        percentage      = [None] * len(data)
+        filtersize      = 8000
+
+        for i in range(len(data)):
+            timekey[i]   = datetime.datetime.fromtimestamp(data[i]['key'], tz=tz)
+            timeval[i]   = data[i]['key']
+            watertemp[i] = data[i]['value']['watertemp']
+            watermax     = max(watermax, float(data[i]['value']['watertemp']))
+            watermin     = min(watermin, float(data[i]['value']['watertemp']))
+            if float(data[i]['value']['heater']) == 1.0:
+                heater[i]      = True
+                heatergraph[i] = 23.9
+            if float(data[i]['value']['waterlevel']) == 1.0:
+                waterlevelgraph[i] = 23.7
+
+        for i in range(filtersize, len(heater)):
+            timeon = 0.0
+            for m in range(i - filtersize, i):
+                if heater[m]:
+                    timeon += timeval[m] - timeval[m - 1]
+            percentage[i] = (timeon / (timeval[i] - timeval[i - filtersize])) * 100
+
+        print "Calculation done"
+
+        # Water temperature
+        duration = DAY / 10
+        fig = plt.figure(figsize=(32, 13), dpi=self._chartDPI, edgecolor='yellow')
+        axes = fig.gca().set_ylim([23.5, watermax + 0.5])
+        ax = fig.add_subplot(111)
+        ax.plot(timekey[-duration:], watertemp[-duration:], 'green', timekey[-duration:], heatergraph[-duration:], 'red', timekey[-duration:], waterlevelgraph[-duration:], 'blue')
+        plt.draw()
+        filename = "/%d-Watertemp.png" % (int(time.time()))
+        plt.savefig(self._chartDir + filename, dpi = self._chartDPI)
+
+        # Heater Percentage
+        duration = (5 * DAY) / 10
+        fig = plt.figure(figsize=(32, 13), dpi=self._chartDPI, edgecolor='yellow')
+        axes = fig.gca().set_ylim([0, 40])
+        ax = fig.add_subplot(111)
+        ax.plot(timekey[-duration:], percentage[-duration:], 'red')
+        plt.draw()
+        filename2 = "/%d-Heaterstat.png" % (int(time.time()))
+        plt.savefig(self._chartDir + filename2, dpi = self._chartDPI)
+        return filename, filename2
+
+    def publishCharts(self):
+        now = time.time()
+        if (now - self._lastcharts) > int(self._config.get("CHARTS", "GraphInterval")):
+            waterfilename, heaterfilename = self.calculateCharts()
+            self._mqclient.publish("twitter/picture/%s" % waterfilename, "water temperature, heater usage and water level")
+            self._mqclient.publish("twitter/picture/%s" % heaterfilename, "heater percentage")
+            self._lastcharts = now
+
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.on_connect    = self._on_connect
@@ -225,12 +330,13 @@ class Tank(threading.Thread):
             self.publishMQTT()
             self.publishTwitter()
             self.publishFertilizer()
+            self.publishCharts()
             time.sleep(15)
 
 if __name__ == '__main__':
     print "Start"
     t = Tank()
     t.start()
-    time.sleep(23)
+    time.sleep(100)
     print "End"
 
