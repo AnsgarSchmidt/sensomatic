@@ -331,16 +331,15 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("livingroom/temperature", v)
 
                 if keys[2] == "waterlevel":
-                    print "Waterlevel check " + v
-                    ival = int(v)
-                    if self._lastwaterlevel != ival:
-                        if ival == 1:
+                    fval = float(v)
+                    if self._lastwaterlevel != fval:
+                        if fval > 0.5:
                             print "Waterlevel back to normal"
                             self._tts.createWavFile(self._template.getWaterlevelNormal(), Room.LIVING_ROOM)
                         else:
                             print "Waterlevel is to low now"
                             self._tts.createWavFile(self._template.getWaterlevelLow(), Room.LIVING_ROOM)
-                        self._lastwaterlevel = ival
+                        self._lastwaterlevel = fval
 
         if keys[0] == Room.ANSI_ROOM:
 
