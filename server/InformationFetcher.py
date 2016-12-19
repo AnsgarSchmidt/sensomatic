@@ -351,6 +351,27 @@ class InformationFetcher():
         except:
             return None, None
 
+    def getSpaceApi(self, spacename):
+        try:
+            allspaces = json.loads(requests.get("http://spaceapi.fixme.ch/directory.json").content)
+            if allspaces is not None and spacename in allspaces:
+                url = allspaces[spacename]
+                space = json.loads(requests.get(url).content)
+                if space is not None:
+                    return space
+                else:
+                    return None
+        except:
+            return None
+
+    def isSpaceOpen(self, spacename):
+        try:
+            space = self.getSpaceApi(spacename)
+            if space is not None:
+                return bool(space['state']['open'])
+        except:
+            return None
+
     def getRadiationAverage(self):
         # https://odlinfo.bfs.de/daten/Datenbereitstellung-2016-04-21.pdf
         try:
@@ -428,11 +449,13 @@ if __name__ == '__main__':
     #print i.getOutsideLightLevel()
     #print i.getNextWackeuptime()
     print i.getCheeringLightColours()
-    #print i.getWoWAchievementPoints("Garrosh", "Phawx")
-    #print i.getWoWHealth("Garrosh", "Phawx")
-    #print i.getWoWPower("Garrosh", "Phawx")
-    #print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
+    print i.getWoWAchievementPoints("Garrosh", "Phawx")
+    print i.getWoWHealth("Garrosh", "Phawx")
+    print i.getWoWPower("Garrosh", "Phawx")
+    print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
     print i.getSunTimes("Port Of Spain", 0)
     print i.getMoonPhase("Port Of Spain")
     print i.getSunPosition()
     print i.getMoonPosition()
+    print i.getSpaceApi("xHain")['state']
+    print i.isSpaceOpen("xHain")
