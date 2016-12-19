@@ -315,8 +315,8 @@ class Tank(threading.Thread):
         now = time.time()
         if (now - self._lastcharts) > int(self._config.get("CHARTS", "GraphInterval")):
             waterfilename, heaterfilename = self.calculateCharts()
-            self._mqclient.publish("twitter/picture/%s" % waterfilename, "water temperature, heater usage and water level")
-            self._mqclient.publish("twitter/picture/%s" % heaterfilename, "heater percentage")
+            self._mqclient.publish("twitter/picture/" + waterfilename, "water temperature, heater usage and water level")
+            self._mqclient.publish("twitter/picture/" + heaterfilename, "heater percentage")
             self._lastcharts = now
 
     def run(self):
