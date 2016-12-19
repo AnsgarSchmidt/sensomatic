@@ -145,6 +145,7 @@ class Tank(threading.Thread):
         self._chartDir        = self._config.get("CHARTS", "ChartsDir")
         self._chartDPI        = int(self._config.get("CHARTS", "DPI"))
         self._checkChartFolder()
+        plt.use('Agg')
         plt.rcdefaults()
 
     def _on_connect(self, client, userdata, rc, msg):
