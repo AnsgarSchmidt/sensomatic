@@ -131,6 +131,7 @@ class TwitterPusher(threading.Thread):
         #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         try:
             keys = msg.topic.split("/")
+            print keys
             if keys[1] == "text":
                 print "TEXT"
                 self._send_text(msg.payload)
