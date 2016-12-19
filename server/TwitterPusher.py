@@ -110,6 +110,7 @@ class TwitterPusher(threading.Thread):
 
     def _send_picture(self, pictureFileName, text):
         try:
+            print self._chartDir + "/" + pictureFileName
             with open(self._chartDir + "/" + pictureFileName, "rb") as imagefile:
                 imagedata = imagefile.read()
             uploadresult = self._twittermedia.media.upload(media=imagedata)
