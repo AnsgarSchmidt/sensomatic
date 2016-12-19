@@ -126,7 +126,7 @@ class InitialState(threading.Thread):
     def run(self):
         while True:
             self.pushData()
-            time.sleep(60 * 10) # 10 Minutes
+            time.sleep(60 * 15) # 15 Minutes
 
 if __name__ == "__main__":
     print "InitialState"
