@@ -334,8 +334,10 @@ class MqttRulez(threading.Thread):
                     ival = int(v)
                     if self._lastwaterlevel != ival:
                         if ival == 1:
+                            print "Waterlevel back to normal"
                             self._tts.createWavFile(self._template.getWaterlevelNormal(), Room.LIVING_ROOM)
                         else:
+                            print "Waterlevel is to low now"
                             self._tts.createWavFile(self._template.getWaterlevelLow(), Room.LIVING_ROOM)
                         self._lastwaterlevel = ival
 
