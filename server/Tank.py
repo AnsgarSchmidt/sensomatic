@@ -141,7 +141,7 @@ class Tank(threading.Thread):
         self._daystate        = Tank.NIGHT
         self._twitterdaystate = Tank.NIGHT
         self._lastfurtilizer  = time.time()
-        self._lastcharts      = 0
+        self._lastcharts      = time.time()
         self._sunpercentage   = 0
         self._moonpercentage  = 0
         self._chartDir        = self._config.get("CHARTS", "ChartsDir")

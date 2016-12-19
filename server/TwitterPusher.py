@@ -110,7 +110,6 @@ class TwitterPusher(threading.Thread):
 
     def _send_picture(self, pictureFileName, text):
         try:
-            print self._chartDir + "/" + pictureFileName
             with open(self._chartDir + "/" + pictureFileName, "rb") as imagefile:
                 imagedata = imagefile.read()
             uploadresult = self._twittermedia.media.upload(media=imagedata)
@@ -131,12 +130,9 @@ class TwitterPusher(threading.Thread):
         #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
         try:
             keys = msg.topic.split("/")
-            print keys
             if keys[1] == "text":
-                print "TEXT"
                 self._send_text(msg.payload)
             if keys[1] == "picture":
-                print "PICTURE"
                 self._send_picture(keys[2], msg.payload)
         except:
             pass
