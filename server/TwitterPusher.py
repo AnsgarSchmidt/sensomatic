@@ -112,7 +112,7 @@ class TwitterPusher(threading.Thread):
         try:
             with open(self._chartDir + "/" + pictureFileName, "rb") as imagefile:
                 imagedata = imagefile.read()
-            uploadresult = self._twittermedia.media.upload(media=imagedata)["media_id_string"]
+            uploadresult = self._twittermedia.media.upload(media=imagedata)
             print uploadresult
             results      = self._twitter.statuses.update(status=text, media_ids=uploadresult["media_id_string"])
             print results['user']['statuses_count']
