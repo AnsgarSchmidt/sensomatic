@@ -115,8 +115,8 @@ class TwitterPusher(threading.Thread):
             uploadresult = self._twittermedia.media.upload(media=imagedata)
             results      = self._twitter.statuses.update(status=text, media_ids=uploadresult["media_id_string"])
             print results['user']['statuses_count']
-        except as e:
-            print e
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
 
     def _send_text(self, text):
         try:
