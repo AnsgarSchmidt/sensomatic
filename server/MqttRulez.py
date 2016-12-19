@@ -331,6 +331,7 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("livingroom/temperature", v)
 
                 if keys[2] == "waterlevel":
+                    print "Waterlevel check " + v
                     ival = int(v)
                     if self._lastwaterlevel != ival:
                         if ival == 1:
