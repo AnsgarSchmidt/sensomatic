@@ -7,7 +7,6 @@ import threading
 import datetime
 import ConfigParser
 import matplotlib.pyplot as     plt
-import numpy             as     np
 from   requests.auth     import HTTPBasicAuth
 
 SECOND =   1
