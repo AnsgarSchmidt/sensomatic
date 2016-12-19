@@ -322,11 +322,22 @@ class MqttRulez(threading.Thread):
                 print "motion in livingroom detected"
                 self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
 
-            if keys[1] == "tank" and keys[2] == "humidity":
-                self._mqclient.publish("livingroom/humidity", v)
+            if keys[1] == "tank":
 
-            if keys[1] == "tank" and keys[2] == "airtemp":
-                self._mqclient.publish("livingroom/temperature", v)
+                if keys[2] == "humidity":
+                    self._mqclient.publish("livingroom/humidity", v)
+
+                if keys[2] == "airtemp":
+                    self._mqclient.publish("livingroom/temperature", v)
+
+                if keys[2] == "waterlevel":
+                    ival = int(v)
+                    if self._lastwaterlevel != ival:
+                        if ival == 1:
+                            self._tts.createWavFile(self._template.getWaterlevelNormal(), Room.LIVING_ROOM)
+                        else:
+                            self._tts.createWavFile(self._template.getWaterlevelLow(), Room.LIVING_ROOM)
+                        self._lastwaterlevel = ival
 
         if keys[0] == Room.ANSI_ROOM:
 
@@ -387,6 +398,7 @@ class MqttRulez(threading.Thread):
         self._template       = TemplateMatcher()
         self._info           = InformationFetcher()
         self._workingQueue   = Queue.Queue()
+        self._lastwaterlevel = -1
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
