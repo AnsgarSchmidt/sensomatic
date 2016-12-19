@@ -110,6 +110,14 @@ class TemplateMatcher():
         template = self._env.get_template('radiation-higher-then-average.txt')
         return template.render(valuehere=valuehere, valueavr=valueavr)
 
+    def getWaterlevelLow(self):
+        template = self._env.get_template('tank-waterlevel-low.txt')
+        return template.render()
+
+    def getWaterlevelNormal(self):
+        template = self._env.get_template('tank-waterlevel-normal.txt')
+        return template.render()
+
 if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
@@ -127,3 +135,5 @@ if __name__ == '__main__':
     print t.getCo2ToHigh(Room.ANSI_ROOM)
     print t.getRadiationToHigh(0.232)
     print t.getRadiationHigherThenAverage(0.1, 0.09)
+    print t.getWaterlevelLow()
+    print t.getWaterlevelNormal()
