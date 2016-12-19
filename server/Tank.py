@@ -6,6 +6,8 @@ import datetime
 import requests
 import threading
 import ConfigParser
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot  as     plt
 import paho.mqtt.client   as     mqtt
 from   InformationFetcher import InformationFetcher
@@ -138,7 +140,7 @@ class Tank(threading.Thread):
         self._mqclient        = mqtt.Client("Tank", clean_session=True)
         self._daystate        = Tank.NIGHT
         self._twitterdaystate = Tank.NIGHT
-        self._lastfurtilizer  = 0
+        self._lastfurtilizer  = time.time()
         self._lastcharts      = 0
         self._sunpercentage   = 0
         self._moonpercentage  = 0
