@@ -200,13 +200,12 @@ class Tank(threading.Thread):
             self._moonpercentage = 0
 
     def publishMQTT(self):
-        self._mqclient.publish("livingroom/tank/whitelight", self._sunpercentage)
+        self._mqclient.publish("livingroom/tank/whitelight", self._sunpercentage )
+        self._mqclient.publish("livingroom/tank/bluelight",  self._moonpercentage)
 
         if self._daystate in (Tank.DAWN, Tank.DAY, Tank.SUNSET):
-            self._mqclient.publish("livingroom/tank/bluelight", max(self._sunpercentage, self._moonpercentage))
             self._mqclient.publish("livingroom/tank/settemp",   self._config.get("TANK", "DayTemp"))
         else:
-            self._mqclient.publish("livingroom/tank/bluelight", self._moonpercentage)
             self._mqclient.publish("livingroom/tank/settemp",   self._config.get("TANK", "NightTemp"))
 
     def publishTwitter(self):
