@@ -1,7 +1,6 @@
 import os
 import time
 import json
-import pytz
 import datetime
 import requests
 import threading
