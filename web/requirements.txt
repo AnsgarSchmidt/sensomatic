@@ -1,3 +1,5 @@
 requests
 pytz
-Flask==0.10.1
+Flask
+matplotlib==1.4.3
+twitter
