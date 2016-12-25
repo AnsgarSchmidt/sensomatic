@@ -118,6 +118,13 @@ class TwitterPusher(threading.Thread):
         except:
             print "Unexpected error:", sys.exc_info()[0]
 
+    def _send_uploaded_picture(self, id, text):
+        try:
+            results      = self._twitter.statuses.update(status=text, media_ids=id)
+            print results['user']['statuses_count']
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+
     def _send_text(self, text):
         try:
             print "Tweeting %s" % text
@@ -134,6 +141,8 @@ class TwitterPusher(threading.Thread):
                 self._send_text(msg.payload)
             if keys[1] == "picture":
                 self._send_picture(keys[2], msg.payload)
+            if keys[1] == "uploaded":
+                self._send_uploaded_picture(keys[2], msg.payload)
         except:
             pass
 
