@@ -133,7 +133,7 @@ class Tank(threading.Thread):
         print "Disconnect MQTTRulez"
 
     def updateSunAndMoon(self):
-        now                               = datetime.datetime.today()
+        now                               = datetime.datetime.now()
         dawn, sunrise, noon, sunset, dusk = self._info.getSunTimes(self._config.get("TANK", "Location"), int(self._config.get("TANK", "LocationOffset")))
         moonPhase                         = self._info.getMoonPhase(self._config.get("TANK", "Location"))
         moonElevation, _                  = self._info.getMoonPosition()
@@ -163,7 +163,7 @@ class Tank(threading.Thread):
 
         if (0 < moonPhase < 14):
             moonphasepercentage = 1.0 - ( (14.0 - (moonPhase       ) ) / 14.0)
-        elif (14 < moonPhase < 28):
+        else:
             moonphasepercentage =       ( (14.0 - (moonPhase - 14.0) ) / 14.0)
 
         if moonElevation > 0:
@@ -203,10 +203,8 @@ class Tank(threading.Thread):
     def publishCharts(self):
         now = time.time()
         if (now - self._lastcharts) > int(self._config.get("TANK", "GraphInterval")):
-            print "Publish Charts"
             try:
                 j = json.loads(requests.get("https://uss-horizon.mybluemix.net/api/twitter/getHeaterID").content)
-                print j
                 self._mqclient.publish("twitter/uploaded/" + j[0]['media_id_string'], "Water temperature, air temperature, heater active and water level. #IoT #Fishtank #watson #analytics")
                 self._mqclient.publish("twitter/uploaded/" + j[1]['media_id_string'], "Heater activity percentage, air temperature and humidity. #IoT #Fishtank #watson #analytics")
                 self._mqclient.publish("twitter/uploaded/" + j[2]['media_id_string'], "Sun and moon intensity for the fishtank. #IoT #fishtank #watson #analytics")
