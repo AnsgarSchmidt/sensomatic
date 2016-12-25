@@ -331,7 +331,7 @@ class Tank(threading.Thread):
             self.publishMQTT()
             self.publishTwitter()
             self.publishFertilizer()
-            self.publishCharts()
+            #self.publishCharts()
             time.sleep(15)
 
 if __name__ == '__main__':
