@@ -36,7 +36,7 @@
             ]);
           data.setValue(0, 1, jsonData);
           var chart    = new google.visualization.Gauge(document.getElementById('chart_tank_temp_gauge'));
-          var options  = { title: 'Current Temperature', width: 125, height: 125, min: 22, max: 28, greenFrom: 23, greenTo: 27, redFrom: 22, redTo: 23, yellowFrom:27, yellowTo: 28, minorTicks: 0.5};
+          var options  = { title: 'Current Temperature', width: 125, height: 125, min: 23, max: 25, greenFrom: 23, greenTo: 27, redFrom: 22, redTo: 23, yellowFrom:27, yellowTo: 28, minorTicks: 0.5};
           chart.draw(data, options);
       }
 
