@@ -151,13 +151,14 @@ class InformationFetcher():
         a                  = astral.Astral()
         a.solar_depression = 'civil'
         city               = a[cityName]
-        return city.moon_phase()
+        return city.moon_phase(date= datetime.datetime.now(tz = pytz.timezone('Europe/Berlin')))
 
     def getMoonPosition(self):
         observer = ephem.Observer()
         observer.lon       =       self._config.get("INFORMATION", "Logitude" )
         observer.lat       =       self._config.get("INFORMATION", "Latitude" )
         observer.elevation = float(self._config.get("INFORMATION", "Elevation"))
+        observer.date      = datetime.datetime.now(tz = pytz.timezone('Europe/Berlin'))
         moon = ephem.Moon(observer)
         alt = moon.alt * (180 / math.pi)
         az  = moon.az  * (180 / math.pi)
