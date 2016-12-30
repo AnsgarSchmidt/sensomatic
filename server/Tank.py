@@ -160,7 +160,7 @@ class Tank(threading.Thread):
         # 0 = New moon, 7 = First quarter, 14 = Full moon, 21 = Last quarter
         moonphasepercentage = 0.0
 
-        if (0 < moonPhase < 14):
+        if (0 <= moonPhase <= 14):
             moonphasepercentage = 1.0 - ( (14.0 - (moonPhase       ) ) / 14.0)
         else:
             moonphasepercentage =       ( (14.0 - (moonPhase - 14.0) ) / 14.0)
