@@ -19,12 +19,15 @@ DAY    = 24 * HOUR
 WEEK   =  7 * DAY
 
 def getCloudantData(start, end):
-    auth = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix",
-                         "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
-    url = "%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
-    "https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com", start, end)
-    j = json.loads(requests.get(url, auth=auth).content)
-    tz = pytz.timezone('Europe/Berlin')
+    vcap_config    = os.environ.get('VCAP_SERVICES')
+    decoded_config = json.loads(vcap_config)
+
+    auth = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
+                         decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
+    url = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
+           decoded_config['cloudantNoSQLDB'][0]['credentials']['host'], start, end)
+    j   = json.loads(requests.get(url, auth=auth).content)
+    tz  = pytz.timezone('Europe/Berlin')
 
     data = {
         "cols": [
