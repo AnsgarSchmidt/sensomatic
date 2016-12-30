@@ -21,7 +21,6 @@ WEEK   =  7 * DAY
 def getCloudantData(start, end):
     vcap_config    = os.environ.get('VCAP_SERVICES')
     decoded_config = json.loads(vcap_config)
-
     auth = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
                          decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
     url = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
@@ -60,15 +59,23 @@ def Welcome():
 
 @app.route('/api/data/gaugetemp')
 def getGaugeTemp():
-    auth = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix", "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
-    url = "https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com/usshorizon/_design/livingroom/_view/tank?descending=true&limit=1"
+    vcap_config    = os.environ.get('VCAP_SERVICES')
+    decoded_config = json.loads(vcap_config)
+    auth = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
+                         decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
+    url = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
+           decoded_config['cloudantNoSQLDB'][0]['credentials']['host'], start, end)
     j = json.loads(requests.get(url, auth=auth).content)
     return jsonify(float(j['rows'][0]['value']['watertemp']))
 
 @app.route('/api/data/gaugeheater')
 def getGaugeHeater():
-    auth = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix", "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
-    url = "https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com/usshorizon/_design/livingroom/_view/tank?descending=true&limit=1"
+    vcap_config    = os.environ.get('VCAP_SERVICES')
+    decoded_config = json.loads(vcap_config)
+    auth = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
+                         decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
+    url = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
+           decoded_config['cloudantNoSQLDB'][0]['credentials']['host'], start, end)
     j = json.loads(requests.get(url, auth=auth).content)
     return jsonify(float(j['rows'][0]['value']['heater']))
 
@@ -94,10 +101,12 @@ def get1Minute():
 
 @app.route('/api/data/heaterusage1week')
 def getHeaterUsage1Week():
-    auth = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix",
-                         "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
-    url = "%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
-    "https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com", time.time() - WEEK, time.time())
+    vcap_config    = os.environ.get('VCAP_SERVICES')
+    decoded_config = json.loads(vcap_config)
+    auth = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
+                         decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
+    url = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
+           decoded_config['cloudantNoSQLDB'][0]['credentials']['host'], time.time() - WEEK, time.time())
     j = json.loads(requests.get(url, auth=auth).content)
     tz = pytz.timezone('Europe/Berlin')
 
@@ -156,6 +165,8 @@ def getHeaterID():
     days_to_catch          = 14
     smooth                 = 20
     filtersize             = 8000
+    vcap_config            = os.environ.get('VCAP_SERVICES')
+    decoded_config         = json.loads(vcap_config)
     tz                     = pytz.timezone('Europe/Berlin')
     myFmt                  = mdates.DateFormatter('%d.%b %H:%M')
     oauth                  = OAuth("995619222-Hcr6Ljy26WsahYa2vHzIoTtdQASXDIxyq5hCIsMh",
@@ -164,8 +175,12 @@ def getHeaterID():
                                    "E0YOIjEVI3JsBLCpXoaoxL0SLVFISiVUSrNMgvbDQcvcwQ4EGH"
                                   )
     twittermedia           = Twitter(domain='upload.twitter.com', auth=oauth)
-    auth                   = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix", "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
-    url                    = "%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % ("https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com", time.time() - (days_to_catch * DAY), time.time())
+    auth                   = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
+                                           decoded_config['cloudantNoSQLDB'][0]['credentials']['password'])
+    url                    = "https://%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % (
+                              decoded_config['cloudantNoSQLDB'][0]['credentials']['host'],
+                              time.time() - (days_to_catch * DAY),
+                              time.time())
     data                   = json.loads(requests.get(url, auth=auth).content)
     watertemp_patch        = mpatches.Patch(color='blue',   label='Water Temperature')
     airtemp_patch          = mpatches.Patch(color='green',  label='Air Temperature')
