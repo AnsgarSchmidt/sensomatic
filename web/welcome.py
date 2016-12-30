@@ -4,9 +4,13 @@ import time
 import requests
 import datetime
 import pytz
-from flask         import Flask
-from flask         import jsonify
-from requests.auth import HTTPBasicAuth
+import matplotlib.pyplot  as     plt
+import matplotlib.patches as     mpatches
+import matplotlib.dates   as     mdates
+from   flask              import Flask
+from   flask              import jsonify
+from   requests.auth      import HTTPBasicAuth
+from   twitter            import *
 
 SECOND =  1
 MINUTE = 60 * SECOND
@@ -113,6 +117,166 @@ def getHeaterUsage1Week():
 
     return jsonify(data)
 
+def getKeys(data):
+    keys = []
+    for i in data['rows']:
+        keys.append(float(i['key']))
+    return keys
+
+def getValue(data, name):
+    values = []
+    for i in data['rows']:
+        values.append(float(i['value'][name]))
+    return values
+
+def getDateTime(data, tz):
+    keys = []
+    for i in data['rows']:
+        keys.append(datetime.datetime.fromtimestamp(i['key'], tz=tz))
+    return keys
+
+def getModified(data, mulval, addval):
+    d = []
+    for i in data:
+        d.append(addval + (float(i) * mulval) )
+    return d
+
+def getBoolean(data):
+    d = [False] * len(data)
+    for i in range(len(data)):
+        if float(data[i]) == 1:
+            d[i] = True
+    return d
+
+@app.route('/api/twitter/getHeaterID')
+def getHeaterID():
+    days_to_catch          = 14
+    smooth                 = 20
+    filtersize             = 8000
+    tz                     = pytz.timezone('Europe/Berlin')
+    myFmt                  = mdates.DateFormatter('%d.%b %H:%M')
+    oauth                  = OAuth("995619222-Hcr6Ljy26WsahYa2vHzIoTtdQASXDIxyq5hCIsMh",
+                                   "Wa3nZsgNT9kSmAT1awNt1nm6wTNUg4Jqogic9hhI9VOj5",
+                                   "U9RBoVDw8G7crlG4bW8u1jrlS",
+                                   "E0YOIjEVI3JsBLCpXoaoxL0SLVFISiVUSrNMgvbDQcvcwQ4EGH"
+                                  )
+    twittermedia           = Twitter(domain='upload.twitter.com', auth=oauth)
+    auth                   = HTTPBasicAuth("3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix", "24b4187fbd39510e84cc2cf10184cebf97ea56b836aab8ce4590ffe6477ae925")
+    url                    = "%s/usshorizon/_design/livingroom/_view/tank?descending=false&startkey=%f&endkey=%f" % ("https://3a4d4cf0-aed2-4916-8413-fa0177d2129f-bluemix.cloudant.com", time.time() - (days_to_catch * DAY), time.time())
+    data                   = json.loads(requests.get(url, auth=auth).content)
+    watertemp_patch        = mpatches.Patch(color='blue',   label='Water Temperature')
+    airtemp_patch          = mpatches.Patch(color='green',  label='Air Temperature')
+    heater_patch           = mpatches.Patch(color='red',    label='Heater active')
+    waterlevel_patch       = mpatches.Patch(color='black',  label='Waterlevel')
+    humidity_patch         = mpatches.Patch(color='blue',   label='Humidity')
+    heaterpercentage_patch = mpatches.Patch(color='red',    label='Heater Percentage')
+    sun_patch              = mpatches.Patch(color='orange', label='Sun')
+    moon_patch             = mpatches.Patch(color='blue',   label='Moon')
+    addwater_patch         = mpatches.Patch(color='pink',   label='AddingWater')
+    timeval                = getKeys(data)
+    timedt                 = getDateTime(data, tz)
+    watertemp              = getValue(data, "watertemp")
+    settemp                = getValue(data, "settemp")
+    airtemp                = getValue(data, "airtemp")
+    heater                 = getValue(data, "heater")
+    heaterspecial          = getModified(heater, 0.2, 23.7)
+    heaterBoolean          = getBoolean(heater)
+    humidity               = getValue(data, "humidity")
+    moon                   = getValue(data, "moon")
+    sun                    = getValue(data, "sun")
+    waterlevel             = getValue(data, "waterlevel")
+    waterlevelspecial      = getModified(waterlevel, 0.2, 23.4)
+    addingwater            = getValue(data, "addingwater")
+    addingwaterspecial     = getModified(addingwater, 0.2, 23.1)
+    smoothairtemp          = [0] * len(timeval)
+    smoothhum              = [0] * len(timeval)
+    heaterPercentage       = [0] * len(timeval)
+
+    # smooth the raw values
+    for i in range(smooth, len(timeval) - smooth):
+        airdummy = 0.0
+        humdummy = 0.0
+        for j in range(i - smooth, i + smooth):
+            airdummy += airtemp[j]
+            humdummy += humidity[j]
+        airdummy /= (2.0 * smooth)
+        humdummy /= (2.0 * smooth)
+        smoothairtemp[i] = airdummy
+        smoothhum[i] = humdummy
+
+    for i in range(len(timeval) - smooth, len(timeval)):
+        smoothairtemp[i] = smoothairtemp[len(timeval) - smooth - 1]
+        smoothhum[i]     = smoothhum[len(timeval) - smooth - 1]
+
+    # Calculate heater percentage
+    for i in range(filtersize, len(timeval)):
+        timeOn = 0.0
+        for m in range(i - filtersize, i):
+            if heaterBoolean[m]:
+                timeOn += timeval[m] - timeval[m - 1]
+        heaterPercentage[i] = (timeOn / (timeval[i] - timeval[i - filtersize])) * 100
+
+    # Temp
+    duration = 5000
+    fig = plt.figure(figsize=(42, 23), dpi=1024, edgecolor='yellow')
+    fig.gca().set_ylim([22, 26])
+    ax = fig.add_subplot(111)
+    ax.legend(handles=[watertemp_patch, airtemp_patch, heater_patch, waterlevel_patch, addwater_patch])
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.plot(timedt[-duration:], watertemp[-duration:],          'blue',
+            timedt[-duration:], smoothairtemp[-duration:],      'green',
+            timedt[-duration:], heaterspecial[-duration:],      'red',
+            timedt[-duration:], waterlevelspecial[-duration:],  'black',
+            timedt[-duration:], addingwaterspecial[-duration:], 'pink')
+    fig.savefig("test1.png")
+
+    # Percentage
+    duration = 20000
+    fig = plt.figure(figsize=(42, 23), dpi=1024, edgecolor='yellow')
+    fig.gca().set_ylim([10, 50])
+    ax = fig.add_subplot(111)
+    ax.legend(handles=[heaterpercentage_patch, airtemp_patch, humidity_patch])
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.plot(timedt[-duration:], heaterPercentage[-duration:], 'red',
+            timedt[-duration:], smoothairtemp[-duration:],    'green',
+            timedt[-duration:], smoothhum[-duration:],        'blue')
+    fig.savefig("test2.png")
+
+    # sun moon
+    duration = 70000
+    fig = plt.figure(figsize=(42, 23), dpi=1024, edgecolor='yellow')
+    fig.gca().set_ylim([-2, 102])
+    ax = fig.add_subplot(111)
+    ax.legend(handles=[sun_patch, moon_patch])
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.plot(timedt[-duration:], sun[-duration:],  'orange',
+            timedt[-duration:], moon[-duration:], 'blue')
+    fig.savefig("test3.png")
+
+    retval = []
+
+    with open("test1.png", "rb") as imagefile:
+        imagedata = imagefile.read()
+    retval.append(twittermedia.media.upload(media=imagedata))
+
+    with open("test2.png", "rb") as imagefile:
+        imagedata = imagefile.read()
+    retval.append(twittermedia.media.upload(media=imagedata))
+
+    with open("test3.png", "rb") as imagefile:
+        imagedata = imagefile.read()
+    retval.append(twittermedia.media.upload(media=imagedata))
+
+    if os.path.exists("test1.png"):
+        os.remove("test1.png")
+
+    if os.path.exists("test2.png"):
+        os.remove("test2.png")
+
+    if os.path.exists("test3.png"):
+        os.remove("test3.png")
+
+    return jsonify(retval)
 
 if __name__ == "__main__":
     port = os.getenv('PORT', '5000')
