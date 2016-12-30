@@ -70,3 +70,5 @@ alexa/requests
 alexa/requests-2.11.1.dist-info
 alexa/passwd.txt
 web/config.txt
+
+server/cloudant/passwd.txt
