@@ -7,7 +7,7 @@ applications:
   host: uss-horizon
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/buildpack-python.git
-#  services:
+  services:
 #  - Conversation
-#  - Cloudant USS Horizon
+  - Cloudant USS Horizon
 #  - Tone Analyzer
