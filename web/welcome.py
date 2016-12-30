@@ -1,9 +1,10 @@
 import os
 import json
 import time
+import pytz
 import requests
 import datetime
-import pytz
+import ConfigParser
 import matplotlib.pyplot  as     plt
 import matplotlib.patches as     mpatches
 import matplotlib.dates   as     mdates
@@ -167,12 +168,14 @@ def getHeaterID():
     filtersize             = 8000
     vcap_config            = os.environ.get('VCAP_SERVICES')
     decoded_config         = json.loads(vcap_config)
+    configparser           = ConfigParser.ConfigParser()
+    configparser.read("config.txt")
     tz                     = pytz.timezone('Europe/Berlin')
     myFmt                  = mdates.DateFormatter('%d.%b %H:%M')
-    oauth                  = OAuth("995619222-Hcr6Ljy26WsahYa2vHzIoTtdQASXDIxyq5hCIsMh",
-                                   "Wa3nZsgNT9kSmAT1awNt1nm6wTNUg4Jqogic9hhI9VOj5",
-                                   "U9RBoVDw8G7crlG4bW8u1jrlS",
-                                   "E0YOIjEVI3JsBLCpXoaoxL0SLVFISiVUSrNMgvbDQcvcwQ4EGH"
+    oauth                  = OAuth(configparser.get("TWITTER", "accesstoken"),
+                                   configparser.get("TWITTER", "accesstokensecret"),
+                                   configparser.get("TWITTER", "consumerkey"),
+                                   configparser.get("TWITTER", "consumersecret")
                                   )
     twittermedia           = Twitter(domain='upload.twitter.com', auth=oauth)
     auth                   = HTTPBasicAuth(decoded_config['cloudantNoSQLDB'][0]['credentials']['username'],
