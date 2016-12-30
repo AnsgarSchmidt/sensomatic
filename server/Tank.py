@@ -204,7 +204,7 @@ class Tank(threading.Thread):
         if (now - self._lastcharts) > int(self._config.get("TANK", "GraphInterval")):
             try:
                 j = json.loads(requests.get("https://uss-horizon.mybluemix.net/api/twitter/getHeaterID").content)
-                self._mqclient.publish("twitter/uploaded/" + j[0]['media_id_string'], "Water temperature, air temperature, heater active and water level. #IoT #Fishtank #watson #analytics")
+                self._mqclient.publish("twitter/uploaded/" + j[0]['media_id_string'], "Water temperature, air temperature, heater active, water level and adding water. #IoT #Fishtank #watson #analytics")
                 self._mqclient.publish("twitter/uploaded/" + j[1]['media_id_string'], "Heater activity percentage, air temperature and humidity. #IoT #Fishtank #watson #analytics")
                 self._mqclient.publish("twitter/uploaded/" + j[2]['media_id_string'], "Sun and moon intensity for the fishtank. #IoT #fishtank #watson #analytics")
             except:
