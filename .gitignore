@@ -72,3 +72,5 @@ alexa/passwd.txt
 web/config.txt
 
 server/cloudant/passwd.txt
+
+server/cloudant/update.sh
