@@ -11,15 +11,17 @@ function(doc) {
     var waterlevel  = 0;
     var addingwater = 0;
 
-    if (doc.livingroom.tank.whitelight)  { sun        = doc.livingroom.tank.whitelight.value   }
-    if (doc.livingroom.tank.bluelight)   { moon       = doc.livingroom.tank.bluelight.value    }
-    if (doc.livingroom.tank.heater)      { heater     = doc.livingroom.tank.heater.value       }
-    if (doc.livingroom.tank.watertemp)   { watertemp  = doc.livingroom.tank.watertemp.value    }
-    if (doc.livingroom.tank.settemp)     { settemp    = doc.livingroom.tank.settemp.value      }
-    if (doc.livingroom.tank.airtemp)     { airtemp    = doc.livingroom.tank.airtemp.value      }
-    if (doc.livingroom.tank.humidity)    { humidity   = doc.livingroom.tank.humidity.value     }
-    if (doc.livingroom.tank.waterlevel)  { waterlevel = doc.livingroom.tank.waterlevel.value   }
-    if (doc.livingroom.tank.addingwater) { addingwater = doc.livingroom.tank.addingwater.value }
+    if (doc.livingroom.tank.whitelight)   { sun         = doc.livingroom.tank.whitelight.value   }
+    if (doc.livingroom.tank.bluelight)    { moon        = doc.livingroom.tank.bluelight.value    }
+    if (doc.livingroom.tank.heater)       { heater      = doc.livingroom.tank.heater.value       }
+    if (doc.livingroom.tank.watertemp)    { watertemp   = doc.livingroom.tank.watertemp.value    }
+    if (doc.livingroom.tank.settemp)      { settemp     = doc.livingroom.tank.settemp.value      }
+    if (doc.livingroom.tank.airtemp)      { airtemp     = doc.livingroom.tank.airtemp.value      }
+    if (doc.livingroom.tank.humidity)     { humidity    = doc.livingroom.tank.humidity.value     }
+    if (doc.livingroom.tank.waterlevel)   { waterlevel  = doc.livingroom.tank.waterlevel.value   }
+    if (doc.kitchen && doc.kitchen.water) {
+      if (doc.kitchen.water.valve)        { addingwater = doc.kitchen.water.valve.value          }
+    }
 
     var data = {"sun":         sun,
                 "moon":        moon,
