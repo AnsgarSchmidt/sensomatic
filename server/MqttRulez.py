@@ -376,7 +376,7 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("bathroom/light/main",             "TOGGLE")
                     self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.BATH_ROOM)
                     try:
-                       Chromecast().playMusicURL('Chromeansi', 'http://rbb-mp3-fritz-m.akacast.akamaistream.net/7/799/292093/v1/gnl.akacast.akamaistream.net/rbb_mp3_fritz_m')
+                       Chromecast().playMusicURL('Chromeansi', 'http://rb-mp3-m-bremenvier.akacast.akamaistream.net/7/23/234437/v1/gnl.akacast.akamaistream.net/rb-mp3-m-bremenvier')
                     except:
                         pass
 
