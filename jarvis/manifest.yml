@@ -1,0 +1,13 @@
+applications:
+- path: .
+  memory: 128M
+  instances: 1
+  domain: mybluemix.net
+  name: uss-horizon-jarvis
+  host: uss-horizon-jarvis
+  disk_quota: 512M
+  buildpack: https://github.com/cloudfoundry/buildpack-python.git
+#  services:
+#  - Conversation
+#  - Cloudant USS Horizon
+#  - Tone Analyzer
