@@ -3,3 +3,4 @@ pytz
 Flask
 matplotlib==1.4.3
 twitter
+telepot
