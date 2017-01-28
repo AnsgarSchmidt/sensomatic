@@ -19,6 +19,7 @@ from   HS100              import HS100
 from   Mpd                import Mpd
 from   TwitterPusher      import TwitterPusher
 from   Tank               import Tank
+from   Carbon             import Carbon
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -129,6 +130,11 @@ if __name__ == '__main__':
     print "Start Persistor"
     persistor = Persistor()
     persistor.start()
+    time.sleep(2)
+
+    print "Start Carbon"
+    carbon = Carbon()
+    carbon.start()
     time.sleep(2)
 
     print "Start MqttRulez"
