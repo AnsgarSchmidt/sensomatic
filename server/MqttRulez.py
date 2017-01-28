@@ -13,6 +13,7 @@ from   Template           import TemplateMatcher
 from   Mpd                import Mpd
 from   Chromecast         import Chromecast
 from   InformationFetcher import InformationFetcher
+from   Carbon             import Carbon
 
 class MqttRulez(threading.Thread):
 
@@ -248,6 +249,7 @@ class MqttRulez(threading.Thread):
             if keys[1] == "motion":
                 print "motion in bath detected"
                 self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
+                self._carbon.sendData("bathroom.motion", 1)
                 if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
                     print "Play Radio in Bath"
                     self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
@@ -367,6 +369,7 @@ class MqttRulez(threading.Thread):
             if keys[1] == "motion":
                 print "motion in ansi room detected"
                 self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
+                self._carbon.sendData("ansiroom.motion", 1)
                 if self._redis.exists("ansiwakeup"):
                     print "Ansiwakeup detected motion"
                     self._redis.delete("ansiwakeup")
@@ -402,6 +405,7 @@ class MqttRulez(threading.Thread):
         self._info           = InformationFetcher()
         self._workingQueue   = Queue.Queue()
         self._lastwaterlevel = -1
+        self._carbon         = Carbon
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
