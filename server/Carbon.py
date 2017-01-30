@@ -106,7 +106,6 @@ class Carbon(threading.Thread):
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-        self._socket         = socket.socket()
         self._connect()
         self._mqclient       = mqtt.Client("Carbon", clean_session=True)
         self._workingQueue   = Queue.Queue()
@@ -123,14 +122,20 @@ class Carbon(threading.Thread):
         print "Disconnect MQTTRulez"
 
     def _connect(self):
-        self._socket.connect((self._config.get("CARBON", "Address"), int(self._config.get("CARBON", "Port"))))
-        print "Connected"
+        try:
+            self._socket = socket.socket()
+            self._socket.connect((self._config.get("CARBON", "Address"), int(self._config.get("CARBON", "Port"))))
+            print "Connected"
+        except Exception as e:
+            print "Error connecting to Carbin socket"
+            print e
 
     def sendData(self, topic, value):
         try:
             message = '%s %s %d\n' % (topic, value, time.time())
             self._socket.sendall(message)
         except Exception as e:
+            print "Error sending data"
             print e
             self._connect()
 
