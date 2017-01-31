@@ -65,7 +65,7 @@ if __name__ == "__main__":
         mqclient.publish(systemname+"/cpuuserusage", getCPUuse())
         mqclient.publish(systemname+"/loadlevel",    getLoadLevel())
         mqclient.publish(systemname+"/ramfree",      getRAMinfo()[2])
-        mqclient.publish(systemname+"/diskused",     getDiskSpace()[3])
+        mqclient.publish(systemname+"/diskused",     getDiskSpace()[3][:-1])
         mqclient.loop(max_packets=1000)
 
         time.sleep(10)
