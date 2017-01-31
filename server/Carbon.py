@@ -159,6 +159,7 @@ class Carbon(threading.Thread):
 
     def _process(self):
         k, v = self._workingQueue.get()
+
         if k in Carbon.PATTERN:
             a = k.replace("/", ".")
             self.sendData(a, v)
@@ -172,6 +173,7 @@ class Carbon(threading.Thread):
         self._mqclient.on_message    = self._on_message
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.loop_start()
+
         while True:
             try:
                 self._process()
