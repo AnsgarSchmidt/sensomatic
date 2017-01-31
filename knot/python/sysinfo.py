@@ -9,8 +9,8 @@ def on_message(client, userdata, msg):
     print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
 
 def getLoadLevel():
-    res = os.popen('uptime | cut -c 40- | cut -f 2 -d ":" | cut -d "," -f 1').readline()
-    return res.replace("'C\n", "")
+    res = os.popen('uptime | cut -c 40- | cut -f 2 -d ":" | cut -d "," -f 1').readline().replace("'C\n", "")
+    return res
 
 # Return CPU temperature as a character string
 def getCPUtemperature():
