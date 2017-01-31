@@ -13,12 +13,24 @@ class Carbon(threading.Thread):
              "ansiroom/co2",
              "ansiroom/motion",
              "ansiroom/bed/plant",
+             #ANSISERVER
+             "ansiserver/cputemp",
+             "ansiserver/cpuuserusage",
+             "ansiserver/loadlevel",
+             "ansiserver/ramfree",
+             "ansiserver/diskused",
              #BATHROOM
              "bathroom/temperature",
              "bathroom/humidity",
              "bathroom/combustible",
              "bathroom/light",
              "bathroom/motion",
+             #BATHSERVER
+             "bathserver/cputemp",
+             "bathserver/cpuuserusage",
+             "bathserver/loadlevel",
+             "bathserver/ramfree",
+             "bathserver/diskused",
              #LIVINGROOM TANK
              "livingroom/tank/whitelight",
              "livingroom/tank/bluelight",
@@ -49,8 +61,14 @@ class Carbon(threading.Thread):
              "cortex/cortex/rx",
              "cortex/cortex/tx",
              "cortex/phawxansi/rx",
-             "cortex/phawxansi/tx"
-            ]
+             "cortex/phawxansi/tx",
+             #POWERSERVER
+             "powerserver/cputemp",
+             "powerserver/cpuuserusage",
+             "powerserver/loadlevel",
+             "powerserver/ramfree",
+             "powerserver/diskused",
+    ]
 
     def _readConfig(self):
         update = False
