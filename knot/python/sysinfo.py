@@ -10,7 +10,7 @@ def on_message(client, userdata, msg):
 
 def getLoadLevel():
     res = os.popen('uptime | cut -c 40- | cut -f 2 -d ":" | cut -d "," -f 1').readline()
-    return res
+    return res.replace("'C\n", "")
 
 # Return CPU temperature as a character string
 def getCPUtemperature():
