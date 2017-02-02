@@ -1,3 +1,10 @@
+spotipy
+pychromecast
+
+
+cloudant
+packaging
+appdirs
 feedparser
 paho-mqtt
 python-mpd
