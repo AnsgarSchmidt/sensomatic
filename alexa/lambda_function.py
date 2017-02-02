@@ -1,120 +1,243 @@
-from __future__ import print_function
+# -*- coding: utf-8 -*-
+
+import logging
 import requests
-import socket
 import json
-import urllib2
 
-def build_speechlet_response(title, output, reprompt_text, should_end_session):
-    return {
-        'outputSpeech': {
-            'type': 'PlainText',
-            'text': output
-        },
-        'card': {
-            'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
-        },
-        'reprompt': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': reprompt_text
-            }
-        },
-        'shouldEndSession': should_end_session
-    }
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
-def build_response(session_attributes, speechlet_response):
-    return {
-        'version': '1.0',
-        'sessionAttributes': session_attributes,
-        'response': speechlet_response
-    }
-
-def get_welcome_response():
-    session_attributes = {}
-    card_title         = "Welcome"
-    speech_output      = """
-                         Willkommen auf der USS Horizon.
-                         Ich kann zum Beispiel das Licht im wohnzimmer, kueche, esstisch, flur, ansiraum, tiffyraum, badezimmer
-                         an und ausschalten."""
-    reprompt_text      = "Ja genau. Herzlich willkommen auf der USS Horizon"
-    should_end_session = True
-
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-def handle_session_end_request():
-    card_title         = "Session Ended"
-    speech_output      = "Schoenen Weiterflug"
-    should_end_session = True
-    return build_response({}, build_speechlet_response(
-        card_title, speech_output, None, should_end_session))
-
-def on_session_started(session_started_request, session):
-    print("on_session_started requestId=" + session_started_request['requestId']
-          + ", sessionId=" + session['sessionId'])
-
-def on_launch(launch_request, session):
-    print("on_launch requestId=" + launch_request['requestId'] +
-          ", sessionId=" + session['sessionId'])
-    return get_welcome_response()
-
-def handle_light(intent, session):
-
-    session_attributes = {}
-    reprompt_text      = None
-
-    print(intent)
-    print(session)
-
-    if intent.get('slots', {}) and "room" in intent.get('slots', {}):
-        room               = intent['slots']['room']['value']
-        state              = intent['slots']['state']['value']
-        speech_output      = "Du hast den Raum " + room + " ausgesucht. Ich schalte das Licht dort."
-        should_end_session = True
-
-        passwd = ""
-        with open('passwd.txt', 'r') as myfile:
-            passwd = myfile.read().replace('\n', '')
-        command   = "light"
-        url       = "http://aws.23-5.eu:2342/api/v1.0/command"
-        data      = {"command" : command, "value" : state, "room": room, "pass": passwd}
+def requestDevices():
+    with open('passwd.txt', 'r') as myfile:
+        passwd = myfile.read().replace('\n', '')
+        url    = "https://6e0e0e97.ngrok.io/api/v1.0/discovery"
+        data   = {"pass": passwd}
         try:
-            print(requests.post(url, data).content)
-        except:
-            speech_output = "Ich habe Probleme die USS Horizon zu erreichen. Vermutlich interstellare Stoerungen."
-    else:
-        speech_output      = "Es wurde kein Raum ausgesucht."
-        should_end_session = True
+            return json.loads(requests.post(url, data).content)
+        except Exception as e:
+            print e
 
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
-
-def on_intent(intent_request, session):
-
-    print("on_intent requestId=" + intent_request['requestId'] + ", sessionId=" + session['sessionId'])
-
-    intent      = intent_request['intent']
-    intent_name = intent_request['intent']['name']
-
-    if intent_name == "light":
-        return handle_light(intent, session)
-    else:
-        raise ValueError("Invalid intent")
-
-def on_session_ended(session_ended_request, session):
-    print("on_session_ended requestId=" + session_ended_request['requestId'] + ", sessionId=" + session['sessionId'])
+def sendAction(data):
+    with open('passwd.txt', 'r') as myfile:
+        passwd = myfile.read().replace('\n', '')
+        url    = "https://6e0e0e97.ngrok.io/api/v1.0/action"
+        data   = {"pass": passwd, "data": data}
+        try:
+            return json.loads(requests.post(url, data).content)
+        except Exception as e:
+            print e
 
 def lambda_handler(event, context):
-    print("event.session.application.applicationId=" + event['session']['application']['applicationId'])
+    logger.info('Logged Event:{}'.format(event))
+    access_token = event['payload']['accessToken']
 
-    if event['session']['new']:
-        on_session_started({'requestId': event['request']['requestId']}, event['session'])
+    logger.info('Request Header:{}'.format(event['header']))
+    logger.info('Request Payload:{}'.format(event['payload']))
 
-    if event['request']['type'] == "LaunchRequest":
-        return on_launch(event['request'], event['session'])
-    elif event['request']['type'] == "IntentRequest":
-        return on_intent(event['request'], event['session'])
-    elif event['request']['type'] == "SessionEndedRequest":
-        return on_session_ended(event['request'], event['session'])
+    if event['header']['namespace'] == 'Alexa.ConnectedHome.Discovery':
+        return handleDiscovery(context, event)
+
+    elif event['header']['namespace'] == 'Alexa.ConnectedHome.Control':
+        return handleControl(context, event)
+
+def handleDiscovery(context, event):
+    payload = ''
+    header = {
+        "messageId": "GUIDGUIDGUIDGUID",
+        "namespace": "Alexa.ConnectedHome.Discovery",
+        "name": "DiscoverAppliancesResponse",
+        "payloadVersion": "2"
+    }
+
+    if event['header']['name'] == 'DiscoverAppliancesRequest':
+        payload = {
+            "discoveredAppliances": [
+                {
+                    "applianceId": "sample-7",
+                    "manufacturerName": "WORKORAMA",
+                    "modelName": "WORKORAMA",
+                    "version": "1",
+                    "friendlyName": "WORKORAMA",
+                    "friendlyDescription": "Thermostat by WORKORAMA",
+                    "isReachable": True,
+                    "actions": [
+                        "setTargetTemperature",
+                        "incrementTargetTemperature",
+                        "decrementTargetTemperature"
+                    ],
+                    "additionalApplianceDetails": {
+                        "extraDetail1": "This is a thermostat that is reachable"
+                    }
+                },
+                {
+                    "applianceId": "sample-2",
+                    "manufacturerName": "Sample Manufacturer",
+                    "modelName": "Sample Dimmer",
+                    "version": "1",
+                    "friendlyName": "Sample Dimmer",
+                    "friendlyDescription": "Dimmer by Sample Manufacturer",
+                    "isReachable": True,
+                    "actions": [
+                        "turnOn",
+                        "turnOff",
+                        "setPercentage",
+                        "incrementPercentage",
+                        "decrementPercentage"
+                    ],
+                    "additionalApplianceDetails": {
+                        "extraDetail1": "This is a dimmer that is reachable"
+                    }
+                },
+                {
+                    "applianceId": "sample-3",
+                    "manufacturerName": "Sample Manufacturer",
+                    "modelName": "Sample Switch",
+                    "version": "1",
+                    "friendlyName": "Sample Switch",
+                    "friendlyDescription": "Switch by Sample Manufacturer",
+                    "isReachable": True,
+                    "actions": [
+                        "turnOn",
+                        "turnOff"
+                    ],
+                    "additionalApplianceDetails": {
+                        "extraDetail1": "This is a switch that is reachable"
+                    }
+                },
+                {
+                    "applianceId": "sample-4",
+                    "manufacturerName": "Sample Manufacturer",
+                    "modelName": "Sample Fan",
+                    "version": "1",
+                    "friendlyName": "Sample Fan",
+                    "friendlyDescription": "Fan by Sample Manufacturer",
+                    "isReachable": True,
+                    "actions": [
+                        "turnOn",
+                        "turnOff",
+                        "setPercentage",
+                        "incrementPercentage",
+                        "decrementPercentage"
+                    ],
+                    "additionalApplianceDetails": {
+                        "extraDetail1": "This is a fan that is reachable"
+                    }
+                },
+                {
+                    "applianceId": "sample-5",
+                    "manufacturerName": "Sample Manufacturer",
+                    "modelName": "Sample Switch",
+                    "version": "1",
+                    "friendlyName": "Sample Switch Unreachable",
+                    "friendlyDescription": "Switch by Sample Manufacturer",
+                    "isReachable": False,
+                    "actions": [
+                        "turnOn",
+                        "turnOff",
+                    ],
+                    "additionalApplianceDetails": {
+                        "extraDetail1": "This is a switch that is not reachable and should show as offline in the Alexa app"
+                    }
+                }
+            ]
+        }
+
+    payload = requestDevices()
+
+    logger.info('Response Header:{}'.format(header))
+    logger.info('Response Payload:{}'.format(payload))
+
+    return {
+        "header": header,
+        "payload": payload
+    }
+
+
+def handleControl(context, event):
+    payload = {}
+    appliance_id = event['payload']['appliance']['applianceId']
+    message_id   = event['header']['messageId']
+    request_name = event['header']['name']
+
+    response_name = ''
+    if request_name == 'TurnOnRequest': response_name = 'TurnOnConfirmation'
+    if request_name == 'TurnOffRequest': response_name = 'TurnOffConfirmation'
+    if request_name == 'SetTargetTemperatureRequest':
+        response_name = 'SetTargetTemperatureConfirmation'
+        target_temperature = event['payload']['targetTemperature']['value']
+        payload = {
+            "targetTemperature": {
+                "value": target_temperature
+            },
+            "temperatureMode": {
+                "value": "AUTO"
+            },
+            "previousState": {
+                "targetTemperature": {
+                    "value": 21.0
+                },
+                "mode": {
+                    "value": "AUTO"
+                }
+            }
+        }
+    if request_name == 'IncrementTargetTemperatureRequest':
+        response_name = 'IncrementTargetTemperatureConfirmation'
+        delta_temperature = event['payload']['deltaTemperature']['value']
+        payload = {
+            "previousState": {
+                "mode": {
+                    "value": "AUTO"
+                },
+                "targetTemperature": {
+                    "value": 21.0
+                }
+            },
+            "targetTemperature": {
+                "value": 21.0 + delta_temperature
+            },
+            "temperatureMode": {
+                "value": "AUTO"
+            }
+        }
+    if request_name == 'DecrementTargetTemperatureRequest':
+        response_name = 'DecrementTargetTemperatureConfirmation'
+        delta_temperature = event['payload']['deltaTemperature']['value']
+        payload = {
+            "previousState": {
+                "mode": {
+                    "value": "AUTO"
+                },
+                "targetTemperature": {
+                    "value": 21.0
+                }
+            },
+            "targetTemperature": {
+                "value": 21.0 - delta_temperature
+            },
+            "temperatureMode": {
+                "value": "AUTO"
+            }
+        }
+    if request_name == 'SetPercentageRequest': response_name = 'SetPercentageConfirmation'
+    if request_name == 'IncrementPercentageRequest': response_name = 'IncrementPercentageConfirmation'
+    if request_name == 'DecrementPercentageRequest': response_name = 'DecrementPercentageConfirmation'
+
+    if appliance_id == 'sample-5':
+        response_name = 'TargetOfflineError'
+        payload = {}
+
+    header = {
+        "namespace": "Alexa.ConnectedHome.Control",
+        "name": response_name,
+        "payloadVersion": "2",
+        "messageId": message_id
+    }
+
+    logger.info('Response Header:{}'.format(header))
+    logger.info('Response Payload:{}'.format(payload))
+
+    return {
+        "header": header,
+        "payload": payload
+    }

@@ -1,41 +1,60 @@
+import json
 from   flask import Flask
 from   flask import request
+from   flask import Response
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
 
-@app.route('/api/v1.0/command', methods=['POST'])
-def PostCommand():
-    if "pass" in request.form and "command" in request.form and "value" in request.form and "room" in request.form:
-        with open('passwd.txt', 'r') as myfile:
-            passwd = myfile.read().replace('\n', '')
-            if passwd == request.form['pass']:
+@app.route('/', methods=['GET'])
+def Homepage():
+    return "Hallo Welt"
 
-                if "wohnzimmer" == request.form['room']:
-                    mqclient.publish("livingroom/light/main", "TOGGLE")
-                    print "Livingroom light"
+@app.route('/api/v1.0/discovery', methods=['POST'])
+def Discovery():
+    with open('passwd.txt', 'r') as myfile:
+        passwd = myfile.read().replace('\n', '')
+        if passwd == request.form['pass']:
+            devices = {
+            "discoveredAppliances": [
+                {
+                    "applianceId"         : "ansi-1",
+                    "manufacturerName"    : "Ansi",
+                    "modelName"           : "Ansi",
+                    "version"             : "1",
+                    "friendlyName"        : "Ansi",
+                    "friendlyDescription" : "Thermostat by Ansi",
+                    "isReachable"         : True,
+                    "actions"             : [
+                                             "setTargetTemperature",
+                                             "incrementTargetTemperature",
+                                             "decrementTargetTemperature"
+                                            ],
+                    "additionalApplianceDetails" : {
+                        "extraDetail1": "This is a ansi thermostat that is reachable"
+                    }
+                }
+            ]}
+            return Response(json.dumps(devices), mimetype='application/json')
+        else:
+            return "Wrong Passwd"
 
-                if "esstisch" == request.form['room']:
-                    mqclient.publish("hackingroom/light/main", "TOGGLE")
-                    print "hackingroom light"
+@app.route('/api/v1.0/action', methods=['POST'])
+def Action():
+    with open('passwd.txt', 'r') as myfile:
+        passwd = myfile.read().replace('\n', '')
+        if passwd == request.form['pass']:
+            print request.form['data']
+            return "OK"
 
-                if "ansiraum" == request.form['room']:
-                    mqclient.publish("ansiroom/light/main", "TOGGLE")
-                    print "ansiraum light"
 
-                if "tiffyraum" == request.form['room']:
-                    mqclient.publish("tiffyroom/light/main", "TOGGLE")
-                    print "tiffyraum light"
 
-                if "kueche" == request.form['room']:
-                    mqclient.publish("kitchen/light/main", "TOGGLE")
-                    print "kueche light"
 
-    return "Process command request"
+
 
 if __name__ == '__main__':
     mqclient = mqtt.Client("alexa", clean_session = True)
     mqclient.connect("cortex", 1883, 60)
     mqclient.loop_start()
-    app.run(debug = False, port = 2342)
+    app.run(debug = False, port = 9001)
 
