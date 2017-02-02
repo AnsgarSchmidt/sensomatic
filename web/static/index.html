@@ -4,106 +4,25 @@
   <head>
       <title>USS Horizon</title>
       <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="static/stylesheets/style.css">
-      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-      <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-      <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart', 'gauge']});
-
-      google.charts.setOnLoadCallback(drawChartTankGaugeTemp);
-      google.charts.setOnLoadCallback(drawChartTankGaugeHeater);
-      //google.charts.setOnLoadCallback(drawChartTank1Minute);
-      //google.charts.setOnLoadCallback(drawChartTank1Hour);
-      //google.charts.setOnLoadCallback(drawChartTank1Day);
-      //google.charts.setOnLoadCallback(drawChartTank1Week);
-      //google.charts.setOnLoadCallback(drawChartTankHeaterUsage1Week);
-
-      setInterval(drawChartTankGaugeTemp,             10 * 1000)
-      setInterval(drawChartTankGaugeHeater,           10 * 1000)
-      //setInterval(drawChartTank1Minute,               20 * 1000)
-      //setInterval(drawChartTank1Hour,                 60 * 1000)
-      //setInterval(drawChartTank1Day,              2 * 60 * 1000)
-      //setInterval(drawChartTank1Week,            10 * 60 * 1000)
-      //setInterval(drawChartTankHeaterUsage1Week,  1 * 60 * 1000)
-
-      function drawChartTankGaugeTemp() {
-          var jsonData = $.ajax({url:"/api/data/gaugetemp", dataType:"json", async:false }).responseText;
-          var data = google.visualization.arrayToDataTable([
-            ['Label',  'Value'],
-            ['Temperature', 23]
-            ]);
-          data.setValue(0, 1, jsonData);
-          var chart    = new google.visualization.Gauge(document.getElementById('chart_tank_temp_gauge'));
-          var options  = { title: 'Current Temperature', width: 125, height: 125, min: 23, max: 25, greenFrom: 23, greenTo: 27, redFrom: 22, redTo: 23, yellowFrom:27, yellowTo: 28, minorTicks: 0.5};
-          chart.draw(data, options);
-      }
-
-      function drawChartTankGaugeHeater() {
-          var jsonData = $.ajax({url:"/api/data/gaugeheater", dataType:"json", async:false }).responseText;
-          var data = google.visualization.arrayToDataTable([
-            ['Label',  'Value'],
-            ['Heater', 23]
-            ]);
-          data.setValue(0, 1, jsonData);
-          var chart    = new google.visualization.Gauge(document.getElementById('chart_tank_heater_gauge'));
-          var options  = { title: 'Heater', width: 125, height: 125, min: 0, max: 1, minorTicks: 0.5};
-          chart.draw(data, options);
-      }
-
-      function drawChartTank1Minute() {
-          var jsonData = $.ajax({url:"/api/data/1minute", dataType:"json", async:false }).responseText;
-          var data     = new google.visualization.DataTable(jsonData);
-          var chart    = new google.visualization.LineChart(document.getElementById('chart_tank_temp_1minute_div'));
-          var options  = { title: '1 Minute', width: 250, height: 250, curveType: 'function', legend: { position: 'bottom' }};
-          chart.draw(data, options);
-      }
-
-      function drawChartTank1Hour() {
-          var jsonData = $.ajax({url:"/api/data/1hour", dataType:"json", async:false }).responseText;
-          var data     = new google.visualization.DataTable(jsonData);
-          var chart    = new google.visualization.LineChart(document.getElementById('chart_tank_temp_1hour_div'));
-          var options  = { title: '1 Hour', width: 250, height: 250, curveType: 'function', legend: { position: 'bottom' }};
-          chart.draw(data, options);
-      }
-
-      function drawChartTank1Day() {
-          var jsonData = $.ajax({url:"/api/data/1day", dataType:"json", async:false }).responseText;
-          var data     = new google.visualization.DataTable(jsonData);
-          var chart    = new google.visualization.LineChart(document.getElementById('chart_tank_temp_1day_div'));
-          var options  = { title: '1 Day', width: 250, height: 250, curveType: 'function', legend: { position: 'bottom' }};
-          chart.draw(data, options);
-      }
-
-      function drawChartTank1Week() {
-          var jsonData = $.ajax({url:"/api/data/1week", dataType:"json", async:false }).responseText;
-          var data     = new google.visualization.DataTable(jsonData);
-          var chart    = new google.visualization.LineChart(document.getElementById('chart_tank_temp_1week_div'));
-          var options  = { title: '1 Week', width:250, height:250, curveType: 'function', legend: { position: 'bottom' }};
-          chart.draw(data, options);
-      }
-
-      function drawChartTankHeaterUsage1Week() {
-          var jsonData = $.ajax({url:"/api/data/heaterusage1week", dataType:"json", async:false }).responseText;
-          var data     = new google.visualization.DataTable(jsonData);
-          var chart    = new google.visualization.LineChart(document.getElementById('chart_tank_heater_usage_1week_div'));
-          var options  = { title: '1 Week heater usage', width:250, height:250, curveType: 'function', legend: { position: 'bottom' }};
-          chart.draw(data, options);
-      }
-
-    </script>
   </head>
 
   <body>
-  <H1>Tank</H1>
-  <div id="chart_tank_temp_gauge"></div>
-  <div id="chart_tank_heater_gauge"></div>
-  <div id="chart_tank_temp_1minute_div"></div>
-  <div id="chart_tank_temp_1hour_div"></div>
-  <div id="chart_tank_temp_1day_div"></div>
-  <div id="chart_tank_temp_1week_div"></div>
-  <div id="chart_tank_heater_usage_1week_div"></div>
+  <H1>Ansiroom</H1>
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=ansiroom.temperature&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=ansiroom.co2&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=ansiroom.motion&lineWidth=3">
+
+  <H1>Bathroom</H1>
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.temperature&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.humidity&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.combustible&lineWidth=3">
+
+  <H1>Washing Machine</H1>
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.washingmachine.current&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.washingmachine.state&lineWidth=3">
+  <img src="http://169.46.158.118/render/?width=320&height=240&from=-1days&lineMode=connected&drawNullAsZero=false&target=bathroom.washingmachine.voltage&lineWidth=3">
+
+
   </body>
 
 </html>
