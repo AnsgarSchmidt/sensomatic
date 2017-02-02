@@ -3,7 +3,7 @@ import time
 import redis
 import schedule
 import ConfigParser
-from   Cloudant           import Cloudant
+from   CloudantDB         import CloudantDB
 from   InformationFetcher import InformationFetcher
 from   Tts                import Tts
 from   Template           import TemplateMatcher
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     time.sleep(2)
 
     print "Start Cloudant"
-    cloudantdb = Cloudant()
+    cloudantdb = CloudantDB()
     cloudantdb.start()
     time.sleep(2)
 

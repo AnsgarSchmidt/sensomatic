@@ -3,8 +3,9 @@ import time
 import redis
 import threading
 import ConfigParser
+from   cloudant.account import Cloudant
 
-class Cloudant(threading.Thread):
+class CloudantDB(threading.Thread):
 
     def _readConfig(self):
         update = False
@@ -59,16 +60,13 @@ class Cloudant(threading.Thread):
                 self._config.write(f)
 
     def __init__(self):
-
         threading.Thread.__init__(self)
         self.setDaemon(True)
-
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
         self._redis          = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
-        from cloudant.account import Cloudant
         self._cloudant       = Cloudant(self._config.get("CLOUDANT", "Username"), self._config.get("CLOUDANT", "Password"), url=self._config.get("CLOUDANT", "ServerAddress"))
         self.checkDB()
 
@@ -112,5 +110,5 @@ class Cloudant(threading.Thread):
             time.sleep(10)
 
 if __name__ == '__main__':
-    c = Cloudant()
+    c = CloudantDB()
     c.start()
