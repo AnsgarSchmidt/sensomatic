@@ -1,5 +1,0 @@
-Flask
-Flask-SQLAlchemy
-werkzeug
-Flask-OAuthlib
-requests
