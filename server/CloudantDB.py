@@ -3,7 +3,7 @@ import time
 import redis
 import threading
 import ConfigParser
-from   cloudant.account import Cloudant
+from   cloudant.client import Cloudant
 
 class CloudantDB(threading.Thread):
 
