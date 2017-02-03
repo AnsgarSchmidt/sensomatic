@@ -44,10 +44,12 @@ class Carbon(threading.Thread):
              "kitchen/water/airtemp",
              "kitchen/water/humidity",
              "kitchen/water/valve",
-             #LIVINGROOM HAL
-             "livingroom/hal/fan",
-             "livingroom/hal/cputemp",
-             "livingroom/hal/loadlevel",
+             #HAL
+             "hal/cputemp",
+             "hal/cpuuserusage",
+             "hal/loadlevel",
+             "hal/ramfree",
+             "hal/diskused",
              #BATHROOM WASHINGMACHINE
              "bathroom/washingmachine/voltage",
              "bathroom/washingmachine/current",
@@ -62,6 +64,12 @@ class Carbon(threading.Thread):
              "cortex/cortex/tx",
              "cortex/phawxansi/rx",
              "cortex/phawxansi/tx",
+             "cortex/wan/rxdelta",
+             "cortex/wan/txdelta",
+             "cortex/cortex/rxdelta",
+             "cortex/cortex/txdelta",
+             "cortex/phawxansi/rxdelta",
+             "cortex/phawxansi/tdeltax",
              #POWERSERVER
              "powerserver/cputemp",
              "powerserver/cpuuserusage",
