@@ -471,8 +471,8 @@ class MqttRulez(threading.Thread):
         while True:
             try:
                 self._process()
-            except:
-                pass
+            except Exception as e:
+                print e
 
 if __name__ == '__main__':
     print "Start"
