@@ -388,21 +388,68 @@ class MqttRulez(threading.Thread):
                 print "motion in tiffy room detected"
                 self._redis.setex(Room.TIFFY_ROOM+"/populated", 60 * 60, time.time())
 
+        if keys[0]  == "cortex":
+
+            if keys[1] == "wan":
+                if keys[2] == "rx":
+                    if self._cortex_wan_rx > 0:
+                        delta = int(v) - self._cortex_wan_rx
+                        self._mqclient.publish("cortex/wan/rxdelta", delta)
+                    self._cortex_wan_rx = int(v)
+
+                if keys[2] == "tx":
+                    if self._cortex_wan_tx > 0:
+                        delta = int(v) - self._cortex_wan_tx
+                        self._mqclient.publish("cortex/wan/txdelta", delta)
+                    self._cortex_wan_tx = int(v)
+
+            if keys[1] == "cortex":
+                if keys[2] == "rx":
+                    if self._cortex_cortex_rx > 0:
+                        delta = int(v) - self._cortex_cortex_rx
+                        self._mqclient.publish("cortex/cortex/rxdelta", delta)
+                    self._cortex_cortex_rx = int(v)
+
+                if keys[2] == "tx":
+                    if self._cortex_cortex_tx > 0:
+                        delta = int(v) - self._cortex_cortex_tx
+                        self._mqclient.publish("cortex/cortex/txdelta", delta)
+                    self._cortex_cortex_tx = int(v)
+
+            if keys[1] == "phawxansi":
+                if keys[2] == "rx":
+                    if self._cortex_phawxansi_rx > 0:
+                        delta = int(v) - self._cortex_phawxansi_rx
+                        self._mqclient.publish("cortex/phawxansi/rxdelta", delta)
+                    self._cortex_phawxansi_rx = int(v)
+
+                if keys[2] == "tx":
+                    if self._cortex_phawxansi_tx > 0:
+                        delta = int(v) - self._cortex_phawxansi_tx
+                        self._mqclient.publish("cortex/phawxansi/txdelta", delta)
+                    self._cortex_phawxansi_tx = int(v)
+
     def __init__(self):
         random.seed
         threading.Thread.__init__(self)
         self.setDaemon(True)
-        self._homeDir        = os.path.expanduser("~/.sensomatic")
-        self._configFileName = self._homeDir + '/config.ini'
-        self._config         = ConfigParser.ConfigParser()
+        self._homeDir              = os.path.expanduser("~/.sensomatic")
+        self._configFileName       = self._homeDir + '/config.ini'
+        self._config               = ConfigParser.ConfigParser()
         self._readConfig()
-        self._mqclient       = mqtt.Client("MqttRulez", clean_session=True)
-        self._redis          = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
-        self._tts            = Tts()
-        self._template       = TemplateMatcher()
-        self._info           = InformationFetcher()
-        self._workingQueue   = Queue.Queue()
-        self._lastwaterlevel = -1
+        self._mqclient             = mqtt.Client("MqttRulez", clean_session=True)
+        self._redis                = redis.StrictRedis(host=self._config.get("REDIS", "ServerAddress"), port=self._config.get("REDIS", "ServerPort"), db=0)
+        self._tts                  = Tts()
+        self._template             = TemplateMatcher()
+        self._info                 = InformationFetcher()
+        self._workingQueue         = Queue.Queue()
+        self._lastwaterlevel       = -1
+        self._cortex_wan_rx        = 0
+        self._cortex_wan_tx        = 0
+        self._cortex_cortex_rx     = 0
+        self._cortex_cortex_tx     = 0
+        self._cortex_phawxansi_rx  = 0
+        self._cortex_phawxansi_tx  = 0
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
