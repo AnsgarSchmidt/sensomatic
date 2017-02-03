@@ -394,15 +394,15 @@ class MqttRulez(threading.Thread):
                 if keys[2] == "rx":
                     if self._cortex_wan_rx > 0:
                         delta = int(v) - self._cortex_wan_rx
-                        print delta
-                        self._mqclient.publish("cortex/wan/rxdelta", delta)
+                        s = "%d" % delta
+                        self._mqclient.publish("cortex/wan/rxdelta", s)
                     self._cortex_wan_rx = int(v)
 
                 if keys[2] == "tx":
                     if self._cortex_wan_tx > 0:
                         delta = int(v) - self._cortex_wan_tx
-                        print delta
-                        self._mqclient.publish("cortex/wan/txdelta", delta)
+                        s = "%d" % delta
+                        self._mqclient.publish("cortex/wan/txdelta", s)
                     self._cortex_wan_tx = int(v)
 
             if keys[1] == "cortex":
