@@ -7,21 +7,38 @@ import json
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+device = {
+            "applianceId": "",
+            "manufacturerName": "Ansi",
+            "modelName": "Ansi",
+            "version": "1",
+            "friendlyName": "",
+            "friendlyDescription": "",
+            "isReachable": True,
+            "actions": [],
+            "additionalApplianceDetails": {
+                "extraDetail1": "This device is brought to you by HAL"
+            }
+         }
+
 def requestDevices():
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
-        url    = "https://6e0e0e97.ngrok.io/api/v1.0/discovery"
+        url    = "http://e578ed86.ngrok.io/api/v1.0/discovery"
         data   = {"pass": passwd}
         try:
             return json.loads(requests.post(url, data).content)
         except Exception as e:
             print e
 
-def sendAction(data):
+def sendAction(event):
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
-        url    = "https://6e0e0e97.ngrok.io/api/v1.0/action"
-        data   = {"pass": passwd, "data": data}
+        url    = "http://e578ed86.ngrok.io/api/v1.0/action"
+        data   = {"pass": passwd, "event": json.dumps(event)}
+        print "XXXXXXXXXXXXXXXXXXXXXX"
+        print json.dumps(data)
+        print "XXXXXXXXXXXXXXXXXXXXXX"
         try:
             return json.loads(requests.post(url, data).content)
         except Exception as e:
@@ -50,99 +67,20 @@ def handleDiscovery(context, event):
     }
 
     if event['header']['name'] == 'DiscoverAppliancesRequest':
-        payload = {
-            "discoveredAppliances": [
-                {
-                    "applianceId": "sample-7",
-                    "manufacturerName": "WORKORAMA",
-                    "modelName": "WORKORAMA",
-                    "version": "1",
-                    "friendlyName": "WORKORAMA",
-                    "friendlyDescription": "Thermostat by WORKORAMA",
-                    "isReachable": True,
-                    "actions": [
-                        "setTargetTemperature",
-                        "incrementTargetTemperature",
-                        "decrementTargetTemperature"
-                    ],
-                    "additionalApplianceDetails": {
-                        "extraDetail1": "This is a thermostat that is reachable"
-                    }
-                },
-                {
-                    "applianceId": "sample-2",
-                    "manufacturerName": "Sample Manufacturer",
-                    "modelName": "Sample Dimmer",
-                    "version": "1",
-                    "friendlyName": "Sample Dimmer",
-                    "friendlyDescription": "Dimmer by Sample Manufacturer",
-                    "isReachable": True,
-                    "actions": [
-                        "turnOn",
-                        "turnOff",
-                        "setPercentage",
-                        "incrementPercentage",
-                        "decrementPercentage"
-                    ],
-                    "additionalApplianceDetails": {
-                        "extraDetail1": "This is a dimmer that is reachable"
-                    }
-                },
-                {
-                    "applianceId": "sample-3",
-                    "manufacturerName": "Sample Manufacturer",
-                    "modelName": "Sample Switch",
-                    "version": "1",
-                    "friendlyName": "Sample Switch",
-                    "friendlyDescription": "Switch by Sample Manufacturer",
-                    "isReachable": True,
-                    "actions": [
-                        "turnOn",
-                        "turnOff"
-                    ],
-                    "additionalApplianceDetails": {
-                        "extraDetail1": "This is a switch that is reachable"
-                    }
-                },
-                {
-                    "applianceId": "sample-4",
-                    "manufacturerName": "Sample Manufacturer",
-                    "modelName": "Sample Fan",
-                    "version": "1",
-                    "friendlyName": "Sample Fan",
-                    "friendlyDescription": "Fan by Sample Manufacturer",
-                    "isReachable": True,
-                    "actions": [
-                        "turnOn",
-                        "turnOff",
-                        "setPercentage",
-                        "incrementPercentage",
-                        "decrementPercentage"
-                    ],
-                    "additionalApplianceDetails": {
-                        "extraDetail1": "This is a fan that is reachable"
-                    }
-                },
-                {
-                    "applianceId": "sample-5",
-                    "manufacturerName": "Sample Manufacturer",
-                    "modelName": "Sample Switch",
-                    "version": "1",
-                    "friendlyName": "Sample Switch Unreachable",
-                    "friendlyDescription": "Switch by Sample Manufacturer",
-                    "isReachable": False,
-                    "actions": [
-                        "turnOn",
-                        "turnOff",
-                    ],
-                    "additionalApplianceDetails": {
-                        "extraDetail1": "This is a switch that is not reachable and should show as offline in the Alexa app"
-                    }
-                }
-            ]
-        }
 
-    payload = requestDevices()
+        devices = []
+
+        for d in requestDevices():
+            a = device.copy()
+            a['applianceId'] = d['id']
+            a['friendlyName'] = d['name']
+            a['friendlyDescription'] = d['description']
+            a['actions'] = d['actions']
+            devices.append(a)
+
+        payload = {
+            "discoveredAppliances": devices
+        }
 
     logger.info('Response Header:{}'.format(header))
     logger.info('Response Payload:{}'.format(payload))
@@ -158,6 +96,8 @@ def handleControl(context, event):
     appliance_id = event['payload']['appliance']['applianceId']
     message_id   = event['header']['messageId']
     request_name = event['header']['name']
+
+    sendAction(event)
 
     response_name = ''
     if request_name == 'TurnOnRequest': response_name = 'TurnOnConfirmation'

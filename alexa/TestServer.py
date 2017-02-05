@@ -6,6 +6,47 @@ import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
 
+devices = [
+           {"id":"ansiroom-mainlight",
+            "name":"Ansiroom Mainlight",
+            "description":"Mainlight ansiroom",
+            "actions":["turnOn",
+                       "turnOff",
+                      ]
+           },
+           {"id": "kitchen-mainlight",
+            "name": "Kitchen Mainlight",
+            "description": "Mainlight Kitchen",
+            "actions": ["turnOn",
+                        "turnOff",
+                        ]
+            },
+           {"id": "table-mainlight",
+            "name": "Hackingtable Mainlight",
+            "description": "Mainlight Hackingtable",
+            "actions": ["turnOn",
+                        "turnOff",
+                       ]
+           },
+           {"id": "livingroom-mainlight",
+            "name": "Livingroom Mainlight",
+            "description": "Mainlight livingroom",
+            "actions": ["turnOn",
+                        "turnOff",
+                        ]
+           },
+]
+
+actions = ["setTargetTemperature",
+           "incrementTargetTemperature",
+           "decrementTargetTemperature",
+           "setPercentage",
+           "incrementPercentage",
+           "decrementPercentage",
+           "turnOff",
+           "turnOn"
+          ]
+
 @app.route('/', methods=['GET'])
 def Homepage():
     return "Hallo Welt"
@@ -15,26 +56,6 @@ def Discovery():
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
         if passwd == request.form['pass']:
-            devices = {
-            "discoveredAppliances": [
-                {
-                    "applianceId"         : "ansi-1",
-                    "manufacturerName"    : "Ansi",
-                    "modelName"           : "Ansi",
-                    "version"             : "1",
-                    "friendlyName"        : "Ansi",
-                    "friendlyDescription" : "Thermostat by Ansi",
-                    "isReachable"         : True,
-                    "actions"             : [
-                                             "setTargetTemperature",
-                                             "incrementTargetTemperature",
-                                             "decrementTargetTemperature"
-                                            ],
-                    "additionalApplianceDetails" : {
-                        "extraDetail1": "This is a ansi thermostat that is reachable"
-                    }
-                }
-            ]}
             return Response(json.dumps(devices), mimetype='application/json')
         else:
             return "Wrong Passwd"
@@ -44,13 +65,29 @@ def Action():
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
         if passwd == request.form['pass']:
-            print request.form['data']
+            j = json.loads(request.form['event'])
+            #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+            id = j['payload']['appliance']['applianceId']
+
+            if id == "ansiroom-mainlight":
+                print "Ansiraumlich"
+                mqclient.publish("ansiroom/light/main", "TOGGLE")
+
+            if id == "kitchen-mainlight":
+                print "Kitchenlicht"
+                mqclient.publish("kitchen/light/main", "TOGGLE")
+
+            if id == "table-mainlight":
+                print "Tablelicht"
+                mqclient.publish("hackingroom/light/main", "TOGGLE")
+
+            if id == "livingroom-mainlight":
+                print "livingroomlicht"
+                mqclient.publish("livingroom/light/main", "TOGGLE")
+
             return "OK"
-
-
-
-
-
+        else:
+            print "passwd errror"
 
 if __name__ == '__main__':
     mqclient = mqtt.Client("alexa", clean_session = True)
