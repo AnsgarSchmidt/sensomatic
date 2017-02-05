@@ -8,6 +8,7 @@ python:
  # - "nightly"
 
 env:
+  - TEST_DIR=alexa
   - TEST_DIR=knot/python
   - TEST_DIR=server
 
