@@ -86,16 +86,43 @@ class LEDKey(threading.Thread):
 
     def run(self):
         while True:
+
+            # Display
             if self.mode == 'timetemp':
                 now = datetime.datetime.now()
                 temp = 88
                 hum  = 88
                 if self._redis.exists("outside/temperature"):
-                    temp = float(self._redis.get("outside/temperature"))
+                    temp = float(self._redis.get("outside/feelslike"))
                 if self._redis.exists("outside/humidity"):
                     hum = float(self._redis.get("outside/humidity"))
                 s = "%02d%02d%02d%02d" % (now.hour, now.minute, temp, hum)
                 self.tm.set_text(s)
+
+            # LED 1 -> Heater Tank
+            if self._redis.exists("livingroom/tank/heater"):
+                heater = int(self._redis.get("livingroom/tank/heater"))
+                if heater == 1:
+                    self.tm.set_led(0, 1)
+                else:
+                    self.tm.set_led(0, 0)
+
+            # LED 2 -> Ansi here
+            if self._redis.exists("ansi/wlanPresents"):
+                ansi = int(self._redis.get("ansi/wlanPresents"))
+                if ansi == 1:
+                    self.tm.set_led(1, 1)
+                else:
+                    self.tm.set_led(1, 0)
+
+            # LED 3 -> Tiffy here
+            if self._redis.exists("tiffy/wlanPresents"):
+                tiffy = int(self._redis.get("tiffy/wlanPresents"))
+                if tiffy == 1:
+                    self.tm.set_led(2, 1)
+                else:
+                    self.tm.set_led(2, 0)
+
             time.sleep(1)
 
 if __name__ == "__main__":
