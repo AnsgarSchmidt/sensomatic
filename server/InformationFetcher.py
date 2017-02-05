@@ -12,12 +12,12 @@ import requests
 import httplib2
 import datetime
 import ConfigParser
-from apiclient         import discovery
-from oauth2client      import client
-from oauth2client      import tools
-from oauth2client.file import Storage
-from requests.auth     import HTTPBasicAuth
-from imapclient        import IMAPClient
+from   apiclient         import discovery
+from   oauth2client      import client
+from   oauth2client      import tools
+from   oauth2client.file import Storage
+from   requests.auth     import HTTPBasicAuth
+from   imapclient        import IMAPClient
 
 class InformationFetcher():
 
