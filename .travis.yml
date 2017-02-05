@@ -8,9 +8,10 @@ python:
  # - "nightly"
 
 env:
+  - TEST_DIR=web
   - TEST_DIR=alexa
-  - TEST_DIR=knot/python
   - TEST_DIR=server
+  - TEST_DIR=knot/python
 
 notifications:
   email:
