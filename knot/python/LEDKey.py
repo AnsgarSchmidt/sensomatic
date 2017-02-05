@@ -88,12 +88,12 @@ class LEDKey(threading.Thread):
         while True:
             if self.mode == 'timetemp':
                 now = datetime.datetime.now()
-                temp = 1
-                hum  = 2
-                if self._redis.exists("bathroom/temperature"):
-                    temp = float(self._redis.get("bathroom/temperature"))
-                if self._redis.exists("bathroom/humidity"):
-                    hum = float(self._redis.get("bathroom/humidity"))
+                temp = 88
+                hum  = 88
+                if self._redis.exists("outside/temperature"):
+                    temp = float(self._redis.get("outside/temperature"))
+                if self._redis.exists("outside/humidity"):
+                    hum = float(self._redis.get("outside/humidity"))
                 s = "%02d%02d%02d%02d" % (now.hour, now.minute, temp, hum)
                 self.tm.set_text(s)
             time.sleep(1)
