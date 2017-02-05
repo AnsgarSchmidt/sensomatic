@@ -102,13 +102,16 @@ class CloudantDB(threading.Thread):
     def run(self):
         while True:
             d = self.getData()
+            # print d
             try:
                 if self.checkDB():
-                    my_document = self._database.create_document(d)
-            except:
+                    self._database.create_document(d)
+            except Exception as e:
+                print e
                 time.sleep(60)
             time.sleep(10)
 
 if __name__ == '__main__':
     c = CloudantDB()
     c.start()
+    time.sleep(5)
