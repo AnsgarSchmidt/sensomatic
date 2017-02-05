@@ -12,7 +12,8 @@ class TM1638(object):
             0b00000111,
             0b01111111,
             0b01100111,
-            0b00000000]
+            0b00000000,
+            0b01000000]
 
     def __init__(self, dio, clk, stb):
         self.dio = dio
@@ -69,7 +70,10 @@ class TM1638(object):
 
     def set_text(self, text):
         for i in range(8):
-            self.set_segment(i,int(text[i]))
+            if text[i] == "-":
+                self.set_segment(i, 11) # "-" is 11 in the FONT array
+            else:
+                self.set_segment(i, int(text[i]))
 
     def receive(self):
         temp = 0
