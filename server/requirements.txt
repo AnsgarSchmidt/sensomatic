@@ -34,3 +34,4 @@ httplib2
 pytz
 pafy
 astral
+telepot
