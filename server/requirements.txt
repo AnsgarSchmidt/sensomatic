@@ -1,7 +1,5 @@
 spotipy
 pychromecast
-
-
 cloudant
 packaging
 appdirs
