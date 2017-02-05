@@ -20,6 +20,7 @@ from   Mpd                import Mpd
 from   TwitterPusher      import TwitterPusher
 from   Tank               import Tank
 from   Carbon             import Carbon
+from   Telegram           import Telegram
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -126,66 +127,72 @@ if __name__ == '__main__':
 
     _readConfig()
     _redis = redis.StrictRedis(host=config.get("REDIS", "ServerAddress"), port=config.get("REDIS", "ServerPort"), db=0)
+    _wait_time = 5
 
     print "Start Persistor"
     persistor = Persistor()
     persistor.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Carbon"
     carbon = Carbon()
     carbon.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
+
+    print "Start Telegram bot"
+    telegram = Telegram()
+    telegram.start()
+    time.sleep(_wait_time)
 
     print "Start MqttRulez"
     rulez = MqttRulez()
     rulez.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Pinger"
     pinger = Pinger()
     pinger.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Cloudant"
     cloudantdb = CloudantDB()
     cloudantdb.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Inital State"
     initialState = InitialState()
     initialState.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Climate Control"
     climate = Climate()
     climate.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Room Control"
     lightControl = RoomController()
     lightControl.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Alarmclock"
     alarmclock = AlarmClock()
     alarmclock.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Washing Machine"
     washingmachine = HS100("192.168.1.42", "bathroom/washingmachine/")
     washingmachine.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start TwitterPusher"
     twitterpusher = TwitterPusher()
     twitterpusher.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     print "Start Tank"
     tank = Tank()
     tank.start()
-    time.sleep(2)
+    time.sleep(_wait_time)
 
     #https://github.com/dbader/schedule
 
