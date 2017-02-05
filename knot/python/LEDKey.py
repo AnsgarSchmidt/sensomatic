@@ -101,8 +101,8 @@ class LEDKey(threading.Thread):
 
             # LED 1 -> Heater Tank
             if self._redis.exists("livingroom/tank/heater"):
-                heater = int(self._redis.get("livingroom/tank/heater"))
-                if heater == 1:
+                heater = float(self._redis.get("livingroom/tank/heater"))
+                if heater == 1.0:
                     self.tm.set_led(0, 1)
                 else:
                     self.tm.set_led(0, 0)
