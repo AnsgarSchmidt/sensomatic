@@ -280,6 +280,7 @@ class MqttRulez(threading.Thread):
                             print "Ack washing machine ready"
                             self._redis.delete("WashingmachineActive")
                             self._redis.setex("WashingmachineReady", 60 * 60 * 24 * 1, time.time())
+                            self._mqclient.publish("telegram", "Washing maching ready")
                             for room in Room.ANNOUNCE_ROOMS:
                                 if self._info.isSomeoneInTheRoom(room):
                                     self._tts.createWavFile(self._template.getAcknowledgeEndWashingMachine(), room)
@@ -288,6 +289,7 @@ class MqttRulez(threading.Thread):
                     if 0.02 <= current < 0.08:
                         if not self._redis.exists("WashingmachineActive"):
                             self._redis.setex("WashingmachineActive", 60 * 60 * 24 * 1, time.time())
+                            self._mqclient.publish("telegram", "Washing maching started")
                             self._tts.createWavFile(self._template.getAcknowledgeStartWashingMachine(), Room.BATH_ROOM)
 
                     # WASHING
