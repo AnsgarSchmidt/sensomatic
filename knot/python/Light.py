@@ -97,22 +97,22 @@ class Light(threading.Thread):
 	if s[1] == 'light' and s[2] == 'main':
 		if s[0] == 'livingroom':
 			self._switch(Light.LIVING_ROOM, msg.payload)
-                if s[0] == 'hackingroom':
-                        self._switch(Light.HACKING_ROOM, msg.payload)
-                if s[0] == 'ansiroom':
-                        self._switch(Light.ANSI_ROOM, msg.payload)
-                if s[0] == 'tiffyroom':
-                        self._switch(Light.TIFFY_ROOM, msg.payload)
-                if s[0] == 'kitchen':
-                        self._switch(Light.KITCHEN, msg.payload)
-                if s[0] == 'corridor':
-                        self._switch(Light.CORRIDOR, msg.payload)
-                if s[0] == 'storage':
-                        self._switch(Light.STORAGE, msg.payload)
-                if s[0] == 'entrance':
-                        self._switch(Light.ENTRANCE, msg.payload)
-                if s[0] == 'bathroom':
-                        self._switch(Light.BATHROOM, msg.payload)
+        if s[0] == 'hackingroom':
+            self._switch(Light.HACKING_ROOM, msg.payload)
+        if s[0] == 'ansiroom':
+            self._switch(Light.ANSI_ROOM, msg.payload)
+        if s[0] == 'tiffyroom':
+            self._switch(Light.TIFFY_ROOM, msg.payload)
+        if s[0] == 'kitchen':
+            self._switch(Light.KITCHEN, msg.payload)
+        if s[0] == 'corridor':
+            self._switch(Light.CORRIDOR, msg.payload)
+        if s[0] == 'storage':
+            self._switch(Light.STORAGE, msg.payload)
+        if s[0] == 'entrance':
+            self._switch(Light.ENTRANCE, msg.payload)
+        if s[0] == 'bathroom':
+            self._switch(Light.BATHROOM, msg.payload)
 
     def _on_disconnect(self, client, userdata, msg):
         print "Disconnect"
