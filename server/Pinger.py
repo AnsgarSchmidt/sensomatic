@@ -57,28 +57,47 @@ class Pinger(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
-
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
         self._readConfig()
-
-        self._mqclient = mqtt.Client("Pinger", clean_session=True)
+        self._mqclient       = mqtt.Client("Pinger", clean_session=True)
+        self._crew           = {"ansi": False, "tiffy": False}
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.loop_start()
         while True:
 
+            av = False
             a = ping.quiet_ping(self._config.get("PINGER", "AnsiIP"), timeout=1, count=1)
             if a[0] == 0:
-                print "Ansi ist da"
                 self._mqclient.publish("ansi/wlanPresents", "1")
+                av = True
+            else:
+                self._mqclient.publish("ansi/wlanPresents", "0")
 
+            if av != self._crew['ansi']:
+                if av:
+                    self._mqclient.publish("telegram", "Ansi is home")
+                else:
+                    self._mqclient.publish("telegram", "Ansi left")
+                self._crew['ansi'] = av
+
+            tv = False
             t = ping.quiet_ping(self._config.get("PINGER", "TiffyIP"), timeout=1, count=1)
             if t[0] == 0:
-                print "Tiffy ist da"
                 self._mqclient.publish("tiffy/wlanPresents", "1")
+                tv = True
+            else:
+                self._mqclient.publish("tiffy/wlanPresents", "0")
+
+            if tv != self._crew['tiffy']:
+                if tv:
+                    self._mqclient.publish("telegram", "Tiffy is home")
+                else:
+                    self._mqclient.publish("telegram", "Tiffy left")
+                self._crew['tiffy'] = tv
 
             time.sleep(30)
 
