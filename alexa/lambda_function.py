@@ -24,7 +24,7 @@ device = {
 def requestDevices():
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
-        url    = "http://e578ed86.ngrok.io/api/v1.0/discovery"
+        url    = "http://a0bb8378.ngrok.io/api/v1.0/discovery"
         data   = {"pass": passwd}
         try:
             return json.loads(requests.post(url, data).content)
@@ -34,7 +34,7 @@ def requestDevices():
 def sendAction(event):
     with open('passwd.txt', 'r') as myfile:
         passwd = myfile.read().replace('\n', '')
-        url    = "http://e578ed86.ngrok.io/api/v1.0/action"
+        url    = "http://a0bb8378.ngrok.io/api/v1.0/action"
         data   = {"pass": passwd, "event": json.dumps(event)}
         print "XXXXXXXXXXXXXXXXXXXXXX"
         print json.dumps(data)

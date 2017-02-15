@@ -2,6 +2,7 @@ import json
 from   flask import Flask
 from   flask import request
 from   flask import Response
+from   flask import jsonify
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
@@ -50,6 +51,20 @@ actions = ["setTargetTemperature",
 @app.route('/', methods=['GET'])
 def Homepage():
     return "Hallo Welt"
+
+@app.route('/api/v1.0/ifttt', methods=['POST'])
+def Ifttt():
+    with open('passwd.txt', 'r') as myfile:
+        passwd = myfile.read().replace('\n', '')
+        data = request.get_json(force=True)
+        if data['pass'] == passwd:
+            if data['command'] == "ansilight":
+                mqclient.publish("ansiroom/light/main", "TOGGLE")
+            if data['command'] == "tiffylight":
+                mqclient.publish("tiffyroom/light/main", "TOGGLE")
+        else:
+            print "Wrong passwd"
+    return "OK"
 
 @app.route('/api/v1.0/discovery', methods=['POST'])
 def Discovery():
