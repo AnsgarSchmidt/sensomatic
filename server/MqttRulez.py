@@ -390,49 +390,6 @@ class MqttRulez(threading.Thread):
                 print "motion in tiffy room detected"
                 self._redis.setex(Room.TIFFY_ROOM+"/populated", 60 * 60, time.time())
 
-        if keys[0]  == "cortex":
-
-            if keys[1] == "wan":
-                if keys[2] == "rx":
-                    if self._cortex_wan_rx > 0:
-                        delta = int(v) - self._cortex_wan_rx
-                        s = "%d" % delta
-                        self._mqclient.publish("cortex/wan/rxdelta", s)
-                    self._cortex_wan_rx = int(v)
-
-                if keys[2] == "tx":
-                    if self._cortex_wan_tx > 0:
-                        delta = int(v) - self._cortex_wan_tx
-                        s = "%d" % delta
-                        self._mqclient.publish("cortex/wan/txdelta", s)
-                    self._cortex_wan_tx = int(v)
-
-            if keys[1] == "cortex":
-                if keys[2] == "rx":
-                    if self._cortex_cortex_rx > 0:
-                        delta = int(v) - self._cortex_cortex_rx
-                        self._mqclient.publish("cortex/cortex/rxdelta", delta)
-                    self._cortex_cortex_rx = int(v)
-
-                if keys[2] == "tx":
-                    if self._cortex_cortex_tx > 0:
-                        delta = int(v) - self._cortex_cortex_tx
-                        self._mqclient.publish("cortex/cortex/txdelta", delta)
-                    self._cortex_cortex_tx = int(v)
-
-            if keys[1] == "phawxansi":
-                if keys[2] == "rx":
-                    if self._cortex_phawxansi_rx > 0:
-                        delta = int(v) - self._cortex_phawxansi_rx
-                        self._mqclient.publish("cortex/phawxansi/rxdelta", delta)
-                    self._cortex_phawxansi_rx = int(v)
-
-                if keys[2] == "tx":
-                    if self._cortex_phawxansi_tx > 0:
-                        delta = int(v) - self._cortex_phawxansi_tx
-                        self._mqclient.publish("cortex/phawxansi/txdelta", delta)
-                    self._cortex_phawxansi_tx = int(v)
-
     def __init__(self):
         random.seed
         threading.Thread.__init__(self)
