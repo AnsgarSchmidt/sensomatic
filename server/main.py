@@ -21,6 +21,7 @@ from   TwitterPusher      import TwitterPusher
 from   Tank               import Tank
 from   Carbon             import Carbon
 from   Telegram           import Telegram
+from   SmarterCoffee      import SmartCoffee
 
 temp = TemplateMatcher()
 tts  = Tts()
@@ -191,6 +192,11 @@ if __name__ == '__main__':
 
     print "Start Tank"
     tank = Tank()
+    tank.start()
+    time.sleep(_wait_time)
+
+    print "Start Coffee machine"
+    coffee = SmartCoffee()
     tank.start()
     time.sleep(_wait_time)
 
