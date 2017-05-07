@@ -4,7 +4,7 @@ import Queue
 import socket
 import threading
 import ConfigParser
-import paho.mqtt.client   as     mqtt
+import paho.mqtt.client as mqtt
 
 class Carbon(threading.Thread):
 
