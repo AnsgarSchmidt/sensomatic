@@ -3,7 +3,7 @@ import time
 import redis
 import threading
 import ConfigParser
-from ISStreamer.Streamer import Streamer
+from   ISStreamer.Streamer import Streamer
 
 class InitialState(threading.Thread):
 
