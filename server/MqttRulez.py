@@ -78,13 +78,13 @@ class MqttRulez(threading.Thread):
                 if v == "1":
                     if self._redis.exists("shower"):
                         print "Stop shower"
-                        self._mqclient.publish("bathroom/light/rgb","0,0,0")
+                        self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         Mpd().getServerbyName("Bath").stop()
                         self._redis.delete("shower")
                         self._tts.createWavFile(self._template.getAcknowledgeEndShower('Ansi'), Room.BATH_ROOM)
                     else:
                         print "Start shower"
-                        self._mqclient.publish("bathroom/light/rgb","255,255,255")
+                        self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
                         if self._redis.exists("PlayRadioInBath"):
                             self._redis.delete("PlayRadioInBath")
@@ -377,12 +377,14 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0       )
                     self._mqclient.publish("corridor/light/main",             "TOGGLE")
                     self._mqclient.publish("bathroom/light/main",             "TOGGLE")
-                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.BATH_ROOM)
+                    self._mqclient.publish("coffee/brew_wakeup_coffee",       "NOW"   )
                     try:
                         Chromecast().volume('Chromeansi', 0.4)
                         Chromecast().playMusicURL('Chromeansi', 'http://rb-mp3-m-bremenvier.akacast.akamaistream.net/7/23/234437/v1/gnl.akacast.akamaistream.net/rb-mp3-m-bremenvier')
-                    except:
-                        pass
+                    except Exception e:
+                        print "Error in wakeup"
+                        print e
+                    self._tts.createWavFile(self._template.getWakeupText("Ansi"), Room.BATH_ROOM)
 
         if keys[0] == Room.TIFFY_ROOM:
 
