@@ -257,7 +257,9 @@ class InformationFetcher():
             j = json.loads(json_string)
             #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
             return j["current_observation"]["temp_c"], j["current_observation"]["relative_humidity"], j["current_observation"]["feelslike_c"], j["current_observation"]["weather"], j["current_observation"]["wind_dir"], j["current_observation"]["wind_kph"], j["current_observation"]["wind_gust_kph"]
-        except:
+        except Exception as e:
+            print "Error in getOutdoortemperature"
+            print e
             return 0,0,0,0,0,0,0
 
     def getPrediction(self):
@@ -439,8 +441,8 @@ if __name__ == '__main__':
     #print i.getNumEmailMessages()
     #print i.getRoomTemp(Room.BATH_ROOM)
     #print i.getRoomHumidity(Room.BATH_ROOM)
-    #print i.getOutdoor()
-    #print i.getPrediction()
+    print i.getOutdoor()
+    print i.getPrediction()
     #print i.getNextISSPass()
     #print i.getAstronauts()
     #print i.getRoomCo2Level(Room.ANSI_ROOM)
@@ -449,14 +451,14 @@ if __name__ == '__main__':
     #print i.getSunPosition()
     #print i.getOutsideLightLevel()
     #print i.getNextWackeuptime()
-    print i.getCheeringLightColours()
-    print i.getWoWAchievementPoints("Garrosh", "Phawx")
-    print i.getWoWHealth("Garrosh", "Phawx")
-    print i.getWoWPower("Garrosh", "Phawx")
-    print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
-    print i.getSunTimes("Port Of Spain", 0)
-    print i.getMoonPhase("Port Of Spain")
-    print i.getSunPosition()
-    print i.getMoonPosition()
-    print i.getSpaceApi("xHain")['state']
-    print i.isSpaceOpen("xHain")
+    #print i.getCheeringLightColours()
+    #print i.getWoWAchievementPoints("Garrosh", "Phawx")
+    #print i.getWoWHealth("Garrosh", "Phawx")
+    #print i.getWoWPower("Garrosh", "Phawx")
+    #print i.getWoWTotalHonorableKills("Garrosh", "Phawx")
+    #print i.getSunTimes("Port Of Spain", 0)
+    #print i.getMoonPhase("Port Of Spain")
+    #print i.getSunPosition()
+    #print i.getMoonPosition()
+    #print i.getSpaceApi("xHain")['state']
+    #print i.isSpaceOpen("xHain")
