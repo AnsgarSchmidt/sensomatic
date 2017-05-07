@@ -113,7 +113,7 @@ def getHeaterUsage1Week():
 
     data = {
         "cols": [
-            {"id": "", "label": "Time",        "pattern": "", "type": "string"},
+            {"id": "", "label": "Time",   "pattern": "", "type": "string"},
             {"id": "", "label": "Heater", "pattern": "", "type": "number"}
         ],
         "rows": []
@@ -139,7 +139,15 @@ def getKeys(data):
 def getValue(data, name):
     values = []
     for i in data['rows']:
-        values.append(float(i['value'][name]))
+        if isinstance(i['value'][name], unicode):
+            values.append(float(i['value'][name]))
+        elif isinstance(i['value'][name], int) or isinstance(i['value'][name], float):
+            values.append(i['value'][name])
+        elif i['value'][name] is None:
+            values.append(0)
+        else:
+            print type(i['value'][name])
+            print i
     return values
 
 def getDateTime(data, tz):
@@ -163,7 +171,7 @@ def getBoolean(data):
 
 @app.route('/api/twitter/getHeaterID')
 def getHeaterID():
-    days_to_catch          = 14
+    days_to_catch          = 10
     smooth                 = 20
     filtersize             = 8000
     vcap_config            = os.environ.get('VCAP_SERVICES')
@@ -184,6 +192,7 @@ def getHeaterID():
                               decoded_config['cloudantNoSQLDB'][0]['credentials']['host'],
                               time.time() - (days_to_catch * DAY),
                               time.time())
+    print url
     data                   = json.loads(requests.get(url, auth=auth).content)
     watertemp_patch        = mpatches.Patch(color='blue',   label='Water Temperature')
     airtemp_patch          = mpatches.Patch(color='green',  label='Air Temperature')
