@@ -135,10 +135,10 @@ if __name__ == '__main__':
     persistor.start()
     time.sleep(_wait_time)
 
-    print "Start Carbon"
-    carbon = Carbon()
-    carbon.start()
-    time.sleep(_wait_time)
+    #print "Start Carbon"
+    #carbon = Carbon()
+    #carbon.start()
+    #time.sleep(_wait_time)
 
     print "Start Telegram bot"
     telegram = Telegram()
@@ -160,10 +160,10 @@ if __name__ == '__main__':
     cloudantdb.start()
     time.sleep(_wait_time)
 
-    print "Start Inital State"
-    initialState = InitialState()
-    initialState.start()
-    time.sleep(_wait_time)
+    #print "Start Inital State"
+    #initialState = InitialState()
+    #initialState.start()
+    #time.sleep(_wait_time)
 
     print "Start Climate Control"
     climate = Climate()
