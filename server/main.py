@@ -117,6 +117,14 @@ def radiationCheck():
             if info.isSomeoneInTheRoom(room):
                 tts.createWavFile(temp.getRadiationHigherThenAverage(here, avr), room)
 
+def particulateMatterCheck():
+    print "ParticularMatterCheck"
+    p1, p2 = info.getParticulateMatter()
+    if p1 > 23.0 or p2 > 23.0:
+        for room in Room.ANNOUNCE_ROOMS:
+            if info.isSomeoneInTheRoom(room):
+                tts.createWavFile(temp.getParticulateMatterHigherThenAverage(p1, p2), room)
+
 def bathShowerUpdate():
     print "Checking Bath and Shower conditions"
     if info.getBathOrShower() is not None:
@@ -208,6 +216,7 @@ if __name__ == '__main__':
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
     schedule.every().hour.at("00:42").do(radiationCheck)
+    schedule.every().hour.at("00:23").do(particulateMatterCheck)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
 

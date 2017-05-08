@@ -110,6 +110,10 @@ class TemplateMatcher():
         template = self._env.get_template('radiation-higher-then-average.txt')
         return template.render(valuehere=valuehere, valueavr=valueavr)
 
+    def getParticulateMatterHigherThenAverage(self, p1, p2):
+        template = self._env.get_template('particulate-matter-to-high.txt')
+        return template.render(p1=p1, p2=p2)
+
     def getWaterlevelLow(self):
         template = self._env.get_template('tank-waterlevel-low.txt')
         return template.render()
@@ -137,3 +141,4 @@ if __name__ == '__main__':
     #print t.getRadiationHigherThenAverage(0.1, 0.09)
     #print t.getWaterlevelLow()
     #print t.getWaterlevelNormal()
+    print t.getParticulateMatterHigherThenAverage(2.2, 3.3)

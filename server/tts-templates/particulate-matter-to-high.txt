@@ -1,0 +1,3 @@
+Particulate Matter outside is to high. I would recommend closing the windows and do not
+get outside right now. 10 micrometer particles are {{p1}} parts per million and 2.5
+micrometer are {{p2}} parts per million.

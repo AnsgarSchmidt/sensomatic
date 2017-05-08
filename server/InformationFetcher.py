@@ -124,6 +124,15 @@ class InformationFetcher():
             update = True
             self._config.set("INFORMATION", "BattleNetSecret", "magic")
 
+        if not self._config.has_option("INFORMATION", "LuftDatenURL"):
+            print "No LuftDatenURL"
+            update = True
+            self._config.set("INFORMATION", "LuftDatenURL", "http://api.luftdaten.info/v1/sensor/")
+
+        if not self._config.has_option("INFORMATION", "LuftDatenSensorID"):
+            print "No LuftDatenSensorID"
+            update = True
+            self._config.set("INFORMATION", "LuftDatenSensorID", "2117")
 
         if update:
             with open(self._configFileName, 'w') as f:
@@ -367,6 +376,33 @@ class InformationFetcher():
         except:
             return None
 
+    def getParticulateMatter(self):
+        p1      = 0.0
+        p2      = 0.0
+        counter = 0
+        try:
+            data = json.loads(requests.get(self._config.get("INFORMATION", "LuftDatenURL") + "/" + self._config.get("INFORMATION", "LuftDatenSensorID")).content)
+            if data is not None:
+                for entry in data:
+                    #print json.dumps(entry, indent=4, sort_keys=True)
+                    for sensor in entry['sensordatavalues']:
+                        if sensor['value_type'] == "P1":
+                            p1 += float(sensor['value'])
+                        if sensor['value_type'] == "P2":
+                            p2 += float(sensor['value'])
+                    counter += 1
+                p1 /= counter
+                p2 /= counter
+                p1 = float("{0:.2f}".format(p1))
+                p2 = float("{0:.2f}".format(p2))
+                return [p1, p2]
+            else:
+                return [p1, p2]
+        except Exception as e:
+            print "error"
+            print e
+            return [p1, p2]
+
     def isSpaceOpen(self, spacename):
         try:
             space = self.getSpaceApi(spacename)
@@ -441,8 +477,8 @@ if __name__ == '__main__':
     #print i.getNumEmailMessages()
     #print i.getRoomTemp(Room.BATH_ROOM)
     #print i.getRoomHumidity(Room.BATH_ROOM)
-    print i.getOutdoor()
-    print i.getPrediction()
+    #print i.getOutdoor()
+    #print i.getPrediction()
     #print i.getNextISSPass()
     #print i.getAstronauts()
     #print i.getRoomCo2Level(Room.ANSI_ROOM)
@@ -462,3 +498,4 @@ if __name__ == '__main__':
     #print i.getMoonPosition()
     #print i.getSpaceApi("xHain")['state']
     #print i.isSpaceOpen("xHain")
+    print i.getParticulateMatter()
