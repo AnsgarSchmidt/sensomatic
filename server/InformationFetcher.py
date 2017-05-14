@@ -6,6 +6,7 @@ import pytz
 import redis
 import ephem
 import astral
+import imaplib
 import urllib2
 import iso8601
 import requests
@@ -17,7 +18,6 @@ from   oauth2client      import client
 from   oauth2client      import tools
 from   oauth2client.file import Storage
 from   requests.auth     import HTTPBasicAuth
-from   imapclient        import IMAPClient
 
 class InformationFetcher():
 
@@ -205,11 +205,13 @@ class InformationFetcher():
 
     def getNumEmailMessages(self):
         try:
-            server = IMAPClient(self._config.get("INFORMATION","IMAPServer"), use_uid=True, ssl=True)
-            server.login(self._config.get("INFORMATION", "IMAPUser"), self._config.get("INFORMATION", "IMAPPasswd"))
-            select_info = server .select_folder(self._config.get("INFORMATION", "IMAPFolder"))
-            #print json.dumps(select_info, sort_keys=True, indent=4, separators=(',', ': '))
-            return select_info['EXISTS']
+            mail = imaplib.IMAP4_SSL(self._config.get("INFORMATION","IMAPServer"))
+            mail.login(self._config.get("INFORMATION", "IMAPUser"), self._config.get("INFORMATION", "IMAPPasswd"))
+            isOK, number = mail.select(self._config.get("INFORMATION", "IMAPFolder"))
+            if isOK == 'OK':
+                return number[0]
+            else:
+                return 0
         except Exception as inst:
             print str(inst)
             return 0
@@ -474,7 +476,7 @@ if __name__ == '__main__':
     print "Testing"
     i = InformationFetcher()
     #print i.getEarthRotationTime()
-    #print i.getNumEmailMessages()
+    print i.getNumEmailMessages()
     #print i.getRoomTemp(Room.BATH_ROOM)
     #print i.getRoomHumidity(Room.BATH_ROOM)
     #print i.getOutdoor()
