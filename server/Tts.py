@@ -15,11 +15,11 @@ class Tts():
         self._ttsDir         = self._config.get("TTS", "TTSDir")
         self._tts            = TextToSpeechV1(username=self._config.get('TTS', 'AuthName'),
                                               password=self._config.get('TTS', 'AuthSecret'),
-                                              x_watson_learning_opt_out=False) # Lets learn from our nonsense
+                                              x_watson_learning_opt_out=False)  # Lets learn from our nonsense
 
-        if not os.path.isdir(self._config.get("TTS","TTSDir")):
+        if not os.path.isdir(self._config.get("TTS", "TTSDir")):
             print "Creating TTS Dir"
-            os.makedirs(self._config.get("TTS","TTSDir"))
+            os.makedirs(self._config.get("TTS", "TTSDir"))
 
     def _readConfig(self):
         update = False
