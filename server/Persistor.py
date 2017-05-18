@@ -1,9 +1,9 @@
 import os
+import time
 import redis
 import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
-import time
 
 class Persistor(threading.Thread):
 
