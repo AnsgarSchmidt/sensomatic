@@ -1,10 +1,10 @@
-import json
-import requests
 import os
+import json
 import time
 import pytz
-import threading
+import requests
 import datetime
+import threading
 import ConfigParser
 import matplotlib.pyplot as     plt
 from   requests.auth     import HTTPBasicAuth
