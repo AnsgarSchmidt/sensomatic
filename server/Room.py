@@ -1,4 +1,3 @@
-
 class Room():
 
     LIVING_ROOM = "livingroom"
