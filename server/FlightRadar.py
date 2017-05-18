@@ -3,6 +3,7 @@ import socket
 import datetime
 from   geopy.distance import vincenty
 
+
 class FlightRadar():
 
     #https://github.com/wiseman/node-sbs1

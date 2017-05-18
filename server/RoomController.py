@@ -9,6 +9,7 @@ from   Room               import Room
 from   InformationFetcher import InformationFetcher
 from   Chromecast         import Chromecast
 
+
 class RoomController(threading.Thread):
 
     def __init__(self):

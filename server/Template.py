@@ -3,7 +3,7 @@ import datetime
 from   jinja2             import Environment
 from   jinja2             import PackageLoader
 from   Room               import Room
-from   InformationFetcher import  InformationFetcher
+from   InformationFetcher import InformationFetcher
 
 
 class TemplateMatcher():

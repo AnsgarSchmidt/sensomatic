@@ -15,6 +15,7 @@ import sys
 import os
 import paho.mqtt.client as mqtt
 
+
 class HS100(threading.Thread):
 
     def _readConfig(self):

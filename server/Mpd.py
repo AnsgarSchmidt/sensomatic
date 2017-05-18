@@ -5,6 +5,7 @@ import spotipy
 import ConfigParser
 import spotipy.util as util
 
+
 class MpdServer():
 
     def __init__(self, serverName, serverAddress, serverPort=6600):

@@ -9,6 +9,7 @@ from   shutil             import copyfile
 from   Room               import Room
 from   InformationFetcher import InformationFetcher
 
+
 class Climate(threading.Thread):
 
     WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]

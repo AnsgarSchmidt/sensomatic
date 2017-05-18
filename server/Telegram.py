@@ -6,6 +6,7 @@ import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 
+
 class Telegram(threading.Thread):
 
     def _readConfig(self):

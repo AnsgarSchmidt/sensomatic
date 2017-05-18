@@ -5,6 +5,7 @@ import threading
 import ConfigParser
 import paho.mqtt.client as mqtt
 
+
 class Pinger(threading.Thread):
 
     def _readConfig(self):

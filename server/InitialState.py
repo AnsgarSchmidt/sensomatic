@@ -5,6 +5,7 @@ import threading
 import ConfigParser
 from   ISStreamer.Streamer import Streamer
 
+
 class InitialState(threading.Thread):
 
     def _readConfig(self):

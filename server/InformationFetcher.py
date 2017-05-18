@@ -19,6 +19,7 @@ from   oauth2client      import tools
 from   oauth2client.file import Storage
 from   requests.auth     import HTTPBasicAuth
 
+
 class InformationFetcher():
 
     def _readConfig(self):

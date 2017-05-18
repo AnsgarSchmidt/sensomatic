@@ -5,6 +5,7 @@ import threading
 import ConfigParser
 from   cloudant.client import Cloudant
 
+
 class CloudantDB(threading.Thread):
 
     def _readConfig(self):

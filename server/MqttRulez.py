@@ -14,6 +14,7 @@ from   Mpd                import Mpd
 from   Chromecast         import Chromecast
 from   InformationFetcher import InformationFetcher
 
+
 class MqttRulez(threading.Thread):
 
     def _readConfig(self):
