@@ -1,7 +1,7 @@
 import time
 import socket
 import datetime
-from geopy.distance import vincenty
+from   geopy.distance import vincenty
 
 class FlightRadar():
 
