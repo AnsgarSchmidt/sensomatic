@@ -1,10 +1,11 @@
 import os
+import sys
 import time
 import Queue
 import random
 import threading
 import ConfigParser
-import paho.mqtt.client as mqtt
+import paho.mqtt.client       as     mqtt
 from   watson_developer_cloud import TextToSpeechV1
 from   subprocess             import call
 
@@ -13,7 +14,7 @@ class Tts(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
-        self.setDaemon(False)
+        self.setDaemon(False) # As a single program, keep this one running all the time
         self._homeDir        = os.path.expanduser("~/.sensomatic")
         self._configFileName = self._homeDir + '/config.ini'
         self._config         = ConfigParser.ConfigParser()
@@ -90,7 +91,7 @@ class Tts(threading.Thread):
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
-                os.exit(1)
+                sys.exit(1)
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT TTS with result code %s" % rc
