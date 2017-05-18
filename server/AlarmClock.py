@@ -4,10 +4,10 @@ import redis
 import threading
 import ConfigParser
 import datetime
-import paho.mqtt.client as     mqtt
-from pytz               import timezone
-from Chromecast         import Chromecast
-from InformationFetcher import InformationFetcher
+import paho.mqtt.client   as     mqtt
+from   pytz               import timezone
+from   Chromecast         import Chromecast
+from   InformationFetcher import InformationFetcher
 
 class AlarmClock(threading.Thread):
 
