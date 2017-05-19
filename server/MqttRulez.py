@@ -256,11 +256,12 @@ class MqttRulez(threading.Thread):
                     s = Mpd().getServerbyName("Bath")
                     s.stop()
                     s.emptyPlaylist()
+                    s.add("http://hal/tagesschau.mp3")
                     s.add("http://inforadio.de/livemp3")
-                    if datetime.datetime.now().hour in (1, 2, 3, 4, 5, 6, 7):
+                    if datetime.datetime.now().hour in (1, 2, 3, 4, 5):
                         self._mqclient.publish("bathroom/light/rgb", "255,25,0")
                         s.volume(1)
-                    if datetime.datetime.now().hour in (8,9):
+                    if datetime.datetime.now().hour in (6, 7, 8, 9):
                         self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         s.volume(42)
                     if datetime.datetime.now().hour in (10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20):

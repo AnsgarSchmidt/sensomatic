@@ -21,6 +21,7 @@ from   TwitterPusher      import TwitterPusher
 from   Tank               import Tank
 from   Telegram           import Telegram
 from   SmarterCoffee      import SmartCoffee
+from   Newscatcher        import Newscatcher
 
 temp = TemplateMatcher()
 info = InformationFetcher()
@@ -159,7 +160,6 @@ def _on_disconnect(client, userdata, msg):
 
 
 if __name__ == '__main__':
-
     _readConfig()
     _redis                  = redis.StrictRedis(host=config.get("REDIS", "ServerAddress"), port=config.get("REDIS", "ServerPort"), db=0)
     _mqclient               = mqtt.Client("Main", clean_session=True)
@@ -238,6 +238,11 @@ if __name__ == '__main__':
     print "Start Coffee machine"
     coffee = SmartCoffee()
     tank.start()
+    time.sleep(_wait_time)
+
+    print "Start Newscatcher"
+    newscatcher = Newscatcher()
+    newscatcher.start()
     time.sleep(_wait_time)
 
     #https://github.com/dbader/schedule
