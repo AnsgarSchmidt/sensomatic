@@ -39,7 +39,7 @@ class RoomController(threading.Thread):
         print "Disconnect Room Controller"
 
     def run(self):
-        self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
+        self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.on_connect    = self._on_connect
         self._mqclient.on_message    = self._on_message
         self._mqclient.on_disconnect = self._on_disconnect
