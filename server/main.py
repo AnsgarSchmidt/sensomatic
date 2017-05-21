@@ -64,17 +64,17 @@ def _readConfig():
         update = True
         config.set("REDIS", "ServerPort", "6379")
 
-    if not self._config.has_section('MQTT'):
+    if not config.has_section('MQTT'):
         print "Adding MQTT part"
         update = True
         config.add_section("MQTT")
 
-    if not self._config.has_option("MQTT", "ServerAddress"):
+    if not config.has_option("MQTT", "ServerAddress"):
         print "No Server Address"
         update = True
         config.set("MQTT", "ServerAddress", "<ServerAddress>")
 
-    if not self._config.has_option("MQTT", "ServerPort"):
+    if not config.has_option("MQTT", "ServerPort"):
         print "No Server Port"
         update = True
         config.set("MQTT", "ServerPort", "1883")
@@ -152,7 +152,7 @@ def _on_connect(client, userdata, rc, msg):
     #self._mqclient.subscribe("#")
 
 def _on_message(client, userdata, msg):
-    #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+    print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
     #self._workingQueue.put((msg.topic, msg.payload))
 
 def _on_disconnect(client, userdata, msg):
