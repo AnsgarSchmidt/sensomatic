@@ -221,7 +221,7 @@ if __name__ == '__main__':
     time.sleep(_wait_time)
 
     print "Start Washing Machine"
-    washingmachine = HS100("192.168.1.42", "bathroom/washingmachine/")
+    washingmachine = HS100("washingmachine", "bathroom/washingmachine/")
     washingmachine.start()
     time.sleep(_wait_time)
 
