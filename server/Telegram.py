@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import Queue
 import telepot
@@ -75,6 +76,7 @@ class Telegram(threading.Thread):
         if update:
             with open(self._configFileName, 'w') as f:
                 self._config.write(f)
+                sys.exit(1)
 
     def __init__(self):
         threading.Thread.__init__(self)
