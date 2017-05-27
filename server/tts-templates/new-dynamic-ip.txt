@@ -1,0 +1,1 @@
+Attention!!! there is a new device connected to the wireless lan. It identifies itself as {{ name }}.
