@@ -19,7 +19,7 @@ class Newscatcher(threading.Thread):
             d = feedparser.parse('http://www.tagesschau.de/export/video-podcast/webxl/tagesschau-in-100-sekunden/')
             link = d['entries'][0]['links'][0]['href']
             if self._link != link:
-                print "convert"
+                print "converting " + link
                 call(["mplayer", "-novideo", "-nocorrect-pts", "-ao", "pcm:waveheader", link])
                 call(["lame", "-V2", "audiodump.wav", "/var/www/html/news/tagesschau.tmp"])
                 os.remove("audiodump.wav")
