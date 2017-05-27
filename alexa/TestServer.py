@@ -108,5 +108,4 @@ if __name__ == '__main__':
     mqclient = mqtt.Client("alexa", clean_session = True)
     mqclient.connect("cortex", 1883, 60)
     mqclient.loop_start()
-    app.run(debug = False, port = 9001)
-
+    app.run(debug=False, host="::", port=9001)
