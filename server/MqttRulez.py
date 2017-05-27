@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 import redis
 import Queue
 import random
@@ -397,6 +398,20 @@ class MqttRulez(threading.Thread):
             if keys[1] == "motion":
                 print "motion in tiffy room detected"
                 self._redis.setex(Room.TIFFY_ROOM+"/populated", 60 * 60, time.time())
+
+        if keys[0] == "cortex":
+
+            if keys[1] == "dhcp":
+                for entry in json.loads(v):
+                    ip = entry['ip'].split(".")
+                    if int(ip[3]) > 200 and not self._redis.exists("dynamicdhcpdetected"):
+                        print "Found new device %s" % entry['name']
+                        self._redis.setex("dynamicdhcpdetected", 60 * 60 * 1, time.time())
+                        self._mqclient.publish("ansiroom/ttsout", self._template.getNewDynamicIP(entry['name']))
+                        self._mqclient.publish("livingroom/ttsout", self._template.getNewDynamicIP(entry['name']))
+
+            if keys[1] == "dynsilenced":
+                self._redis.setex("dynamicdhcpdetected", 60 * 60 * 12, time.time())
 
     def __init__(self):
         random.seed
