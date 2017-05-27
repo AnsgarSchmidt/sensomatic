@@ -21,10 +21,10 @@ class Newscatcher(threading.Thread):
             if self._link != link:
                 print "convert"
                 call(["mplayer", "-novideo", "-nocorrect-pts", "-ao", "pcm:waveheader", link])
-                call(["lame", "-V2", "audiodump.wav", "/var/www/html/tagesschau.tmp"])
+                call(["lame", "-V2", "audiodump.wav", "/var/www/html/news/tagesschau.tmp"])
                 os.remove("audiodump.wav")
-                os.remove("/var/www/html/tagesschau.mp3")
-                os.rename("/var/www/html/tagesschau.tmp", "/var/www/html/tagesschau.mp3")
+                os.remove("/var/www/html/news/tagesschau.mp3")
+                os.rename("/var/www/html/news/tagesschau.tmp", "/var/www/html/news/tagesschau.mp3")
             time.sleep(60 * 5)
 
 if __name__ == '__main__':
