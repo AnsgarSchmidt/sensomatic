@@ -256,7 +256,7 @@ class MqttRulez(threading.Thread):
                     s = Mpd().getServerbyName("Bath")
                     s.stop()
                     s.emptyPlaylist()
-                    s.add("http://hal/tagesschau.mp3")
+                    s.add("http://hal/news/tagesschau.mp3")
                     s.add("http://inforadio.de/livemp3")
                     if datetime.datetime.now().hour in (1, 2, 3, 4, 5):
                         self._mqclient.publish("bathroom/light/rgb", "255,25,0")
