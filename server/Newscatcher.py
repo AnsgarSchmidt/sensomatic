@@ -13,7 +13,6 @@ class Newscatcher(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self._link = ""
-        self._readConfig()
 
     def run(self):
         while True:
