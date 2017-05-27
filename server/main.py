@@ -237,7 +237,7 @@ if __name__ == '__main__':
 
     print "Start Coffee machine"
     coffee = SmartCoffee()
-    tank.start()
+    coffee.start()
     time.sleep(_wait_time)
 
     print "Start Newscatcher"

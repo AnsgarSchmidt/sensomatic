@@ -4,7 +4,8 @@ sensomatic
 Home Sensor Network with MQTT
 
 Setup Server
-sudo apt-get install -y python-pip python-virtualenv
+
+sudo apt-get install -y python-pip python-virtualenv libffi-dev 
 git clone https://github.com/AnsgarSchmidt/sensomatic.git
 cd sensomatic/server
 virtualenv .
