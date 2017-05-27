@@ -114,6 +114,10 @@ class TemplateMatcher():
         template = self._env.get_template('particulate-matter-to-high.txt')
         return template.render(p1=p1, p2=p2)
 
+    def getNewDynamicIP(self, name):
+        template = self._env.get_template('new-dynamic-ip.txt')
+        return template.render(name=name)
+
     def getWaterlevelLow(self):
         template = self._env.get_template('tank-waterlevel-low.txt')
         return template.render()
@@ -129,7 +133,7 @@ if __name__ == '__main__':
     #print t.getAcknowledgeStartWashingMachine()
     #print t.getWashingMachineReady(234234)
     #print t.getTimeToGoToBed()
-    print t.getWakeupText('Ansi')
+    #print t.getWakeupText('Ansi')
     #print t.getAcknowledgeStartShower('Ansi')
     #print t.getAcknowledgeEndShower('Ansi')
     #print t.getBathShowerUpdate()
@@ -141,4 +145,5 @@ if __name__ == '__main__':
     #print t.getRadiationHigherThenAverage(0.1, 0.09)
     #print t.getWaterlevelLow()
     #print t.getWaterlevelNormal()
-    print t.getParticulateMatterHigherThenAverage(2.2, 3.3)
+    #print t.getParticulateMatterHigherThenAverage(2.2, 3.3)
+    print t.getNewDynamicIP("Zubenelgenubi")
