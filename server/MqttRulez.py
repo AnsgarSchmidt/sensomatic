@@ -388,7 +388,7 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("coffee/brew_wakeup_coffee",       "NOW"                               )
                     try:
                         Chromecast().volume('Chromeansi', 0.4)
-                        Chromecast().playMusicURL('Chromeansi', 'http://rb-mp3-m-bremenvier.akacast.akamaistream.net/7/23/234437/v1/gnl.akacast.akamaistream.net/rb-mp3-m-bremenvier')
+                        Chromecast().playMusicURL('Chromeansi', 'http://rb-bremenvier-live.cast.addradio.de/rb/bremenvier/live/mp3/128/stream.mp3')
                     except Exception as e:
                         print "Error in wakeup"
                         print e
