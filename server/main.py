@@ -28,7 +28,7 @@ temp      = TemplateMatcher()
 info      = InformationFetcher()
 logger    = logging.getLogger(__name__)
 hdlr      = logging.FileHandler('/tmp/sensomatic.log')
-formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+formatter = logging.Formatter('%(asctime)s %(name)s %(lineno)d %(levelname)s %(message)s')
 
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr)
