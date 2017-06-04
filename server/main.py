@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import redis
+import logging
 import schedule
 import ConfigParser
 import paho.mqtt.client   as     mqtt
@@ -23,8 +24,15 @@ from   Telegram           import Telegram
 from   SmarterCoffee      import SmartCoffee
 from   Newscatcher        import Newscatcher
 
-temp = TemplateMatcher()
-info = InformationFetcher()
+temp      = TemplateMatcher()
+info      = InformationFetcher()
+logger    = logging.getLogger(__name__)
+hdlr      = logging.FileHandler('/tmp/sensomatic.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
 
 homeDir        = os.path.expanduser("~/.sensomatic")
 configFileName = homeDir + '/config.ini'
@@ -35,47 +43,47 @@ def _readConfig():
     update = False
 
     if not os.path.isdir(homeDir):
-        print "Creating homeDir"
+        logger.info("Creating homeDir")
         os.makedirs(homeDir)
 
     if os.path.isfile(configFileName):
         config.read(configFileName)
     else:
-        print "Config file not found"
+        logger.info("Config file not found")
         update = True
 
     if not config.has_section('MAIN'):
-        print "Adding MAIN part"
+        logger.info("Adding MAIN part")
         update = True
         config.add_section("MAIN")
 
     if not config.has_section('REDIS'):
-        print "Adding Redis part"
+        logger.info("Adding Redis part")
         update = True
         config.add_section("REDIS")
 
     if not config.has_option("REDIS", "ServerAddress"):
-        print "No Server Address"
+        logger.info("No Server Address")
         update = True
         config.set("REDIS", "ServerAddress", "<ServerAddress>")
 
     if not config.has_option("REDIS", "ServerPort"):
-        print "No Server Port"
+        logger.info("No Server Port")
         update = True
         config.set("REDIS", "ServerPort", "6379")
 
     if not config.has_section('MQTT'):
-        print "Adding MQTT part"
+        logger.info("Adding MQTT part")
         update = True
         config.add_section("MQTT")
 
     if not config.has_option("MQTT", "ServerAddress"):
-        print "No Server Address"
+        logger.info("No Server Address")
         update = True
         config.set("MQTT", "ServerAddress", "<ServerAddress>")
 
     if not config.has_option("MQTT", "ServerPort"):
-        print "No Server Port"
+        logger.info("No Server Port")
         update = True
         config.set("MQTT", "ServerPort", "1883")
 
@@ -85,43 +93,43 @@ def _readConfig():
             sys.exit(1)
 
 def hourAnnounce():
-    print "Announce hour"
+    logger.info("Announce hour")
     for room in Room.ANNOUNCE_ROOMS:
         if info.isSomeoneInTheRoom(room):
             _mqclient.publish("%s/ttsout" % room, temp.getHourlyTime())
 
 def checkWaschingMachine():
-    print "Check washing machine"
+    logger.info("Check washing machine")
     if _redis.exists("WashingmachineReady"):
-        print "Washing machine ready"
+        logger.info("Washing machine ready")
         timestamp = float(_redis.get("WashingmachineReady"))
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
                 _mqclient.publish("%s/ttsout" % room, temp.getWashingMachineReady(timestamp))
     else:
-        print "Wasching machine inactive"
+        logger.info("Wasching machine inactive")
 
 def goSleep():
-    print "Go to sleep"
+    logger.info("Go to sleep")
     _mqclient.publish("livingroom/ttsout", temp.getTimeToGoToBed())
 
 def checkBath():
-    print "Checking bath"
+    logger.info("Checking bath")
     if _redis.exists("PlayRadioInBath") and not info.isSomeoneInTheRoom(Room.BATH_ROOM):
         Mpd().getServerbyName("Bath").stop()
         _mqclient.publish("bathroom/light/rgb", "0,0,0")
         _redis.delete("PlayRadioInBath")
 
 def checkCo2(room):
-    print "Check co2"
+    logger.info("Check co2")
     for room in Room.ANNOUNCE_ROOMS:
         if info.isSomeoneInTheRoom(room):
             if info.getRoomCo2Level(room) is not None and info.getRoomCo2Level(room) > 2300:
-                print "CO2 to high:" + str(info.getRoomCo2Level(room))
+                logger.info("CO2 to high:" + str(info.getRoomCo2Level(room)))
                 _mqclient.publish("%s/ttsout" % room, temp.getCo2ToHigh(room))
 
 def radiationCheck():
-    print "Radiation check"
+    logger.info("Radiation check")
     avr  = info.getRadiationAverage()
     here = info.getRadiationForOneStation()
     if here > 0.15:
@@ -133,7 +141,7 @@ def radiationCheck():
                 _mqclient.publish("%s/ttsout" % room, temp.getRadiationHigherThenAverage(here, avr))
 
 def particulateMatterCheck():
-    print "ParticularMatterCheck"
+    logger.info("ParticularMatterCheck")
     p1, p2 = info.getParticulateMatter()
     if p1 > 23.0 or p2 > 23.0:
         for room in Room.ANNOUNCE_ROOMS:
@@ -141,22 +149,22 @@ def particulateMatterCheck():
                 _mqclient.publish("%s/ttsout" % room, temp.getParticulateMatterHigherThenAverage(p1, p2))
 
 def bathShowerUpdate():
-    print "Checking Bath and Shower conditions"
+    logger.info("Checking Bath and Shower conditions")
     if info.getBathOrShower() is not None:
         _mqclient.publish("bathroom/ttsout", temp.getBathShowerUpdate())
     else:
-        print "No one showers"
+        logger.info("No one showers")
 
 def _on_connect(client, userdata, rc, msg):
-    print "Connected MQTT Main with result code %s" % rc
+    logger.info("Connected MQTT Main with result code %s" % rc)
     #self._mqclient.subscribe("#")
 
 def _on_message(client, userdata, msg):
-    print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+    logger.info("Mq Received on channel %s -> %s" % (msg.topic, msg.payload))
     #self._workingQueue.put((msg.topic, msg.payload))
 
 def _on_disconnect(client, userdata, msg):
-    print "Disconnect MQTTRulez"
+    logger.error("Disconnect MQTTRulez")
 
 
 if __name__ == '__main__':
@@ -170,77 +178,77 @@ if __name__ == '__main__':
     _mqclient.loop_start()
     _wait_time = 5
 
-    print "Start Persistor"
+    logger.info("Start Persistor")
     persistor = Persistor()
     persistor.start()
     time.sleep(_wait_time)
 
-    #print "Start Carbon"
+    #logger.info("Start Carbon")
     #carbon = Carbon()
     #carbon.start()
     #time.sleep(_wait_time)
 
-    print "Start Telegram bot"
+    logger.info("Start Telegram bot")
     telegram = Telegram()
     telegram.start()
     time.sleep(_wait_time)
 
-    print "Start MqttRulez"
+    logger.info("Start MqttRulez")
     rulez = MqttRulez()
     rulez.start()
     time.sleep(_wait_time)
 
-    print "Start Pinger"
+    logger.info("Start Pinger")
     pinger = Pinger()
     pinger.start()
     time.sleep(_wait_time)
 
-    print "Start Cloudant"
+    logger.info("Start Cloudant")
     cloudantdb = CloudantDB()
     cloudantdb.start()
     time.sleep(_wait_time)
 
-    #print "Start Inital State"
+    #logger.info("Start Inital State")
     #initialState = InitialState()
     #initialState.start()
     #time.sleep(_wait_time)
 
-    print "Start Climate Control"
+    logger.info("Start Climate Control")
     climate = Climate()
     climate.start()
     time.sleep(_wait_time)
 
-    print "Start Room Control"
+    logger.info("Start Room Control")
     lightControl = RoomController()
     lightControl.start()
     time.sleep(_wait_time)
 
-    print "Start Alarmclock"
+    logger.info("Start Alarmclock")
     alarmclock = AlarmClock()
     alarmclock.start()
     time.sleep(_wait_time)
 
-    print "Start Washing Machine"
+    logger.info("Start Washing Machine")
     washingmachine = HS100("washingmachine", "bathroom/washingmachine/")
     washingmachine.start()
     time.sleep(_wait_time)
 
-    print "Start TwitterPusher"
+    logger.info("Start TwitterPusher")
     twitterpusher = TwitterPusher()
     twitterpusher.start()
     time.sleep(_wait_time)
 
-    print "Start Tank"
+    logger.info("Start Tank")
     tank = Tank()
     tank.start()
     time.sleep(_wait_time)
 
-    print "Start Coffee machine"
+    logger.info("Start Coffee machine")
     coffee = SmartCoffee()
     coffee.start()
     time.sleep(_wait_time)
 
-    print "Start Newscatcher"
+    logger.info("Start Newscatcher")
     newscatcher = Newscatcher()
     newscatcher.start()
     time.sleep(_wait_time)
