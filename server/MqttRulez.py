@@ -5,6 +5,7 @@ import json
 import redis
 import Queue
 import random
+import logging
 import datetime
 import threading
 import ConfigParser
@@ -22,42 +23,42 @@ class MqttRulez(threading.Thread):
         update = False
 
         if not os.path.isdir(self._homeDir):
-            print "Creating homeDir"
+            self._logger.warn("Creating homeDir")
             os.makedirs(self._homeDir)
 
         if os.path.isfile(self._configFileName):
             self._config.read(self._configFileName)
         else:
-            print "Config file not found"
+            self._logger.warn("Config file not found")
             update = True
 
         if not self._config.has_section('MQTT'):
-            print "Adding MQTT part"
+            self._logger.warn("Adding MQTT part")
             update = True
             self._config.add_section("MQTT")
 
         if not self._config.has_option("MQTT", "ServerAddress"):
-            print "No Server Address"
+            self._logger.warn("No Server Address")
             update = True
             self._config.set("MQTT", "ServerAddress", "<ServerAddress>")
 
         if not self._config.has_option("MQTT", "ServerPort"):
-            print "No Server Port"
+            self._logger.warn("No Server Port")
             update = True
             self._config.set("MQTT", "ServerPort", "1883")
 
         if not self._config.has_section('REDIS'):
-            print "Adding Redis part"
+            self._logger.warn("Adding Redis part")
             update = True
             self._config.add_section("REDIS")
 
         if not self._config.has_option("REDIS", "ServerAddress"):
-            print "No Server Address"
+            self._logger.warn("No Server Address")
             update = True
             self._config.set("REDIS", "ServerAddress", "<ServerAddress>")
 
         if not self._config.has_option("REDIS", "ServerPort"):
-            print "No Server Port"
+            self._logger.warn("No Server Port")
             update = True
             self._config.set("REDIS", "ServerPort", "6379")
 
@@ -75,18 +76,18 @@ class MqttRulez(threading.Thread):
         if keys[0] == Room.BATH_ROOM:
 
             if keys[1] == "button":
-                print "button"
+                self._logger.info("button")
 
                 #Ansi shower
                 if v == "1":
                     if self._redis.exists("shower"):
-                        print "Stop shower"
+                        self._logger.info("Stop shower")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndShower('Ansi'))
                         Mpd().getServerbyName("Bath").stop()
                         self._redis.delete("shower")
                     else:
-                        print "Start shower"
+                        self._logger.info("Start shower")
                         self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartShower('Ansi'))
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
@@ -96,19 +97,19 @@ class MqttRulez(threading.Thread):
                         s.stop()
                         s.emptyPlaylist()
                         if datetime.datetime.now().hour > 10:
-                            print "Using Drei ???"
+                            self._logger.info("Using Drei ???")
                             dflist = s.getPlaylists('Drei ???|Die drei ???')
                             if len(dflist) > 0:
-                                print "found %d entries" % len(dflist)
+                                self._logger.info("found %d entries" % len(dflist))
                                 s.loadPlaylist(random.choice(dflist))
                                 s.randomize(0)
                             else:
-                                print "Using Starred"
+                                self._logger.warn("Can not dinf ??? using Starred instead")
                                 for i in s.getPlaylists('Starred'):
                                     s.loadPlaylist(i)
                                 s.randomize(1)
                         else:
-                            print "Using Inforadio"
+                            self._logger.info("Using Inforadio")
                             s.add("http://inforadio.de/livemp3")
                         s.volume(60)
                         s.play()
@@ -116,14 +117,14 @@ class MqttRulez(threading.Thread):
                 # Ansi bath
                 if v == "2":
                     if self._redis.exists("bath"):
-                        print "Stop bath"
+                        self._logger.info("Stop bath")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndBath('Ansi'))
                         self._redis.delete("bath")
                         self._mqclient.publish("ansiroom/settemp", "boost")
                         Mpd().getServerbyName("Bath").stop()
                     else:
-                        print "Start bath"
+                        self._logger.info("Start bath")
                         self._mqclient.publish("bathroom/light/rgb", "255,42,23")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartBath('Ansi'))
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
@@ -139,7 +140,7 @@ class MqttRulez(threading.Thread):
 
                 # Ansi nix
                 if v == "3":
-                    print "Switching off everyting in the bathroom"
+                    self._logger.info("Switching off everyting in the bathroom")
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                     self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeDeactivateBath('Ansi'))
                     if self._redis.exists("shower"):
@@ -151,13 +152,13 @@ class MqttRulez(threading.Thread):
                 #Tiffy shower
                 if v == "4":
                     if self._redis.exists("shower"):
-                        print "Stop shower"
+                        self._logger.info("Stop shower")
                         self._mqclient.publish("bathroom/light/rgb","0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndShower('Phawx'))
                         self._redis.delete("shower")
                         Mpd().getServerbyName("Bath").stop()
                     else:
-                        print "Start shower"
+                        self._logger.info("Start shower")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartShower('Phawx'))
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
                         if self._redis.exists("PlayRadioInBath"):
@@ -168,13 +169,13 @@ class MqttRulez(threading.Thread):
                 #Tiffy bath
                 if v == "5":
                     if self._redis.exists("bath"):
-                        print "Stop bath"
+                        self._logger.info("Stop bath")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndBath('Phawx'))
                         self._redis.delete("bath")
                         Mpd().getServerbyName("Bath").stop()
                     else:
-                        print "Start bath"
+                        self._logger.info("Start bath")
                         self._mqclient.publish("bathroom/light/rgb","0,25,255")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartBath('Phawx'))
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
@@ -188,7 +189,7 @@ class MqttRulez(threading.Thread):
 
                 # Tiffy nix
                 if v == "6":
-                    print "Switching off everyting in the bathroom"
+                    self._logger.info("Switching off everyting in the bathroom")
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                     #self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeDeactivateBath('Phawx'))
                     if self._redis.exists("shower"):
@@ -200,13 +201,13 @@ class MqttRulez(threading.Thread):
                 # Guest shower
                 if v == "7":
                     if self._redis.exists("shower"):
-                        print "Stop shower"
+                        self._logger.info("Stop shower")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndShower('Guest'))
                         self._redis.delete("shower")
                         Mpd().getServerbyName("Bath").stop()
                     else:
-                        print "Start shower"
+                        self._logger.info("Start shower")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartShower('Guest'))
                         self._redis.setex("shower", 60 * 60 * 2, time.time())
                         if self._redis.exists("PlayRadioInBath"):
@@ -223,13 +224,13 @@ class MqttRulez(threading.Thread):
                 # Guest bath
                 if v == "8":
                     if self._redis.exists("bath"):
-                        print "Stop bath"
+                        self._logger.info("Stop bath")
                         self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEndBath('Guest'))
                         self._redis.delete("bath")
                         Mpd().getServerbyName("Bath").stop()
                     else:
-                        print "Start bath"
+                        self._logger.info("Start bath")
                         self._mqclient.publish("bathroom/light/rgb", "0,25,255")
                         self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeStartBath('Guest'))
                         self._redis.setex("bath", 60 * 60 * 5, time.time())
@@ -239,7 +240,7 @@ class MqttRulez(threading.Thread):
 
                 # Guest nix
                 if v == "9":
-                    print "Switching off everyting in the bathroom"
+                    self._logger.info("Switching off everyting in the bathroom")
                     self._mqclient.publish("bathroom/light/rgb", "0,0,0")
                     self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeDeactivateBath('Guest'))
                     if self._redis.exists("shower"):
@@ -249,10 +250,10 @@ class MqttRulez(threading.Thread):
                     Mpd().getServerbyName("Bath").stop()
 
             if keys[1] == "motion":
-                print "motion in bath detected"
+                self._logger.info("motion in bath detected")
                 self._redis.setex(Room.BATH_ROOM+"/populated", 60 * 60, time.time())
                 if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
-                    print "Play Radio in Bath"
+                    self._logger.info("Play Radio in Bath")
                     self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
                     s = Mpd().getServerbyName("Bath")
                     s.stop()
@@ -281,7 +282,7 @@ class MqttRulez(threading.Thread):
                     # OFF
                     if current < 0.02:
                         if self._redis.exists("WashingmachineActive"):
-                            print "Ack washing machine ready"
+                            self._logger.info("Ack washing machine ready")
                             self._redis.delete("WashingmachineActive")
                             self._redis.setex("WashingmachineReady", 60 * 60 * 24 * 1, time.time())
                             self._mqclient.publish("telegram", "Washing maching ready")
@@ -303,29 +304,29 @@ class MqttRulez(threading.Thread):
                 if keys[2] == "state":
                     if int(v) == 0:
                         if self._redis.exists("WashingmachineReady"):
-                            print "Ack emptying washing machine"
+                            self._logger.info("Ack emptying washing machine")
                             self._redis.delete("WashingmachineReady")
                             self._mqclient.publish("bathroom/ttsout", self._template.getAcknowledgeEmtyingWashingMachine())
 
         if keys[0] == Room.LIVING_ROOM:
 
             if keys[1] == "button":
-                print "button"
+                self._logger.info("button")
 
                 #Breakfast
                 if v == "1":
-                    print "Breakfast"
+                    self._logger.info("Breakfast")
 
                 # Lunch
                 if v == "2":
-                    print "Lunch"
+                    self._logger.info("Lunch")
 
                 # Dinner
                 if v == "3":
-                    print "Dinner"
+                    self._logger.info("Dinner")
 
             if keys[1] == "motion":
-                print "motion in livingroom detected"
+                self._logger.info("motion in livingroom detected")
                 self._redis.setex(Room.LIVING_ROOM+"/populated", 60 * 60, time.time())
 
             if keys[1] == "tank":
@@ -340,21 +341,21 @@ class MqttRulez(threading.Thread):
                     fval = float(v)
                     if self._lastwaterlevel != fval:
                         if fval > 0.5:
-                            print "Waterlevel back to normal"
+                            self._logger.info("Waterlevel back to normal")
                             self._mqclient.publish("livingroom/ttsout", self._template.getWaterlevelNormal())
                         else:
-                            print "Waterlevel is to low now"
+                            self._logger.info("Waterlevel is to low now")
                             self._mqclient.publish("livingroom/ttsout", self._template.getWaterlevelLow())
                         self._lastwaterlevel = fval
 
         if keys[0] == Room.ANSI_ROOM:
 
             if keys[1] == "button":
-                print "button"
+                self._logger.info("button")
 
                 #Ansi Read
                 if v == "1":
-                    print "Activating Reading in AnsiRoom"
+                    self._logger.info("Activating Reading in AnsiRoom")
 
                     if self._redis.exists("AnsiRoomFallingAsleep"):
                         self._redis.delete("AnsiRoomFallingAsleep")
@@ -364,7 +365,7 @@ class MqttRulez(threading.Thread):
 
                 # Ansi Sleep
                 if v == "2":
-                    print "Activating Sleeping Sequence in AnsiRoom"
+                    self._logger.info("Activating Sleeping Sequence in AnsiRoom")
 
                     if self._redis.exists("AnsiRoomReading"):
                         self._redis.delete("AnsiRoomReading")
@@ -373,11 +374,11 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("ansiroom/settemp", "10")
 
             if keys[1] == "motion":
-                print "motion in ansi room detected"
+                self._logger.info("motion in ansi room detected")
                 self._redis.setex(Room.ANSI_ROOM+"/populated", 60 * 60, time.time())
 
                 if self._redis.exists("ansiwakeup"):
-                    print "Ansiwakeup detected motion"
+                    self._logger.info("Ansiwakeup detected motion")
                     self._redis.delete("ansiwakeup")
                     self._mqclient.publish("ansiroom/settemp",                "boost"                             )
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0                                   )
@@ -390,13 +391,13 @@ class MqttRulez(threading.Thread):
                         Chromecast().volume('Chromeansi', 0.4)
                         Chromecast().playMusicURL('Chromeansi', 'http://rb-bremenvier-live.cast.addradio.de/rb/bremenvier/live/mp3/128/stream.mp3')
                     except Exception as e:
-                        print "Error in wakeup"
-                        print e
+                        self._logger.erro("Error in wakeup")
+                        self._logger.error(e)
 
         if keys[0] == Room.TIFFY_ROOM:
 
             if keys[1] == "motion":
-                print "motion in tiffy room detected"
+                self._logger.info("motion in tiffy room detected")
                 self._redis.setex(Room.TIFFY_ROOM+"/populated", 60 * 60, time.time())
 
         if keys[0] == "cortex":
@@ -405,7 +406,7 @@ class MqttRulez(threading.Thread):
                 for entry in json.loads(v):
                     ip = entry['ip'].split(".")
                     if int(ip[3]) > 200 and not self._redis.exists("dynamicdhcpdetected"):
-                        print "Found new device %s" % entry['name']
+                        self._logger.info("Found new device %s" % entry['name'])
                         self._redis.setex("dynamicdhcpdetected", 60 * 60 * 1, time.time())
                         self._mqclient.publish("ansiroom/ttsout", self._template.getNewDynamicIP(entry['name']))
                         self._mqclient.publish("livingroom/ttsout", self._template.getNewDynamicIP(entry['name']))
@@ -417,6 +418,12 @@ class MqttRulez(threading.Thread):
         random.seed
         threading.Thread.__init__(self)
         self.setDaemon(True)
+        self._logger               = logging.getLogger(__name__)
+        hdlr                       = logging.FileHandler('/tmp/sensomatic.log')
+        formatter                  = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+        hdlr.setFormatter(formatter)
+        self._logger.addHandler(hdlr)
+        self._logger.setLevel(logging.INFO)
         self._homeDir              = os.path.expanduser("~/.sensomatic")
         self._configFileName       = self._homeDir + '/config.ini'
         self._config               = ConfigParser.ConfigParser()
@@ -435,15 +442,15 @@ class MqttRulez(threading.Thread):
         self._cortex_phawxansi_tx  = 0
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected MQTT Rulez with result code %s" % rc
+        self._logger.info("Connected MQTT Rulez with result code %s" % rc)
         self._mqclient.subscribe("#")
 
     def _on_message(self, client, userdata, msg):
-        #print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        #self._logger.info("Mq Received on channel %s -> %s" % (msg.topic, msg.payload))
         self._workingQueue.put((msg.topic, msg.payload))
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect MQTTRulez"
+        self._logger.error("Disconnect MQTTRulez")
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT","ServerAddress"), self._config.get("MQTT","ServerPort"), 60)
@@ -455,7 +462,8 @@ class MqttRulez(threading.Thread):
             try:
                 self._process()
             except Exception as e:
-                print e
+                self._logger.error("Error in processing")
+                self._logger.error(e)
 
 if __name__ == '__main__':
     print "Start"
