@@ -114,7 +114,8 @@ class AlarmClock(threading.Thread):
                 volume = (1.0 - (diff / (60 * 5))) * 0.6
                 try:
                     Chromecast().volume('Chromeansi', volume)
-                except:
+                except Exception as e:
+                    print e
                     pass
 
             if diff < 0 and waking:
