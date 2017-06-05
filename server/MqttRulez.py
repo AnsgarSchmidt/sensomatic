@@ -383,10 +383,10 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("ansiroom/settemp",                "boost"                             )
                     self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0                                   )
                     self._mqclient.publish("ansiroom/ttsout",                 "Good morning ansi"                 )
-                    self._mqclient.publish("bathroom/ttsout",                 self._template.getWakeupText("Ansi"))
                     self._mqclient.publish("corridor/light/main",             "TOGGLE"                            )
                     self._mqclient.publish("bathroom/light/main",             "TOGGLE"                            )
                     self._mqclient.publish("coffee/brew_wakeup_coffee",       "NOW"                               )
+                    self._mqclient.publish("bathroom/ttsout",                 self._template.getWakeupText("Ansi"))
                     try:
                         Chromecast().volume('Chromeansi', 0.4)
                         Chromecast().playMusicURL('Chromeansi', 'http://rb-bremenvier-live.cast.addradio.de/rb/bremenvier/live/mp3/128/stream.mp3')
