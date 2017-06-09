@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import redis
+import logging
 import threading
 import ConfigParser
 import datetime
@@ -63,6 +64,12 @@ class AlarmClock(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
+        self._logger                 = logging.getLogger(__name__)
+        hdlr                         = logging.FileHandler('/tmp/sensomatic.log')
+        formatter                    = logging.Formatter('%(asctime)s %(name)s %(lineno)d %(levelname)s %(message)s')
+        hdlr.setFormatter(formatter)
+        self._logger.addHandler(hdlr)
+        self._logger.setLevel(logging.INFO)
         self._info                   = InformationFetcher()
         self._homeDir                = os.path.expanduser("~/.sensomatic")
         self._configFileName         = self._homeDir + '/config.ini'
@@ -75,16 +82,15 @@ class AlarmClock(threading.Thread):
         self._mqclient.on_disconnect = self._on_disconnect
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.loop_start()
-        time.sleep(1)
 
     def _on_connect(self, client, userdata, rc, msg):
-        print "Connected Alarmclock with result code %s" % rc
+        self._logger.info("Connected Alarmclock with result code %s" % rc)
 
     def _on_message(self, client, userdata, msg):
-        print "Mq Received on channel %s -> %s" % (msg.topic, msg.payload)
+        self._logger.info("Mq Received on channel %s -> %s" % (msg.topic, msg.payload))
 
     def _on_disconnect(self, client, userdata, msg):
-        print "Disconnect Alarmclock"
+        self._logger.warn("Disconnect Alarmclock")
 
     def run(self):
         starttime, endtime = self._info.getNextWackeuptime()
@@ -97,8 +103,8 @@ class AlarmClock(threading.Thread):
 
             #Switch on the light 15 min before event
             if 0 < diff < (60 * 15):
-                print "light"
                 lightlevel = int((1.0 - (diff / (60 * 15))) * 100)
+                self._logger.info("switching or engreasing lightlevel to %d " % lightlevel)
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", lightlevel)
                 waking = True
 
@@ -106,36 +112,45 @@ class AlarmClock(threading.Thread):
             if 0 < diff < (60 * 5):
                 if not music:
                     try:
+                        self._logger.info("Switching on the music")
                         Chromecast().volume('Chromeansi', 0)
                         Chromecast().playMusicURL('Chromeansi', "http://inforadio.de/livemp3")
                         music = True
-                    except:
+                    except Exception as e:
+                        self._logger.error("Error in starting the music")
+                        self._logger.error(e)
                         music = False
                 volume = (1.0 - (diff / (60 * 5))) * 0.6
                 try:
+                    self._logger.info("Setting the volume to %d" % volume)
                     Chromecast().volume('Chromeansi', volume)
                 except Exception as e:
-                    print e
-                    pass
+                    self._logger.error("Error in setting the volume")
+                    self._logger.error(e)
 
             if diff < 0 and waking:
+                self._logger.info("Switching light to max")
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 100)
                 try:
+                    self._logger.info("Switching volume to max");
                     Chromecast().volume('Chromeansi', 0.7)
-                except:
-                    pass
+                except Exception as e:
+                    self._logger.error("Error in setting max volume")
+                    self._logger.error(e)
                 waking = False
                 music  = False
-                print "ENDE"
-                self._redis.setex("ansiwakeup", 60 * 60 * 5, time.time())
+                self._logger.info("Wakeup done")
+                self._redis.setex("ansiwakeup", 60 * 60 * 6, time.time())
 
             if (time.time() - updated) > (60 * 15):
                 starttime, endtime = self._info.getNextWackeuptime()
                 updated = time.time()
+                self._logger.info("Updating the calendar")
 
             time.sleep(5)
 
 if __name__ == '__main__':
     a = AlarmClock()
+    time.sleep(1)
     a.start()
     time.sleep(5)
