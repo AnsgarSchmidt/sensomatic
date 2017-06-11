@@ -12,7 +12,6 @@ import paho.mqtt.client   as     mqtt
 from   Room               import Room
 from   Template           import TemplateMatcher
 from   Mpd                import Mpd
-from   Chromecast         import Chromecast
 from   InformationFetcher import InformationFetcher
 
 

@@ -8,7 +8,6 @@ import ConfigParser
 import datetime
 import paho.mqtt.client   as     mqtt
 from   pytz               import timezone
-from   Chromecast         import Chromecast
 from   InformationFetcher import InformationFetcher
 
 class AlarmClock(threading.Thread):
@@ -113,8 +112,8 @@ class AlarmClock(threading.Thread):
                 if not music:
                     try:
                         self._logger.info("Switching on the music")
-                        Chromecast().volume('Chromeansi', 0)
-                        Chromecast().playMusicURL('Chromeansi', "http://inforadio.de/livemp3")
+                        self._mqclient.publish("chromecast/Chromeansi/volume", 0.0)
+                        self._mqclient.publish("chromecast/Chromeansi/playMusicURL", "http://inforadio.de/livemp3")
                         music = True
                     except Exception as e:
                         self._logger.error("Error in starting the music")
@@ -123,7 +122,7 @@ class AlarmClock(threading.Thread):
                 volume = (1.0 - (diff / (60 * 5))) * 0.6
                 try:
                     self._logger.info("Setting the volume to %d" % volume)
-                    Chromecast().volume('Chromeansi', volume)
+                    self._mqclient.publish("chromecast/Chromeansi/volume", volume)
                 except Exception as e:
                     self._logger.error("Error in setting the volume")
                     self._logger.error(e)
@@ -133,7 +132,7 @@ class AlarmClock(threading.Thread):
                 self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 100)
                 try:
                     self._logger.info("Switching volume to max");
-                    Chromecast().volume('Chromeansi', 0.7)
+                    self._mqclient.publish("chromecast/Chromeansi/volume", 0.7)
                 except Exception as e:
                     self._logger.error("Error in setting max volume")
                     self._logger.error(e)

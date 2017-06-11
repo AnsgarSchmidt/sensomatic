@@ -23,6 +23,7 @@ from   Tank               import Tank
 from   Telegram           import Telegram
 from   SmarterCoffee      import SmartCoffee
 from   Newscatcher        import Newscatcher
+from   Chromecast         import Chromecast
 
 temp      = TemplateMatcher()
 info      = InformationFetcher()
@@ -206,6 +207,11 @@ if __name__ == '__main__':
     logger.info("Start Cloudant")
     cloudantdb = CloudantDB()
     cloudantdb.start()
+    time.sleep(_wait_time)
+
+    logger.info("Start Chromecast")
+    chromecast = Chromecast()
+    chromecast.start()
     time.sleep(_wait_time)
 
     #logger.info("Start Inital State")

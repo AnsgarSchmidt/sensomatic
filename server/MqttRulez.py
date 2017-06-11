@@ -13,7 +13,6 @@ import paho.mqtt.client   as     mqtt
 from   Room               import Room
 from   Template           import TemplateMatcher
 from   Mpd                import Mpd
-from   Chromecast         import Chromecast
 from   InformationFetcher import InformationFetcher
 
 
@@ -380,19 +379,15 @@ class MqttRulez(threading.Thread):
                 if self._redis.exists("ansiwakeup"):
                     self._logger.info("Ansiwakeup detected motion")
                     self._redis.delete("ansiwakeup")
-                    self._mqclient.publish("ansiroom/settemp",                "boost"                             )
-                    self._mqclient.publish("ansiroom/bedlight/sleep/sunrise", 0                                   )
-                    self._mqclient.publish("ansiroom/ttsout",                 "Good morning ansi"                 )
-                    self._mqclient.publish("corridor/light/main",             "TOGGLE"                            )
-                    self._mqclient.publish("bathroom/light/main",             "TOGGLE"                            )
-                    self._mqclient.publish("coffee/brew_wakeup_coffee",       "NOW"                               )
-                    self._mqclient.publish("bathroom/ttsout",                 self._template.getWakeupText("Ansi"))
-                    try:
-                        Chromecast().volume('Chromeansi', 0.4)
-                        Chromecast().playMusicURL('Chromeansi', 'http://rb-bremenvier-live.cast.addradio.de/rb/bremenvier/live/mp3/128/stream.mp3')
-                    except Exception as e:
-                        self._logger.erro("Error in wakeup")
-                        self._logger.error(e)
+                    self._mqclient.publish("ansiroom/settemp",                  "boost"                             )
+                    self._mqclient.publish("ansiroom/bedlight/sleep/sunrise",   0                                   )
+                    self._mqclient.publish("ansiroom/ttsout",                   "Good morning ansi"                 )
+                    self._mqclient.publish("corridor/light/main",               "TOGGLE"                            )
+                    self._mqclient.publish("bathroom/light/main",               "TOGGLE"                            )
+                    self._mqclient.publish("coffee/brew_wakeup_coffee",         "NOW"                               )
+                    self._mqclient.publish("chromecast/Chromeansi/volume",       0.4)
+                    self._mqclient.publish("chromecast/Chromeansi/playMusicURL", 'http://rb-bremenvier-live.cast.addradio.de/rb/bremenvier/live/mp3/128/stream.mp3')
+                    self._mqclient.publish("bathroom/ttsout",                    self._template.getWakeupText("Ansi"))
 
         if keys[0] == Room.TIFFY_ROOM:
 

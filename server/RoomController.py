@@ -7,7 +7,6 @@ import ConfigParser
 import paho.mqtt.client   as     mqtt
 from   Room               import Room
 from   InformationFetcher import InformationFetcher
-from   Chromecast         import Chromecast
 
 
 class RoomController(threading.Thread):
@@ -159,8 +158,8 @@ class RoomController(threading.Thread):
 
             # Take care of sound
             if not self._SoundActive:
-                Chromecast().playYoutube("Chromeansi", self._config.get("SLEEP", "YoutubeID"))
-                Chromecast().volume("Chromeansi", float(self._config.get("SLEEP", "Volume")))
+                self._mqclient.publish("chromecast/Chromeansi/playYoutube", self._config.get("SLEEP", "YoutubeID"))
+                self._mqclient.publish("chromecast/Chromeansi/volume", self._config.get("SLEEP", "Volume"))
                 self._SoundActive = True
 
             if diff <= max:
@@ -180,14 +179,14 @@ class RoomController(threading.Thread):
                     self._mqclient.publish("ansiroom/bedlight/right/colour",    self.fill(18, [val[0], val[1], val[2]]))
                     self._lastWorkingLight = val
 
-                Chromecast().volume("Chromeansi", percentage * float(self._config.get("SLEEP", "Volume")))
+                self._mqclient.publish("chromecast/Chromeansi/volume", percentage * float(self._config.get("SLEEP", "Volume")))
 
             # end sequence
             if diff > max:
                 print "END Falling Asleep Function"
                 self._redis.delete("AnsiRoomFallingAsleep")
                 self._mqclient.publish("ansiroom/bedlight/sleep/fire", 0)
-                Chromecast().stop('Chromeansi')
+                self._mqclient.publish("chromecast/Chromeansi/stop", 0)
                 self._SoundActive = False
 
         elif self._redis.exists("AnsiRoomReading"):
