@@ -137,7 +137,7 @@ class Chromecast(threading.Thread):
                         cast.set_volume(float(v))
 
                     if keys[2] == "stop":
-                        self._logger.info(stop)
+                        self._logger.info("stop")
                         cast.wait()
                         cast.quit_app()
 
