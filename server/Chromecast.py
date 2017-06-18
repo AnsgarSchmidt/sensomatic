@@ -145,6 +145,7 @@ class Chromecast(threading.Thread):
                 self._logger.error("Error in processing")
                 self._logger.error(e)
                 self._chromecasts_OK = False
+                self._mqclient.publish(k, v)
 
 if __name__ == '__main__':
     c = Chromecast()
