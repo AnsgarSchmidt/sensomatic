@@ -151,7 +151,6 @@ if __name__ == '__main__':
     c = Chromecast()
     c.start()
     time.sleep(60)
-
     #c.playMusicURL('Chromeansi', 'http://inforadio.de/livemp3')
     #time.sleep(1)
     #c.volume('Chromeansi', 0.6)
