@@ -126,10 +126,20 @@ class Chromecast(threading.Thread):
                     if keys[2] == "playMusicURL":
                         self._logger.info("playMusicURL")
                         cast.wait()
+                        # We start one because this can be just a change of media source
                         mc = cast.media_controller
                         mc.play_media(v, 'audio/mpeg')
                         mc.block_until_active()
                         mc.play()
+                        time.sleep(5)
+                        counter = 0
+                        while counter < 5 and cast.status.app_id is None:
+                            self._logger.info("retry playMusicURL")
+                            mc.play_media(v, 'audio/mpeg')
+                            mc.block_until_active()
+                            mc.play()
+                            time.sleep(5)
+                            counter += 1
 
                     if keys[2] == "volume":
                         self._logger.info("volume")
@@ -151,6 +161,7 @@ if __name__ == '__main__':
     c = Chromecast()
     c.start()
     time.sleep(60)
+    
     #c.playMusicURL('Chromeansi', 'http://inforadio.de/livemp3')
     #time.sleep(1)
     #c.volume('Chromeansi', 0.6)
