@@ -103,7 +103,7 @@ class MqttRulez(threading.Thread):
                                 s.loadPlaylist(random.choice(dflist))
                                 s.randomize(0)
                             else:
-                                self._logger.warn("Can not dinf ??? using Starred instead")
+                                self._logger.warn("Can not play ??? using Starred instead")
                                 for i in s.getPlaylists('Starred'):
                                     s.loadPlaylist(i)
                                 s.randomize(1)
