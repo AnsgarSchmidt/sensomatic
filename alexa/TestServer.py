@@ -9,28 +9,28 @@ app = Flask(__name__)
 
 devices = [
            {"id":"ansiroom-mainlight",
-            "name":"Licht",
+            "name":"Ansiraum Licht",
             "description":"Mainlight ansiroom",
             "actions":["turnOn",
                        "turnOff",
                       ]
            },
            {"id": "kitchen-mainlight",
-            "name": "Licht",
+            "name": "Küche Licht",
             "description": "Mainlight Kitchen",
             "actions": ["turnOn",
                         "turnOff",
                         ]
             },
            {"id": "table-mainlight",
-            "name": "Licht",
+            "name": "Tisch Licht",
             "description": "Mainlight Hackingtable",
             "actions": ["turnOn",
                         "turnOff",
                        ]
            },
            {"id": "livingroom-mainlight",
-            "name": "Licht",
+            "name": "Wohnzimmer Licht",
             "description": "Mainlight livingroom",
             "actions": ["turnOn",
                         "turnOff",
@@ -51,7 +51,7 @@ devices = [
                          ]
             },
             {"id": "ansiroom-music",
-             "name": "Musik",
+             "name": "Lala",
              "description": "Music ansiroom",
              "actions": ["turnOn",
                          "turnOff",
