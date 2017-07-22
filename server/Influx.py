@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import Queue
-import datetime
 import threading
 import ConfigParser
 import paho.mqtt.client as     mqtt
@@ -141,6 +140,28 @@ class Influx(threading.Thread):
 
             if keys[1] == "humidity":
                 json_body[0]['measurement'] = "livingroom-humidity"
+                self._influx.write_points(json_body)
+
+        if len(keys) == 3 and keys[0] == "livingroom" and keys[1] == "tank":
+
+            if keys[1] == "watertemp":
+                json_body[0]['measurement'] = "tank-temperature"
+                self._influx.write_points(json_body)
+
+            if keys[1] == "heater":
+                json_body[0]['measurement'] = "tank-heater"
+                if float(v) > 0.0:
+                    json_body[0]['fields']['value'] = True
+                else:
+                    json_body[0]['fields']['value'] = False
+                self._influx.write_points(json_body)
+
+            if keys[1] == "whitelight":
+                json_body[0]['measurement'] = "tank-white"
+                self._influx.write_points(json_body)
+
+            if keys[1] == "bluelight":
+                json_body[0]['measurement'] = "tank-blue"
                 self._influx.write_points(json_body)
 
     def run(self):
