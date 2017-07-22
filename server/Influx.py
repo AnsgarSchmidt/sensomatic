@@ -89,10 +89,11 @@ class Influx(threading.Thread):
         if exists:
             print "Influx DB does exists"
             self._influx.switch_database("horizon")
-            #client.drop_database('example')
+            #self._influx.drop_database('horizon')
         else:
             print "Influx DB does not exists, create one"
             self._influx.create_database("horizon")
+            self._influx.switch_database("horizon")
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected Influx with result code %s" % rc
@@ -109,7 +110,7 @@ class Influx(threading.Thread):
     def _process(self):
         k, v      = self._workingQueue.get()
         keys      = k.split("/")
-        json_body = [{"measurement": "", "fields": {"value": 0}}]
+        json_body = [{"measurement": "", "fields": {"value": 0.0}}]
         json_body[0]['fields']['value'] = float(v)
 
         if len(keys) == 2 and keys[0] == "ansiroom":
@@ -152,8 +153,8 @@ class Influx(threading.Thread):
             try:
                 self._process()
             except Exception as e:
-                self._logger.error("Error in processing")
-                self._logger.error(e)
+                print ("Error in processing")
+                print e
 
 
 if __name__ == '__main__':
