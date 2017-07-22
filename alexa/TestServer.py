@@ -36,6 +36,20 @@ devices = [
                         "turnOff",
                         ]
            },
+           {"id": "ansiroom-readlight",
+            "name": "Ansiroom Readlight",
+            "description": "Readlight ansiroom",
+            "actions": ["turnOn",
+                        "turnOff",
+                        ]
+            },
+           {"id": "ansiroom-fire",
+            "name": "Ansiroom fire",
+             "description": "Fire ansiroom",
+             "actions": ["turnOn",
+                         "turnOff",
+                         ]
+            },
 ]
 
 actions = ["setTargetTemperature",
