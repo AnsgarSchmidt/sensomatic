@@ -50,6 +50,14 @@ devices = [
                          "turnOff",
                          ]
             },
+            {"id": "ansiroom-music",
+             "name": "Musik",
+             "description": "Music ansiroom",
+             "actions": ["turnOn",
+                         "turnOff",
+                         ]
+             },
+
 ]
 
 actions = ["setTargetTemperature",
@@ -121,6 +129,10 @@ def Action():
             if id == "ansiroom-fire":
                 print "ansiroom-fire"
                 mqclient.publish("ansiroom/button", "2")
+
+            if id == "ansiroom-music":
+                print "ansiroom-music"
+                mqclient.publish("chromecast/Chromeansi/stop", "stop")
 
             return "OK"
         else:
