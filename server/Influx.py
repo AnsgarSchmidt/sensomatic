@@ -110,7 +110,7 @@ class Influx(threading.Thread):
         k, v      = self._workingQueue.get()
         keys      = k.split("/")
         json_body = [{"measurement": "", "fields": {"value": 0}}]
-        json_body[0]['fields']['value'] = v
+        json_body[0]['fields']['value'] = float(v)
 
         if len(keys) == 2 and keys[0] == "ansiroom":
 
