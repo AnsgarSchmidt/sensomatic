@@ -110,45 +110,51 @@ class Influx(threading.Thread):
         k, v      = self._workingQueue.get()
         keys      = k.split("/")
         json_body = [{"measurement": "", "fields": {"value": 0.0}}]
-        json_body[0]['fields']['value'] = float(v)
 
         if len(keys) == 2 and keys[0] == "ansiroom":
 
             if keys[1] == "temperature":
                 json_body[0]['measurement'] = "ansiroom-temperature"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
             if keys[1] == "co2":
                 json_body[0]['measurement'] = "ansiroom-co2"
+                json_body[0]['fields']['value'] = int(v)
                 self._influx.write_points(json_body)
 
         if len(keys) == 2 and keys[0] == "bathroom":
 
             if keys[1] == "temperature":
                 json_body[0]['measurement'] = "bathroom-temperature"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
             if keys[1] == "humidity":
                 json_body[0]['measurement'] = "bathroom-humidity"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
         if len(keys) == 2 and keys[0] == "livingroom":
 
             if keys[1] == "temperature":
                 json_body[0]['measurement'] = "livingroom-temperature"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
             if keys[1] == "humidity":
                 json_body[0]['measurement'] = "livingroom-humidity"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
         if len(keys) == 3 and keys[0] == "livingroom" and keys[1] == "tank":
 
-            if keys[1] == "watertemp":
+            if keys[2] == "watertemp":
                 json_body[0]['measurement'] = "tank-temperature"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
-            if keys[1] == "heater":
+            if keys[2] == "heater":
                 json_body[0]['measurement'] = "tank-heater"
                 if float(v) > 0.0:
                     json_body[0]['fields']['value'] = True
@@ -156,12 +162,14 @@ class Influx(threading.Thread):
                     json_body[0]['fields']['value'] = False
                 self._influx.write_points(json_body)
 
-            if keys[1] == "whitelight":
+            if keys[2] == "whitelight":
                 json_body[0]['measurement'] = "tank-white"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
-            if keys[1] == "bluelight":
+            if keys[2] == "bluelight":
                 json_body[0]['measurement'] = "tank-blue"
+                json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
     def run(self):
