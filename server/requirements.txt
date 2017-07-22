@@ -19,3 +19,4 @@ ISStreamer
 twitter
 telepot
 feedparser
+influxdb
