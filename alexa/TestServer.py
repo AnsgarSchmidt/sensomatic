@@ -16,7 +16,7 @@ devices = [
                       ]
            },
            {"id": "kitchen-mainlight",
-            "name": "Küche Licht",
+            "name": "Kueche Licht",
             "description": "Mainlight Kitchen",
             "actions": ["turnOn",
                         "turnOff",
