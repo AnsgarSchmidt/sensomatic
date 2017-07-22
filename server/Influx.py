@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import Queue
+import datetime
 import threading
 import ConfigParser
 import paho.mqtt.client as     mqtt
@@ -79,7 +80,6 @@ class Influx(threading.Thread):
         self._check_db()
 
     def _check_db(self):
-
         exists = False
 
         for e in self._influx.get_list_database():
@@ -88,7 +88,8 @@ class Influx(threading.Thread):
 
         if exists:
             print "Influx DB does exists"
-            # client.drop_database('example')
+            self._influx.switch_database("horizon")
+            #client.drop_database('example')
         else:
             print "Influx DB does not exists, create one"
             self._influx.create_database("horizon")
@@ -106,11 +107,40 @@ class Influx(threading.Thread):
         print "Disconnect Influx"
 
     def _process(self):
-        k, v = self._workingQueue.get()
-        keys = k.split("/")
+        k, v      = self._workingQueue.get()
+        keys      = k.split("/")
+        json_body = [{"measurement": "", "fields": {"value": 0}}]
+        json_body[0]['fields']['value'] = v
 
-        #print keys
-        #print v
+        if len(keys) == 2 and keys[0] == "ansiroom":
+
+            if keys[1] == "temperature":
+                json_body[0]['measurement'] = "ansiroom-temperature"
+                self._influx.write_points(json_body)
+
+            if keys[1] == "co2":
+                json_body[0]['measurement'] = "ansiroom-co2"
+                self._influx.write_points(json_body)
+
+        if len(keys) == 2 and keys[0] == "bathroom":
+
+            if keys[1] == "temperature":
+                json_body[0]['measurement'] = "bathroom-temperature"
+                self._influx.write_points(json_body)
+
+            if keys[1] == "humidity":
+                json_body[0]['measurement'] = "bathroom-humidity"
+                self._influx.write_points(json_body)
+
+        if len(keys) == 2 and keys[0] == "livingroom":
+
+            if keys[1] == "temperature":
+                json_body[0]['measurement'] = "livingroom-temperature"
+                self._influx.write_points(json_body)
+
+            if keys[1] == "humidity":
+                json_body[0]['measurement'] = "livingroom-humidity"
+                self._influx.write_points(json_body)
 
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
