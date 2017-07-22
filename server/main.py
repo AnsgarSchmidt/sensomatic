@@ -24,6 +24,7 @@ from   Telegram           import Telegram
 from   SmarterCoffee      import SmartCoffee
 from   Newscatcher        import Newscatcher
 from   Chromecast         import Chromecast
+from   Influx             import Influx
 
 temp      = TemplateMatcher()
 info      = InformationFetcher()
@@ -136,10 +137,12 @@ def radiationCheck():
     if here > 0.15:
         for room in Room.ANNOUNCE_ROOMS:
             _mqclient.publish("%s/ttsout" % room, temp.getRadiationToHigh(here))
+            _mqclient.publish("telegram",         temp.getRadiationToHigh(here))
     if here > avr:
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
                 _mqclient.publish("%s/ttsout" % room, temp.getRadiationHigherThenAverage(here, avr))
+                _mqclient.publish("telegram",         temp.getRadiationHigherThenAverage(here, avr))
 
 def particulateMatterCheck():
     logger.info("ParticularMatterCheck")
@@ -148,6 +151,7 @@ def particulateMatterCheck():
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
                 _mqclient.publish("%s/ttsout" % room, temp.getParticulateMatterHigherThenAverage(p1, p2))
+                _mqclient.publish("telegram",         temp.getParticulateMatterHigherThenAverage(p1, p2))
 
 def bathShowerUpdate():
     logger.info("Checking Bath and Shower conditions")
@@ -187,10 +191,10 @@ if __name__ == '__main__':
     persistor.start()
     time.sleep(_wait_time)
 
-    #logger.info("Start Carbon")
-    #carbon = Carbon()
-    #carbon.start()
-    #time.sleep(_wait_time)
+    logger.info("Start Influx")
+    influx = Influx()
+    influx.start()
+    time.sleep(_wait_time)
 
     logger.info("Start Telegram bot")
     telegram = Telegram()
