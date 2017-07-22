@@ -114,6 +114,14 @@ def Action():
                 print "livingroomlicht"
                 mqclient.publish("livingroom/light/main", "TOGGLE")
 
+            if id == "ansiroom-readlight":
+                print "ansiroom-readlight"
+                mqclient.publish("ansiroom/button", "1")
+
+            if id == "ansiroom-fire":
+                print "ansiroom-fire"
+                mqclient.publish("ansiroom/button", "2")
+
             return "OK"
         else:
             print "passwd errror"
