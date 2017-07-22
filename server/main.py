@@ -156,6 +156,9 @@ def bathShowerUpdate():
     else:
         logger.info("No one showers")
 
+def stopme():
+    sys.exit(0)
+
 def _on_connect(client, userdata, rc, msg):
     logger.info("Connected MQTT Main with result code %s" % rc)
     #self._mqclient.subscribe("#")
@@ -261,13 +264,15 @@ if __name__ == '__main__':
 
     #https://github.com/dbader/schedule
 
-    schedule.every(15).minutes.do(checkWaschingMachine)
+    schedule.every(23).minutes.do(checkWaschingMachine)
     schedule.every( 1).minutes.do(checkBath)
     schedule.every(30).minutes.do(bathShowerUpdate)
 
     schedule.every().hour.at("00:00").do(hourAnnounce)
     schedule.every().hour.at("00:42").do(radiationCheck)
     schedule.every().hour.at("00:23").do(particulateMatterCheck)
+
+    schedule.every().day.at("03:23").do(stopme)
 
     schedule.every(15).minutes.do(checkCo2, Room.ANSI_ROOM)
 
