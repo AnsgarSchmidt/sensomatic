@@ -20,3 +20,4 @@ twitter
 telepot
 feedparser
 influxdb
+adafruit-io
