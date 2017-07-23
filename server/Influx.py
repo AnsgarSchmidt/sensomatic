@@ -172,6 +172,44 @@ class Influx(threading.Thread):
                 json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
+        if len(keys) == 3 and keys[0] == "cortex":
+
+            if keys[1] == "wan":
+
+                if keys[2] == "rx-diff":
+                    json_body[0]['measurement'] = "wan-rx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "tx-diff":
+                    json_body[0]['measurement'] = "wan-tx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+            if keys[1] == "cortex":
+
+                if keys[2] == "rx-diff":
+                    json_body[0]['measurement'] = "cortex-rx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "tx-diff":
+                    json_body[0]['measurement'] = "cortex-tx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+            if keys[1] == "phawxansi":
+
+                if keys[2] == "rx-diff":
+                    json_body[0]['measurement'] = "phawxansi-rx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "tx-diff":
+                    json_body[0]['measurement'] = "phawxansi-tx"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.on_connect    = self._on_connect
@@ -192,6 +230,6 @@ if __name__ == '__main__':
     i = Influx()
     i.start()
 
-    time.sleep(10)
+    time.sleep(100)
 
     print "End"
