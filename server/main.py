@@ -135,23 +135,23 @@ def radiationCheck():
     avr  = info.getRadiationAverage()
     here = info.getRadiationForOneStation()
     if here > 0.15:
+        _mqclient.publish("telegram", temp.getRadiationToHigh(here))
         for room in Room.ANNOUNCE_ROOMS:
             _mqclient.publish("%s/ttsout" % room, temp.getRadiationToHigh(here))
-            _mqclient.publish("telegram",         temp.getRadiationToHigh(here))
     if here > avr:
+        _mqclient.publish("telegram", temp.getRadiationHigherThenAverage(here, avr))
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
                 _mqclient.publish("%s/ttsout" % room, temp.getRadiationHigherThenAverage(here, avr))
-                _mqclient.publish("telegram",         temp.getRadiationHigherThenAverage(here, avr))
 
 def particulateMatterCheck():
     logger.info("ParticularMatterCheck")
     p1, p2 = info.getParticulateMatter()
     if p1 > 23.0 or p2 > 23.0:
+        _mqclient.publish("telegram", temp.getParticulateMatterHigherThenAverage(p1, p2))
         for room in Room.ANNOUNCE_ROOMS:
             if info.isSomeoneInTheRoom(room):
                 _mqclient.publish("%s/ttsout" % room, temp.getParticulateMatterHigherThenAverage(p1, p2))
-                _mqclient.publish("telegram",         temp.getParticulateMatterHigherThenAverage(p1, p2))
 
 def bathShowerUpdate():
     logger.info("Checking Bath and Shower conditions")
