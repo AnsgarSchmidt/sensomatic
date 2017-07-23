@@ -397,6 +397,8 @@ class MqttRulez(threading.Thread):
 
         if keys[0] == "cortex":
 
+            print keys
+
             if keys[1] == "dhcp":
                 for entry in json.loads(v):
                     ip = entry['ip'].split(".")
@@ -413,6 +415,7 @@ class MqttRulez(threading.Thread):
                 if keys[2] == "rx":
                     if self._cortex_wan_rx > 0 and int(v) > self._cortex_wan_rx:
                         self._mqclient.publish("cortex/wan/rx-diff", int(v) - self._cortex_wan_rx)
+                        print "WANRX"
                     self._cortex_wan_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_wan_tx > 0 and int(v) > self._cortex_wan_tx:
