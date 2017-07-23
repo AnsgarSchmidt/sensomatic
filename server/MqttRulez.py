@@ -486,7 +486,6 @@ class MqttRulez(threading.Thread):
         while True:
             try:
                 self._process()
-                self._mqclient.loop()
             except Exception as e:
                 self._logger.error("Error in processing")
                 self._logger.error(e)
