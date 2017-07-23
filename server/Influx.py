@@ -154,6 +154,11 @@ class Influx(threading.Thread):
                 json_body[0]['fields']['value'] = float(v)
                 self._influx.write_points(json_body)
 
+            if keys[2] == "settemp":
+                json_body[0]['measurement'] = "tank-settemp"
+                json_body[0]['fields']['value'] = float(v)
+                self._influx.write_points(json_body)
+
             if keys[2] == "heater":
                 json_body[0]['measurement'] = "tank-heater"
                 if float(v) > 0.0:
