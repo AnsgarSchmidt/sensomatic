@@ -414,32 +414,31 @@ class MqttRulez(threading.Thread):
             if keys[1] == "wan":
                 if keys[2] == "rx":
                     if self._cortex_wan_rx > 0 and int(v) > self._cortex_wan_rx:
-                        self._mqclient.publish("cortex/wan/rx-diff", int(v) - self._cortex_wan_rx)
-                        print "WANRX"
+                        self._mqclient.publish("cortex/wan/rx-diff", (int(v) - self._cortex_wan_rx))
                     self._cortex_wan_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_wan_tx > 0 and int(v) > self._cortex_wan_tx:
-                        self._mqclient.publish("cortex/wan/tx-diff", int(v) - self._cortex_wan_tx)
+                        self._mqclient.publish("cortex/wan/tx-diff", (int(v) - self._cortex_wan_tx))
                     self._cortex_wan_tx = int(v)
 
             if keys[1] == "cortex":
                 if keys[2] == "rx":
                     if self._cortex_cortex_rx > 0 and int(v) > self._cortex_cortex_rx:
-                        self._mqclient.publish("cortex/cortex/rx-diff", int(v) - self._cortex_cortex_rx)
+                        self._mqclient.publish("cortex/cortex/rx-diff", (int(v) - self._cortex_cortex_rx))
                     self._cortex_cortex_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_cortex_tx > 0 and int(v) > self._cortex_cortex_tx:
-                        self._mqclient.publish("cortex/cortex/rx-diff", int(v) - self._cortex_cortex_tx)
+                        self._mqclient.publish("cortex/cortex/rx-diff", (int(v) - self._cortex_cortex_tx))
                     self._cortex_cortex_tx = int(v)
 
             if keys[1] == "phawxansi":
                 if keys[2] == "rx":
                     if self._cortex_phawxansi_rx > 0 and int(v) > self._cortex_phawxansi_rx:
-                        self._mqclient.publish("cortex/phawxansi/rx-diff", int(v) - self._cortex_phawxansi_rx)
+                        self._mqclient.publish("cortex/phawxansi/rx-diff", (int(v) - self._cortex_phawxansi_rx))
                     self._cortex_phawxansi_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_phawxansi_tx > 0 and int(v) > self._cortex_phawxansi_tx:
-                        self._mqclient.publish("cortex/phawxansi/rx-diff", int(v) - self._cortex_phawxansi_tx)
+                        self._mqclient.publish("cortex/phawxansi/rx-diff", (int(v) - self._cortex_phawxansi_tx))
                     self._cortex_phawxansi_tx = int(v)
 
     def __init__(self):
