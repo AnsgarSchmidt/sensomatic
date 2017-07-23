@@ -426,7 +426,7 @@ class MqttRulez(threading.Thread):
                     self._cortex_cortex_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_cortex_tx > 0 and int(v) > self._cortex_cortex_tx:
-                        self._mqclient.publish("cortex/cortex/rx-diff", int(int(v) - self._cortex_cortex_tx))
+                        self._mqclient.publish("cortex/cortex/tx-diff", int(int(v) - self._cortex_cortex_tx))
                     self._cortex_cortex_tx = int(v)
 
             if keys[1] == "phawxansi":
@@ -436,7 +436,7 @@ class MqttRulez(threading.Thread):
                     self._cortex_phawxansi_rx = int(v)
                 if keys[2] == "tx":
                     if self._cortex_phawxansi_tx > 0 and int(v) > self._cortex_phawxansi_tx:
-                        self._mqclient.publish("cortex/phawxansi/rx-diff", int(int(v) - self._cortex_phawxansi_tx))
+                        self._mqclient.publish("cortex/phawxansi/tx-diff", int(int(v) - self._cortex_phawxansi_tx))
                     self._cortex_phawxansi_tx = int(v)
 
     def __init__(self):
