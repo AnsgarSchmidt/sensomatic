@@ -436,7 +436,7 @@ class MqttRulez(threading.Thread):
                     print type(self._cortex_phawxansi_rx)
                     print self._cortex_phawxansi_rx
                     print int(v)
-                    print (int(v) - self._cortex_phawxansi_rx))
+                    print int(v) - self._cortex_phawxansi_rx
                     if self._cortex_phawxansi_rx > 0 and int(v) > self._cortex_phawxansi_rx:
                         self._mqclient.publish("cortex/phawxansi/rx-diff", (int(v) - self._cortex_phawxansi_rx))
                     self._cortex_phawxansi_rx = int(v)
