@@ -71,15 +71,6 @@ class MqttRulez(threading.Thread):
 
         keys = k.split("/")
         ########## dev code here
-        if keys[0] == "cortex":
-
-            if keys[1] == "dhcp":
-                for entry in json.loads(v):
-                    ip = entry['ip'].split(".")
-                    if int(ip[3]) > 200 and not self._redis.exists("dynamicdhcpdetected"):
-                        print "Found new device %s" % entry['name']
-                        self._redis.setex("dynamicdhcpdetected", 60 * 1, time.time())
-                        self._mqclient.publish("ansiroom/ttsout", self._template.getNewDynamicIP(entry['name']))
         ########## dev code here
 
     def __init__(self):
@@ -95,6 +86,13 @@ class MqttRulez(threading.Thread):
         self._template             = TemplateMatcher()
         self._info                 = InformationFetcher()
         self._workingQueue         = Queue.Queue()
+        self._lastwaterlevel       = -1
+        self._cortex_wan_rx        = 0
+        self._cortex_wan_tx        = 0
+        self._cortex_cortex_rx     = 0
+        self._cortex_cortex_tx     = 0
+        self._cortex_phawxansi_rx  = 0
+        self._cortex_phawxansi_tx  = 0
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
@@ -124,6 +122,6 @@ if __name__ == '__main__':
     m = MqttRulez()
     m.start()
 
-    time.sleep(60)
+    time.sleep(23)
 
     print "End"
