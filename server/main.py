@@ -25,6 +25,7 @@ from   SmarterCoffee      import SmartCoffee
 from   Newscatcher        import Newscatcher
 from   Chromecast         import Chromecast
 from   Influx             import Influx
+from   Adafruit           import Adafruit
 
 temp      = TemplateMatcher()
 info      = InformationFetcher()
@@ -221,10 +222,10 @@ if __name__ == '__main__':
     chromecast.start()
     time.sleep(_wait_time)
 
-    #logger.info("Start Inital State")
-    #initialState = InitialState()
-    #initialState.start()
-    #time.sleep(_wait_time)
+    logger.info("Start Adafruit")
+    adafruit = Adafruit()
+    adafruit.start()
+    time.sleep(_wait_time)
 
     logger.info("Start Climate Control")
     climate = Climate()

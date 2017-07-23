@@ -278,7 +278,7 @@ class InformationFetcher():
         f = urllib2.urlopen(self._config.get("INFORMATION","WUPredictionURL"))
         json_string = f.read()
         j = json.loads(json_string)
-        #print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
+        print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))
         return j['forecast']['txt_forecast']['forecastday'][0]['fcttext_metric']
 
     def getNextISSPass(self):
@@ -481,12 +481,12 @@ if __name__ == '__main__':
     #print i.getRoomTemp(Room.BATH_ROOM)
     #print i.getRoomHumidity(Room.BATH_ROOM)
     #print i.getOutdoor()
-    #print i.getPrediction()
+    print i.getPrediction()
     #print i.getNextISSPass()
     #print i.getAstronauts()
     #print i.getRoomCo2Level(Room.ANSI_ROOM)
-    #print i.getRadiationAverage()
-    #print i.getRadiationForOneStation()
+    print i.getRadiationAverage()
+    print i.getRadiationForOneStation()
     #print i.getSunPosition()
     #print i.getOutsideLightLevel()
     #print i.getNextWackeuptime()
@@ -502,3 +502,4 @@ if __name__ == '__main__':
     #print i.getSpaceApi("xHain")['state']
     #print i.isSpaceOpen("xHain")
     print i.getParticulateMatter()
+
