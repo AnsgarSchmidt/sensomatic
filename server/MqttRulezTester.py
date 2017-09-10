@@ -1,5 +1,6 @@
 import os
 import sys
+import math
 import time
 import json
 import redis
@@ -93,6 +94,8 @@ class MqttRulez(threading.Thread):
         self._cortex_cortex_tx     = 0
         self._cortex_phawxansi_rx  = 0
         self._cortex_phawxansi_tx  = 0
+        self._bike_laststep        = 0
+        self._bike_starttime       = 0
 
     def _on_connect(self, client, userdata, rc, msg):
         print "Connected MQTT Rulez with result code %s" % rc
@@ -122,6 +125,6 @@ if __name__ == '__main__':
     m = MqttRulez()
     m.start()
 
-    time.sleep(23)
+    time.sleep(42)
 
     print "End"
