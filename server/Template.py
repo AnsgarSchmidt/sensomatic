@@ -126,6 +126,18 @@ class TemplateMatcher():
         template = self._env.get_template('tank-waterlevel-normal.txt')
         return template.render()
 
+    def getBikeBatteryLevelWarn(self, level):
+        template = self._env.get_template('bike-low-bat.txt')
+        return template.render(level=level)
+
+    def getBikeStart(self):
+        template = self._env.get_template('bike-start.txt')
+        return template.render()
+
+    def getBikeEnd(self, minutes):
+        template = self._env.get_template('bike-end.txt')
+        return template.render(minutes=minutes)
+
 if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
@@ -147,3 +159,6 @@ if __name__ == '__main__':
     #print t.getWaterlevelNormal()
     #print t.getParticulateMatterHigherThenAverage(2.2, 3.3)
     print t.getNewDynamicIP("Zubenelgenubi")
+    print t.getBikeBatteryLevelWarn(4.23)
+    print t.getBikeStart()
+    print t.getBikeEnd(23)
