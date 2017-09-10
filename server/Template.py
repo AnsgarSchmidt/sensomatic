@@ -130,9 +130,9 @@ class TemplateMatcher():
         template = self._env.get_template('bike-low-bat.txt')
         return template.render(level=level)
 
-    def getBikeStart(self):
+    def getBikeStart(self, hours):
         template = self._env.get_template('bike-start.txt')
-        return template.render()
+        return template.render(hours=hours)
 
     def getBikeEnd(self, minutes):
         template = self._env.get_template('bike-end.txt')
@@ -160,5 +160,5 @@ if __name__ == '__main__':
     #print t.getParticulateMatterHigherThenAverage(2.2, 3.3)
     print t.getNewDynamicIP("Zubenelgenubi")
     print t.getBikeBatteryLevelWarn(4.23)
-    print t.getBikeStart()
+    print t.getBikeStart(5)
     print t.getBikeEnd(23)

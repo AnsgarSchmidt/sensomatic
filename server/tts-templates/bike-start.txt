@@ -1,1 +1,1 @@
-Exercise bike started, very good!
+Exercise bike started, very good! Last exercise was {{hours}} hours ago!
