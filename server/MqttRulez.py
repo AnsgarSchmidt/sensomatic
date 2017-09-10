@@ -1,5 +1,6 @@
 import os
 import sys
+import math
 import time
 import json
 import redis
@@ -439,6 +440,33 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("cortex/phawxansi/tx-diff", int(int(v) - self._cortex_phawxansi_tx))
                     self._cortex_phawxansi_tx = int(v)
 
+        if keys[0] == "bike":
+
+            if keys[1] == "system":
+
+                if v == "startup":
+                    hours = int(round((time.time() - self._bike_starttime) / (60.0 * 60.0)))
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeStart(hours))
+                    self._bike_laststep  = int(round(time.time() * 1000000))
+                    self._bike_starttime = time.time()
+
+                if v == "sleep":
+                    minutes = int(round((time.time() - self._bike_starttime) / 60.0))
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeEnd(minutes))
+                    self._mqclient.publish("bike/exercise_duration", minutes)
+
+            if keys[1] == "battery":
+                battery = int(v) / 1000.0
+                if battery < 3.9:
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeBatteryLevelWarn(battery))
+
+            if keys[1] == "step":
+                deltat = int(round(time.time() * 1000000)) - self._bike_laststep
+                self._bike_laststep = int(round(time.time() * 1000000))
+                self._mqclient.publish("bike/step_duration", deltat)
+                kmh = 45.454 * math.exp(-9.17027 * math.pow(10, -7) * deltat)
+                self._mqclient.publish("bike/speed", kmh)
+
     def __init__(self):
         random.seed
         threading.Thread.__init__(self)
@@ -465,6 +493,8 @@ class MqttRulez(threading.Thread):
         self._cortex_cortex_tx     = 0
         self._cortex_phawxansi_rx  = 0
         self._cortex_phawxansi_tx  = 0
+        self._bike_laststep        = 0
+        self._bike_starttime       = 0
 
     def _on_connect(self, client, userdata, rc, msg):
         self._logger.info("Connected MQTT Rulez with result code %s" % rc)
