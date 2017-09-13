@@ -244,6 +244,14 @@ class Influx(threading.Thread):
                     json_body[0]['fields']['value'] = int(v)
                     self._influx.write_points(json_body)
 
+        if len(keys) == 2 and keys[0] == "bike":
+
+                if keys[1] == "speed":
+                    json_body[0]['measurement'] = "bike-speed"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.on_connect    = self._on_connect
