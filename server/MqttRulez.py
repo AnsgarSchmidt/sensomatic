@@ -446,9 +446,8 @@ class MqttRulez(threading.Thread):
 
                 if v == "startup":
                     hours = int(round((time.time() - self._bike_starttime) / (60.0 * 60.0)))
-                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeStart(hours))
-                    self._bike_laststep  = int(round(time.time() * 1000000))
                     self._bike_starttime = time.time()
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeStart(hours))
 
                 if v == "sleep":
                     minutes = int(round((time.time() - self._bike_starttime) / 60.0))
@@ -461,10 +460,10 @@ class MqttRulez(threading.Thread):
                     self._mqclient.publish("ansiroom/ttsout", self._template.getBikeBatteryLevelWarn(battery))
 
             if keys[1] == "step":
-                deltat = int(round(time.time() * 1000000)) - self._bike_laststep
-                self._bike_laststep = int(round(time.time() * 1000000))
+                deltat = int(v) - self._bike_laststep
+                self._bike_laststep = int(v)
                 self._mqclient.publish("bike/step_duration", deltat)
-                kmh = 45.454 * math.exp(-9.17027 * math.pow(10, -7) * deltat)
+                kmh = 45.454 * math.exp(-0.000917027 * deltat)
                 self._mqclient.publish("bike/speed", kmh)
 
     def __init__(self):
