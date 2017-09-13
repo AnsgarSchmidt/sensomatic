@@ -447,12 +447,14 @@ class MqttRulez(threading.Thread):
                 if v == "startup":
                     hours = int(round((time.time() - self._bike_starttime) / (60.0 * 60.0)))
                     self._bike_starttime = time.time()
+                    self._bike_distance  = 0
                     self._mqclient.publish("ansiroom/ttsout", self._template.getBikeStart(hours))
 
                 if v == "sleep":
                     minutes = int(round((time.time() - self._bike_starttime) / 60.0))
-                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeEnd(minutes))
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeEnd(minutes, self._bike_distance / 1000))
                     self._mqclient.publish("bike/exercise_duration", minutes)
+                    self._mqclient.publish("bike/exercise_distance", self._bike_distance)
 
             if keys[1] == "battery":
                 battery = int(v) / 1000.0
@@ -465,6 +467,9 @@ class MqttRulez(threading.Thread):
                 self._mqclient.publish("bike/step_duration", deltat)
                 kmh = 45.454 * math.exp(-0.000917027 * deltat)
                 self._mqclient.publish("bike/speed", kmh)
+                distance = 0.000277778 * deltat * kmh
+                self._bike_distance += distance
+                self._mqclient.publish("bike/distance", distance)
 
     def __init__(self):
         random.seed
@@ -494,6 +499,7 @@ class MqttRulez(threading.Thread):
         self._cortex_phawxansi_tx  = 0
         self._bike_laststep        = 0
         self._bike_starttime       = 0
+        self._bike_distance        = 0
 
     def _on_connect(self, client, userdata, rc, msg):
         self._logger.info("Connected MQTT Rulez with result code %s" % rc)

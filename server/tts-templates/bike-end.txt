@@ -1,1 +1,1 @@
-Exercise ended after {{minutes}} minutes.
+Exercise ended after {{minutes}} minutes and {{distance}} kilometer.

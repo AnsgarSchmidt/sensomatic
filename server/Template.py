@@ -134,9 +134,9 @@ class TemplateMatcher():
         template = self._env.get_template('bike-start.txt')
         return template.render(hours=hours)
 
-    def getBikeEnd(self, minutes):
+    def getBikeEnd(self, minutes, distance):
         template = self._env.get_template('bike-end.txt')
-        return template.render(minutes=minutes)
+        return template.render(minutes=minutes, distance=distance)
 
 if __name__ == '__main__':
     print "Test templates"
@@ -161,4 +161,4 @@ if __name__ == '__main__':
     print t.getNewDynamicIP("Zubenelgenubi")
     print t.getBikeBatteryLevelWarn(4.23)
     print t.getBikeStart(5)
-    print t.getBikeEnd(23)
+    print t.getBikeEnd(23, 32.131)
