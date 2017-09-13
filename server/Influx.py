@@ -215,6 +215,35 @@ class Influx(threading.Thread):
                     json_body[0]['fields']['value'] = int(v)
                     self._influx.write_points(json_body)
 
+        if len(keys) == 3 and keys[0] == "luftdaten":
+
+            if keys[1] == "3998361":
+
+                if keys[2] == "SDS_P1":
+                    json_body[0]['measurement'] = "outside-pm10"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "SDS_P2":
+                    json_body[0]['measurement'] = "outside-pm25"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "temperature":
+                    json_body[0]['measurement'] = "outside-temperature"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "humidity":
+                    json_body[0]['measurement'] = "outside-humidity"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
+                if keys[2] == "BMP_pressure":
+                    json_body[0]['measurement'] = "pressure"
+                    json_body[0]['fields']['value'] = int(v)
+                    self._influx.write_points(json_body)
+
     def run(self):
         self._mqclient.connect(self._config.get("MQTT", "ServerAddress"), self._config.get("MQTT", "ServerPort"), 60)
         self._mqclient.on_connect    = self._on_connect
