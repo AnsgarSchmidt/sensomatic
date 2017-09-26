@@ -26,6 +26,7 @@ from   Newscatcher        import Newscatcher
 from   Chromecast         import Chromecast
 from   Influx             import Influx
 from   Adafruit           import Adafruit
+from   Exercise           import Exercise
 
 temp      = TemplateMatcher()
 info      = InformationFetcher()
@@ -265,6 +266,11 @@ if __name__ == '__main__':
     logger.info("Start Newscatcher")
     newscatcher = Newscatcher()
     newscatcher.start()
+    time.sleep(_wait_time)
+
+    logger.info("Start Exercise")
+    exercise = Exercise()
+    exercise.start()
     time.sleep(_wait_time)
 
     #https://github.com/dbader/schedule
