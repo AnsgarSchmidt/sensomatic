@@ -262,7 +262,7 @@ class MqttRulez(threading.Thread):
                     s.add("http://inforadio.de/livemp3")
                     if datetime.datetime.now().hour in (1, 2, 3, 4, 5):
                         self._mqclient.publish("bathroom/light/rgb", "255,25,0")
-                        s.volume(1)
+                        s.volume(10)
                     if datetime.datetime.now().hour in (6, 7, 8, 9):
                         self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         s.volume(42)
