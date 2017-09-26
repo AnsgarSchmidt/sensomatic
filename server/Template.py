@@ -138,6 +138,10 @@ class TemplateMatcher():
         template = self._env.get_template('bike-end.txt')
         return template.render(minutes=minutes, distance=distance)
 
+    def getBikeStatus(self, current, distance):
+        template = self._env.get_template('bike-status.txt')
+        return template.render(current=current, distance=distance)
+
 if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
@@ -158,7 +162,9 @@ if __name__ == '__main__':
     #print t.getWaterlevelLow()
     #print t.getWaterlevelNormal()
     #print t.getParticulateMatterHigherThenAverage(2.2, 3.3)
-    print t.getNewDynamicIP("Zubenelgenubi")
-    print t.getBikeBatteryLevelWarn(4.23)
-    print t.getBikeStart(5)
-    print t.getBikeEnd(23, 32.131)
+    #print t.getNewDynamicIP("Zubenelgenubi")
+    #print t.getBikeBatteryLevelWarn(4.23)
+    #print t.getBikeStart(5)
+    #print t.getBikeEnd(23, 32.131)
+    print t.getBikeStatus(42.63424223,  12.2323424)
+    print t.getBikeStatus(42.623423423, -12.234512)

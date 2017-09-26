@@ -1,0 +1,6 @@
+{% if distance >= 0 %}
+You are before your plan by {{ "%.1f"|format(distance|abs) }} kilometers.
+{% else %}
+You are behind your plan by {{ "%.1f"|format(distance|abs) }} kilometers.
+{% endif %}
+{{ "%.1f"|format(current|abs) }} kilometers this week in total.
