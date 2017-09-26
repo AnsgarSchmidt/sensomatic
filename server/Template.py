@@ -18,6 +18,12 @@ class TemplateMatcher():
         _,_,temp,_,_,_,_ = self._informationFetcher.getOutdoor()
         return template.render(hour=hour, temp=temp)
 
+    def getCurrentTime(self):
+        template = self._env.get_template('time-current.txt')
+        hour     = datetime.datetime.now().time().hour
+        minute   = datetime.datetime.now().time().minute
+        return template.render(hour=hour, minute=minute)
+
     def getAcknowledgeStartWashingMachine(self):
         template = self._env.get_template('acknowledge-start-washing-machine.txt')
         return template.render()
@@ -146,6 +152,7 @@ if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
     #print t.getHourlyTime()
+    print t.getCurrentTime()
     #print t.getAcknowledgeStartWashingMachine()
     #print t.getWashingMachineReady(234234)
     #print t.getTimeToGoToBed()
