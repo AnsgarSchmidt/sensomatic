@@ -101,7 +101,7 @@ class Exercise(threading.Thread):
 
                 if (time.time() - self._lastAnnounce) > (60 * 1):
                     diff_distance = self._getdistance(total_distance)
-                    self._mqclient.publish("livingroom/ttsout", self._template.getBikeStatus(total_distance / 1000.0, diff_distance / 1000.0))
+                    self._mqclient.publish("ansiroom/ttsout", self._template.getBikeStatus(total_distance / 1000.0, diff_distance / 1000.0))
                     self._lastAnnounce = time.time()
 
         self._redis.setex("exercise-total-distance", 60 * 60 * 24 * 3, total_distance)
