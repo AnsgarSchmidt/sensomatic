@@ -255,7 +255,7 @@ class MqttRulez(threading.Thread):
                 if not self._redis.exists("PlayRadioInBath") and not self._redis.exists("shower") and not self._redis.exists("bath"):
                     self._logger.info("Play Radio in Bath")
                     self._redis.setex("PlayRadioInBath", 60 * 60 * 2, time.time())
-                    self._mqclient.publish("bathroom/ttsout", self._template.getHourlyTime())
+                    self._mqclient.publish("bathroom/ttsout", self._template.getCurrentTime())
                     s = Mpd().getServerbyName("Bath")
                     s.stop()
                     s.emptyPlaylist()
