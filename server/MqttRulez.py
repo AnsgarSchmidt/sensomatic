@@ -359,7 +359,7 @@ class MqttRulez(threading.Thread):
                     if "on" == v:
                         print "Waterchange activated"
                         self._mqclient.publish("livingroom/ttsout", self._template.getWaterChangeOn())
-                        self._redis.setex(Room.LIVING_ROOM + "/tank/tempannounce", 30 * 60, time.time())
+                        self._redis.setex(Room.LIVING_ROOM + "/tank/tempannounce", 45 * 60, time.time())
 
                     if "off" == v:
                         print "Waterchange deactivated"
@@ -553,6 +553,6 @@ if __name__ == '__main__':
     m = MqttRulez()
     m.start()
 
-    time.sleep(10)
+   time.sleep(42)
 
     print "End"
