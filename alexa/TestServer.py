@@ -65,7 +65,7 @@ devices = [
                          ]
              },
              {"id": "network",
-              "name": "Network Scanner",
+              "name": "Netzwerk",
               "description": "Network warning",
               "actions": ["turnOn",
                           "turnOff",
