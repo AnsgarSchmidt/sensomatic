@@ -132,6 +132,18 @@ class TemplateMatcher():
         template = self._env.get_template('tank-waterlevel-normal.txt')
         return template.render()
 
+    def getWaterChangeOn(self):
+        template = self._env.get_template('tank-waterchange-on.txt')
+        return template.render()
+
+    def getWaterChangeOff(self):
+        template = self._env.get_template('tank-waterchange-off.txt')
+        return template.render()
+
+    def getWaterChangeTemp(self, temp):
+        template = self._env.get_template('tank-waterchange-temp.txt')
+        return template.render(temp=temp)
+
     def getBikeBatteryLevelWarn(self, level):
         template = self._env.get_template('bike-low-bat.txt')
         return template.render(level=level)
@@ -152,7 +164,7 @@ if __name__ == '__main__':
     print "Test templates"
     t = TemplateMatcher()
     #print t.getHourlyTime()
-    print t.getCurrentTime()
+    #print t.getCurrentTime()
     #print t.getAcknowledgeStartWashingMachine()
     #print t.getWashingMachineReady(234234)
     #print t.getTimeToGoToBed()
@@ -173,5 +185,8 @@ if __name__ == '__main__':
     #print t.getBikeBatteryLevelWarn(4.23)
     #print t.getBikeStart(5)
     #print t.getBikeEnd(23, 32.131)
-    print t.getBikeStatus(42.63424223,  12.2323424)
-    print t.getBikeStatus(42.623423423, -12.234512)
+    #print t.getBikeStatus(42.63424223,  12.2323424)
+    #print t.getBikeStatus(42.623423423, -12.234512)
+    print t.getWaterChangeOn()
+    print t.getWaterChangeOff()
+    print t.getWaterChangeTemp(21.3)

@@ -1,0 +1,1 @@
+Switching on water temperature announcement for water change. Will do a constant announcement of the current temperature.
