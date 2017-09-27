@@ -349,6 +349,23 @@ class MqttRulez(threading.Thread):
                             self._mqclient.publish("livingroom/ttsout", self._template.getWaterlevelLow())
                         self._lastwaterlevel = fval
 
+                if keys[2] == "watertemp":
+
+                    if self._redis.exists(Room.LIVING_ROOM + "/tank/tempannounce"):
+                        self._mqclient.publish("livingroom/ttsout", self._template.getWaterChangeTemp(v))
+
+                if keys[2] == "waterchange":
+
+                    if "on" == v:
+                        print "Waterchange activated"
+                        self._mqclient.publish("livingroom/ttsout", self._template.getWaterChangeOn())
+                        self._redis.setex(Room.LIVING_ROOM + "/tank/tempannounce", 30 * 60, time.time())
+
+                    if "off" == v:
+                        print "Waterchange deactivated"
+                        self._mqclient.publish("livingroom/ttsout", self._template.getWaterChangeOff())
+                        self._redis.delete(Room.LIVING_ROOM + "/tank/tempannounce")
+
         if keys[0] == Room.ANSI_ROOM:
 
             if keys[1] == "button":
