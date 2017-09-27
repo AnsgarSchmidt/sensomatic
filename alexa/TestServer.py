@@ -58,14 +58,14 @@ devices = [
                          ]
              },
              {"id": "tank",
-              "name": "Wasser Wechsel",
+              "name": "Aquarium",
               "description": "Announce Water Temperature",
               "actions": ["turnOn",
                           "turnOff",
                          ]
              },
              {"id": "network",
-              "name": "Netzwerk",
+              "name": "Netzwerk Warnung",
               "description": "Network warning",
               "actions": ["turnOn",
                           "turnOff",
