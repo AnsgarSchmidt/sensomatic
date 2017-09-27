@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 devices = [
            {"id":"ansiroom-mainlight",
-            "name":"Ansiraum Licht",
+            "name":"Ansi Licht",
             "description":"Mainlight ansiroom",
             "actions":["turnOn",
                        "turnOff",
@@ -37,7 +37,7 @@ devices = [
                         ]
            },
            {"id": "ansiroom-readlight",
-            "name": "Leselicht",
+            "name": "Lese Licht",
             "description": "Readlight ansiroom",
             "actions": ["turnOn",
                         "turnOff",
@@ -57,7 +57,20 @@ devices = [
                          "turnOff",
                          ]
              },
-
+             {"id": "tank",
+              "name": "Wasser Wechsel",
+              "description": "Announce Water Temperature",
+              "actions": ["turnOn",
+                          "turnOff",
+                         ]
+             },
+             {"id": "network",
+              "name": "Netzwerk",
+              "description": "Network warning",
+              "actions": ["turnOn",
+                          "turnOff",
+                          ]
+              },
 ]
 
 actions = ["setTargetTemperature",
@@ -133,6 +146,14 @@ def Action():
             if id == "ansiroom-music":
                 print "ansiroom-music"
                 mqclient.publish("chromecast/Chromeansi/stop", "stop")
+
+            if id == "tank":
+                print "tank"
+                mqclient.publish("livingroom/tank/waterchange", "on")
+
+            if id == "network":
+                print "network"
+                mqclient.publish("cortex/dynsilenced", "stop")
 
             return "OK"
         else:
