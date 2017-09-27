@@ -1,1 +1,1 @@
-Temperate: {{ temp }}
+Temperature: {{ temp }}
