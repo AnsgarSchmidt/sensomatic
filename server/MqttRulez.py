@@ -104,8 +104,8 @@ class MqttRulez(threading.Thread):
                                 s.loadPlaylist(random.choice(dflist))
                                 s.randomize(0)
                             else:
-                                self._logger.warn("Can not play ??? using Starred instead")
-                                for i in s.getPlaylists('Starred'):
+                                self._logger.warn("Can not play ??? using Ansgar instead")
+                                for i in s.getPlaylists('Ansgar'):
                                     s.loadPlaylist(i)
                                 s.randomize(1)
                         else:
@@ -132,7 +132,7 @@ class MqttRulez(threading.Thread):
                             self._redis.delete("PlayRadioInBath")
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        for i in s.getPlaylists('Starred'):
+                        for i in s.getPlaylists('Ansgar'):
                             s.loadPlaylist(i)
                         s.randomize(1)
                         s.volume(15)
@@ -215,7 +215,7 @@ class MqttRulez(threading.Thread):
                         self._mqclient.publish("bathroom/light/rgb", "255,255,255")
                         s = Mpd().getServerbyName("Bath")
                         s.emptyPlaylist()
-                        for i in s.getPlaylists('Starred'):
+                        for i in s.getPlaylists('Ansgar'):
                             s.loadPlaylist(i)
                         s.randomize(1)
                         s.volume(62)
