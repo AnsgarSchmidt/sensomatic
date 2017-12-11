@@ -246,6 +246,11 @@ class Influx(threading.Thread):
 
         if len(keys) == 2 and keys[0] == "bike":
 
+                if keys[1] == "battery":
+                    json_body[0]['measurement'] = "bike-battery"
+                    json_body[0]['fields']['value'] = float(v)
+                    self._influx.write_points(json_body)
+
                 if keys[1] == "speed":
                     json_body[0]['measurement'] = "bike-speed"
                     json_body[0]['fields']['value'] = float(v)
