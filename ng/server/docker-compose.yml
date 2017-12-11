@@ -25,7 +25,9 @@ services:
       - ./couchdb:/var/lib/influxdb
 
    mosquitto:
-    image: ansi/
+    build:
+       context: Mosquitto
+       dockerfile: Dockerfile
     container_name: mosquitto
     restart: always
     ports:
