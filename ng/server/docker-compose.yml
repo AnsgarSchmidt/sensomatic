@@ -33,6 +33,19 @@ services:
     ports:
       - '127.0.0.1:1883:1883'
 
+   reddis:
+    build:
+      context: Reddis
+      dockerfile: Dockerfile
+    container_name: reddis
+    restart: always
+    ports:
+      - '127.0.0.1:6379:6379'
+
+
+
+
+
 #   tank:
 #     build:
 #       context: Tank/
