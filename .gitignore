@@ -74,3 +74,4 @@ web/config.txt
 server/cloudant/passwd.txt
 
 server/cloudant/update.sh
+ng/server/config.env
