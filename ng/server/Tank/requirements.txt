@@ -1,0 +1,6 @@
+redis
+paho-mqtt
+requests
+matplotlib
+astral
+ephem
