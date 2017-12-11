@@ -20,7 +20,7 @@ services:
     container_name: couchdb
     restart: always
     ports:
-      - '127.0.0.1:5984:5984'
+      - '127.0.0.1:15984:15984'
     volumes:
       - ./couchdb:/var/lib/influxdb
 
