@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+   influxdb:
+    build:
+       context: Influx/
+       dockerfile: Dockerfile
+    container_name: influxdb
+    restart: always
+    ports:
+      - '127.0.0.1:8086:8086'
+    volumes:
+      - ./influx:/var/lib/influxdb
+
+   couchdb:
+    build:
+       context: CouchDB/
+       dockerfile: Dockerfile
+    container_name: couchdb
+    restart: always
+    ports:
+      - '127.0.0.1:5984:5984'
+    volumes:
+      - ./couchdb:/var/lib/influxdb
+
+    mosquitto:
+     image: ansi/
+
+#   tank:
+#     build:
+#       context: Tank/
+#      dockerfile: Dockerfile
+#     restart: always
+#     env_file: config.env
+##     environment:
+#       - NIGHT_TEMP=23
+#       - DAY_TEMP=24
+ #      - LOCATION=Port Of Spain
+#       - OFFSET=0
+#       - INTERVAL_FERTILIZER=3600
+#       - INTERVAL_GRAPH=9000#
+
+#   informationfetcher:
+##     build:
+ #      context: InformationFetcher/
+  #     dockerfile: Dockerfile
+#     restart: always
+ #    env_file: config.env
